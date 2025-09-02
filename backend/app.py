@@ -25,6 +25,8 @@ def tipo_usuario():
     """
     consulta de tipo_usuario
     ---
+    tags:
+      - tipo_usuario
     responses:
       200:
         description: lista de tipos de usuario
@@ -55,6 +57,8 @@ def eliminar_tipo_usuario(codigo):
     """
     Eliminar tipo de usuario por ID
     ---
+    tags:
+      - tipo_usuario
     parameters:
       - name: codigo
         in: path
@@ -80,6 +84,24 @@ def eliminar_tipo_usuario(codigo):
     # Ruta para registrar un nuevo tipo_usuario
 @app.route("/registro_tipo_usuario", methods=['POST'])
 def registro_tipo_usuario():
+    """
+    Registrar un nuevo tipo de usuario
+    ---
+    tags:
+      - tipo_usuario
+    parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              descripcion:
+                type: string
+    responses:
+      200:
+        description: Tipo de usuario registrado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -94,24 +116,6 @@ def registro_tipo_usuario():
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# Ruta para actualizar un tipo_usuario
-@app.route("/actualizar_tipo_usuario/<codigo>", methods=["PUT"])
-def actualizar_tipo_usuario(codigo):
-
-    try:
-        data = request.get_json()
-        descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
-                    (descripcion,codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
 
 # ruta de tipo_documento
 @app.route("/tipo_documento", methods=['GET'])
@@ -119,6 +123,8 @@ def tipo_documento():
     """
     consulta de tipo_documento
     ---
+    tags:
+      - tipo_documento
     responses:
       200:
         description: lista de tipo de documento
@@ -146,6 +152,26 @@ def tipo_documento():
 # Ruta para registrar un nuevo tipo_documento
 @app.route("/registro_tipo_documento", methods=['POST'])
 def registro_tipo_documento():
+    """
+    Registrar un nuevo tipo de documento
+    ---
+    tags:
+      - tipo_documento
+    parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+              abreviatura:
+                type: string
+    responses:
+      200:
+        description: Tipo de documento registrado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -160,28 +186,6 @@ def registro_tipo_documento():
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
-
-
-# Ruta para actualizar un tipo_documento
-@app.route("/actualizar_tipo_documento/<codigo>", methods=["PUT"])
-def actualizar_tipo_documento(codigo):
-    try:
-        data = request.get_json()
-        nombre = data['nombre']
-        abreviatura = data['abreviatura']
-        
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("UPDATE tipo_documento SET nombre= %s, abreviatura= %s WHERE id_tipo_documento= %s", 
-                    (nombre, abreviatura, codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        
-        return jsonify({'mensaje': 'Registro Actualizado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
     
 # Ruta para eliminar tipo_documento
 @app.route("/eliminar_tipo_documento/<int:codigo>", methods=['DELETE'])
@@ -189,6 +193,8 @@ def eliminar_tipo_documento(codigo):
     """
     Eliminar tipo de documento por ID
     ---
+    tags:
+      - tipo_documento
     parameters:
       - name: codigo
         in: path
@@ -217,6 +223,8 @@ def tipo_gasto():
     """
     Consulta de lista de tipos de gasto
     ---
+    tags:
+      - tipo_gasto
     responses:
       200:
         description: lista de tipos de gasto
@@ -244,6 +252,26 @@ def tipo_gasto():
 # Ruta para registrar un nuevo tipo_gasto
 @app.route("/registro_tipo_gasto", methods=['POST'])
 def registro_tipo_gasto():
+    """
+    Registrar un nuevo tipo de gasto
+    ---
+    tags:
+      - tipo_gasto
+    parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+              descripcion:
+                type: string
+    responses:
+      200:
+        description: Tipo de gasto registrado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -259,24 +287,6 @@ def registro_tipo_gasto():
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# Ruta para actualizar un tipo_gasto
-@app.route("/actualizar_tipo_gasto/<codigo>", methods=["PUT"])
-def actualizar_tipo_gasto(codigo):
-    try:
-        data = request.get_json()
-        nombre = data['nombre']
-        descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("UPDATE tipo_gasto SET nombre= %s, descripcion= %s WHERE id_tipo_gasto= %s", 
-                    (nombre, descripcion, codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
 
 # Ruta para eliminar tipo_gasto
 @app.route("/eliminar_tipo_gasto/<int:codigo>", methods=['DELETE'])
@@ -284,6 +294,8 @@ def eliminar_tipo_gasto(codigo):
     """
     Eliminar un tipo de gasto
     ---
+    tags:
+      - tipo_gasto
     parameters:
       - name: codigo
         in: path
@@ -339,6 +351,26 @@ def estado():
 # Ruta para registrar un nuevo estado
 @app.route("/registro_estado", methods=['POST'])
 def registro_estado():
+    """
+    Registrar un nuevo estado
+    ---
+    tags:
+      - estado
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre:
+              type: string
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Estado registrado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -350,24 +382,6 @@ def registro_estado():
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
-
-# Ruta para actualizar un estado
-@app.route("/actualizar_estado/<codigo>", methods=["PUT"])
-def actualizar_estado(codigo):
-    try:
-        data = request.get_json()
-        descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
-                    (descripcion,codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
