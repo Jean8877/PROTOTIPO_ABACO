@@ -324,6 +324,8 @@ def estado():
     """
     Consulta de lista de estados
     ---
+    tags:
+      - estado
     responses:
       200:
         description: lista de estados
@@ -1781,6 +1783,8 @@ def eliminar_categoria_producto(codigo):
     """
     Eliminar categoria_producto por ID
     ---
+    tags:
+      - categoria_producto
     parameters:
       - name: codigo
         in: path
@@ -1809,6 +1813,8 @@ def subcategoria_producto():
     """
     Consulta de lista de subcategorias de producto
     ---
+    tags:
+      - subcategoria_producto
     responses:
       200:
         description: lista de subcategorias de producto
@@ -1835,6 +1841,26 @@ def subcategoria_producto():
 # Ruta para registrar un nuevo subcategoria_producto
 @app.route("/registro_subcategoria_producto", methods=['POST'])
 def registro_subcategoria_producto():
+    """
+    Registro de un nuevo subcategoria_producto
+    ---
+    tags:
+      - subcategoria_producto
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+            categoria_producto:
+              type: integer
+    responses:
+      200:
+        description: subcategoria_producto registrado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -1853,6 +1879,30 @@ def registro_subcategoria_producto():
 # Ruta para actualizar un subcategoria_producto
 @app.route("/actualizar_subcategoria_producto/<codigo>", methods=["PUT"])
 def actualizar_subcategoria_producto(codigo):
+    """
+    Actualizar una subcategoria_producto por su ID
+    ---
+    tags:
+      - subcategoria_producto
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+            categoria_producto:
+              type: integer
+    responses:
+      200:
+        description: subcategoria_producto actualizado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -1875,6 +1925,8 @@ def eliminar_subcategoria_producto(codigo):
     """
     Eliminar subcategoria_producto por ID
     ---
+    tags:
+      - subcategoria_producto
     parameters:
       - name: codigo
         in: path
@@ -1903,6 +1955,8 @@ def fecha_vencimiento():
     """
     Consulta de lista de fechas de vencimiento
     ---
+    tags:
+      - fecha_vencimiento
     responses:
       200:
         description: lista de fechas de vencimiento
@@ -1928,6 +1982,24 @@ def fecha_vencimiento():
 # Ruta para registrar un nueva fecha_vencimiento
 @app.route("/registro_fecha_vencimiento", methods=['POST'])
 def registro_fecha_vencimiento():
+    """
+    Registrar un nuevo fecha_vencimiento
+    ---
+    tags:
+      - fecha_vencimiento
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fecha:
+                type: string
+    responses:
+      200:
+        description: fecha_vencimiento registrado
+    """
     try:
         data = request.get_json()
         fecha = data['fecha']
@@ -1942,23 +2014,6 @@ def registro_fecha_vencimiento():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar una fecha_vencimiento
-@app.route("/actualizar_fecha_vencimiento/<codigo>", methods=["PUT"])
-def actualizar_fecha_vencimiento(codigo):
-    try:
-        data = request.get_json()
-        fecha = data['fecha']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("UPDATE fecha_vencimiento SET fecha= %s WHERE id_fecha_vencimiento= %s", 
-                    (fecha,codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
 
 # Ruta para eliminar fecha_vencimiento
 @app.route("/eliminar_fecha_vencimiento/<int:codigo>", methods=['DELETE'])
@@ -1966,6 +2021,8 @@ def eliminar_fecha_vencimiento(codigo):
     """
     Eliminar fecha_vencimiento por ID
     ---
+    tags:
+      - fecha_vencimiento
     parameters:
       - name: codigo
         in: path
@@ -1994,6 +2051,8 @@ def acta_vencimiento():
     """
     Consulta de lista de actas de vencimiento
     ---
+    tags: 
+      - acta_vencimiento
     responses:
       200:
         description: lista de actas de vencimiento
@@ -2017,9 +2076,30 @@ def acta_vencimiento():
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
+      
 # Ruta para registrar un nuevo acta_vencimiento
 @app.route("/registro_acta_vencimiento", methods=['POST'])
 def registro_acta_vencimiento():
+    """
+    Registrar un nuevo acta_vencimiento
+    ---
+    tags:
+      - acta_vencimiento
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fecha:
+                type: string
+              descripcion:
+                type: string
+    responses:
+      200:
+        description: acta_vencimiento registrado
+    """
     try:
         data = request.get_json()
         fecha = data['fecha']
@@ -2035,31 +2115,14 @@ def registro_acta_vencimiento():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar una acta_vencimiento
-@app.route("/actualizar_acta_vencimiento/<codigo>", methods=["PUT"])
-def actualizar_acta_vencimiento(codigo):
-    try:
-        data = request.get_json()
-        fecha = data['fecha']
-        descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("UPDATE acta_vencimiento SET fecha= %s, descripcion= %s WHERE id_acta= %s", 
-                    (fecha, descripcion, codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
-
 # Ruta para eliminar acta_vencimiento
 @app.route("/eliminar_acta_vencimiento/<int:codigo>", methods=['DELETE'])
 def eliminar_acta_vencimiento(codigo):
     """
     Eliminar acta_vencimiento por ID
     ---
+    tags:
+      - acta_vencimiento
     parameters:
       - name: codigo
         in: path
@@ -2088,6 +2151,8 @@ def bodega():
     """
     Consulta de lista de bodegas
     ---
+    tags:
+      - bodega
     responses:
       200:
         description: lista de bodegas
@@ -2115,6 +2180,28 @@ def bodega():
 # Ruta para registrar un nueva bodega
 @app.route("/registro_bodega", methods=['POST'])
 def registro_bodega():
+    """
+    Registrar una nueva bodega
+    ---
+    tags:
+      - bodega
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre_bodega:
+                type: string
+              capacidad:
+                type: integer
+              estado:
+                type: string
+    responses:
+      200:
+        description: Bodega registrada
+    """
     try:
         data = request.get_json()
         nombre_bodega = data['nombre_bodega']
@@ -2134,6 +2221,28 @@ def registro_bodega():
 # Ruta para actualizar una bodega
 @app.route("/actualizar_bodega/<codigo>", methods=["PUT"])
 def actualizar_bodega(codigo):
+    """
+    Actualizar una bodega
+    ---
+    tags:
+      - bodega
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre_bodega:
+                type: string
+              capacidad:
+                type: integer
+              estado:
+                type: string
+    responses:
+      200:
+        description: Bodega actualizada
+    """
     try:
         data = request.get_json()
         nombre_bodega = data['nombre_bodega']
@@ -2157,6 +2266,8 @@ def eliminar_bodega(codigo):
     """
     Eliminar bodega por ID
     ---
+    tags:
+      - bodega
     parameters:
       - name: codigo
         in: path
@@ -2183,7 +2294,15 @@ def eliminar_bodega(codigo):
 
 @app.route("/unidad_de_medida", methods=['GET'])
 def unidad_de_medida():
-    
+    """
+    Obtener lista de unidades de medida
+    ---
+    tags: 
+      - unidad_de_medida
+    responses:
+      200:
+        description: Lista de unidades de medida
+    """
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
@@ -2207,14 +2326,33 @@ def unidad_de_medida():
 # Ruta para registrar un nueva unidad de medida
 @app.route("/registro_unidad_de_medida", methods=['POST'])
 def registro_unidad_de_medida():
+    """
+    Registrar una nueva unidad de medida
+    ---
+    tags:
+      - unidad_de_medida
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+              cantidad:
+                type: integer
+    responses:
+      200:
+        description: Unidad de medida registrada
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
         cantidad = data['cantidad']
-        estado = data['estado']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO unidad_de_medida (nombre, cantidad, estado) VALUES (%s, %s, %s)", (nombre, cantidad, estado))
+        cur.execute("INSERT INTO unidad_de_medida (nombre, cantidad) VALUES (%s, %s)", (nombre, cantidad))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -2226,6 +2364,26 @@ def registro_unidad_de_medida():
 # Ruta para actualizar una unidad de medida
 @app.route("/actualizar_unidad_de_medida/<codigo>", methods=["PUT"])
 def actualizar_unidad_de_medida(codigo):
+    """
+    Actualizar una unidad de medida
+    ---
+    tags:
+      - unidad_de_medida
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+              cantidad:
+                type: integer
+    responses:
+      200:
+        description: Unidad de medida actualizada
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -2248,6 +2406,8 @@ def eliminar_unidad_de_medida(codigo):
     """
     Eliminar unidad_de_medida por ID
     ---
+    tags:
+      - unidad_de_medida
     parameters:
       - name: codigo
         in: path
@@ -2277,6 +2437,8 @@ def tipo_organizacion():
     """
     Consulta de lista de tipo_organizacion
     ---
+    tags:
+      - tipo_organizacion
     responses:
       200:
         description: lista de tipo_organizacion
@@ -2303,6 +2465,24 @@ def tipo_organizacion():
 # Ruta para registrar un nuevo tipo organizacion
 @app.route("/registro_tipo_organizacion", methods=['POST'])
 def registro_tipo_organizacion():
+    """
+    Registrar un nuevo tipo de organización
+    ---
+    tags:
+      - tipo_organizacion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+    responses:
+      200:
+        description: Tipo de organización registrado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -2320,6 +2500,24 @@ def registro_tipo_organizacion():
 # Ruta para actualizar un tipo_organizacion
 @app.route("/actualizar_tipo_organizacion/<codigo>", methods=["PUT"])
 def actualizar_tipo_organizacion(codigo):
+    """
+    Actualizar un tipo de organización
+    ---
+    tags:
+      - tipo_organizacion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+    responses:
+      200:
+        description: Tipo de organización actualizado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -2341,6 +2539,8 @@ def eliminar_tipo_organizacion(codigo):
     """
     Eliminar tipo_organizacion por ID
     ---
+    tags:
+      - tipo_organizacion
     parameters:
       - name: codigo
         in: path
@@ -2369,6 +2569,8 @@ def tipo_entrega():
     """
     Consulta de lista de tipo_entrega
     ---
+    tags:
+      - tipo_entrega
     responses:
       200:
         description: lista de tipo_entrega
@@ -2394,6 +2596,26 @@ def tipo_entrega():
 # Ruta para registrar un nuevo tipo de entrega
 @app.route("/registro_tipo_entrega", methods=['POST'])
 def registro_tipo_entrega():
+    """
+    Registro de un nuevo tipo de entrega
+    ---
+    tags:
+      - tipo_entrega
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+              descripcion:
+                type: string
+    responses:
+      200:
+        description: Tipo de entrega registrado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -2409,31 +2631,14 @@ def registro_tipo_entrega():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar un tipo_entrega
-@app.route("/actualizar_tipo_entrega/<codigo>", methods=["PUT"])
-def actualizar_tipo_entrega(codigo):
-    try:
-        data = request.get_json()
-        nombre = data['nombre']
-        descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("UPDATE tipo_entrega SET nombre= %s, descripcion= %s WHERE id_tipo_entrega= %s", 
-                    (nombre, descripcion, codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
-
 # Ruta para eliminar tipo_entrega
 @app.route("/eliminar_tipo_entrega/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_entrega(codigo):
     """
     Eliminar tipo_entrega por ID
     ---
+    tags:
+      - tipo_entrega
     parameters:
       - name: codigo
         in: path
@@ -2463,6 +2668,8 @@ def organizacion():
     """
     Consulta de lista de organizacion
     ---
+    tags:
+      - organizacion
     responses:
       200:
         description: lista de organizacion
@@ -2494,9 +2701,38 @@ def organizacion():
     # Ruta para registrar un nueva organizacion
 @app.route("/registro_organizacion", methods=['POST'])
 def registro_organizacion():
+    """
+    Registrar una nueva organización
+    ---
+    tags:
+      - organizacion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              descripcion:
+                type: string
+              nombre:
+                type: string
+              responsable:
+                type: string
+              telefono:
+                type: string
+              direccion:
+                type: string
+              tipo_entrega:
+                type: string
+              tipo_organizacion:
+                type: string
+    responses:
+      200:
+        description: Organización registrada
+    """
     try:
         data = request.get_json()
-        nombre = data['nombre']
         descripcion = data['descripcion']
         nombre = data['nombre']
         responsable = data['responsable']
@@ -2506,7 +2742,7 @@ def registro_organizacion():
         tipo_organizacion = data['tipo_organizacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO organizacion (nombre, descripcion, responsable, telefono, direccion, tipo_entrega, tipo_organizacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre, descripcion, responsable, telefono, direccion, tipo_entrega, tipo_organizacion))
+        cur.execute("INSERT INTO organizacion (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -2518,6 +2754,41 @@ def registro_organizacion():
 # Ruta para actualizar organizacion
 @app.route("/actualizar_organizacion/<codigo>", methods=["PUT"])
 def actualizar_organizacion(codigo):
+    """
+    Actualizar una organización existente
+    ---
+    tags:
+      - organizacion
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              descripcion:
+                type: string
+              nombre:
+                type: string
+              responsable:
+                type: string
+              telefono:
+                type: string
+              direccion:
+                type: string
+              tipo_entrega:
+                type: string
+              tipo_organizacion:
+                type: string
+    responses:
+      200:
+        description: Organización actualizada
+    """
     try:
         data = request.get_json()
         codigo = data['codigo']
@@ -2546,6 +2817,8 @@ def eliminar_organizacion(codigo):
     """
     Eliminar organizacion por ID
     ---
+    tags:
+      - organizacion
     parameters:
       - name: codigo
         in: path
@@ -2574,6 +2847,8 @@ def movimiento_producto():
     """
     Consulta de lista de movimiento_producto
     ---
+    tags:
+      - movimiento_producto
     responses:
       200:
         description: lista de movimiento_producto
@@ -2605,6 +2880,36 @@ def movimiento_producto():
 # Ruta para registrar un nuevo movimiento_producto
 @app.route("/registro_movimiento_producto", methods=['POST'])
 def registro_movimiento_producto():
+    """
+    Registrar un nuevo movimiento_producto
+    ---
+    tags:
+      - movimiento_producto
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              movimiento:
+                type: string
+              cantidad:
+                type: integer
+              observacion:
+                type: string
+              tipo_donacion:
+                type: string
+              organizacion:
+                type: string
+              tipo_organizacion:
+                type: string
+              tipo_entrega:
+                type: string
+    responses:
+      200:
+        description: Movimiento registrado
+    """
     try:
         data = request.get_json()
         movimiento = data['movimiento']
@@ -2628,6 +2933,41 @@ def registro_movimiento_producto():
 # Ruta para actualizar movimiento_producto
 @app.route("/actualizar_movimiento_producto/<id>", methods=["PUT"])
 def actualizar_movimiento_producto(id):
+    """
+    Actualizar un movimiento_producto existente
+    ---
+    tags:
+      - movimiento_producto
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              movimiento:
+                type: string
+              cantidad:
+                type: integer
+              observacion:
+                type: string
+              tipo_donacion:
+                type: string
+              organizacion:
+                type: string
+              tipo_organizacion:
+                type: string
+              tipo_entrega:
+                type: string
+    responses:
+      200:
+        description: Movimiento actualizado
+    """
     try:
         data = request.get_json()
         movimiento = data['movimiento']
@@ -2655,6 +2995,8 @@ def eliminar_movimiento_producto(codigo):
     """
     Eliminar movimiento_producto por ID
     ---
+    tags:
+      - movimiento_producto
     parameters:
       - name: codigo
         in: path
@@ -2679,7 +3021,16 @@ def eliminar_movimiento_producto(codigo):
 # ruta para producto
 @app.route("/producto", methods=['GET'])
 def producto():
-    
+
+    """
+    Obtener la lista de productos
+    ---
+    tags:
+      - producto
+    responses:
+      200:
+        description: Lista de productos
+    """
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
@@ -2714,6 +3065,48 @@ def producto():
 # Ruta para registrar un nuevo producto
 @app.route("/registro_producto", methods=['POST'])
 def registro_producto():
+    """
+    Registrar un nuevo producto
+    ---
+    tags:
+      - producto
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+              descripcion:
+                type: string
+              cantidad:
+                type: string
+              codigo_barras:
+                type: string
+              stock:
+                type: string
+              stock_maximo:
+                type: string
+              stock_minimo:
+                type: string
+              categoria_producto:
+                type: string
+              subcategoria_producto:
+                type: string
+              estado:
+                type: string
+              unidad_de_medida:
+                type: string
+              acta_vencimiento:
+                type: string
+              tipo_donacion:
+                type: string
+    responses:
+      200:
+        description: Producto registrado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -2743,6 +3136,53 @@ def registro_producto():
 # Ruta para actualizar producto
 @app.route("/actualizar_producto/<id>", methods=["PUT"])
 def actualizar_producto(id):
+    """
+    Actualizar un producto existente
+    ---
+    tags:
+      - producto
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              nombre:
+                type: string
+              descripcion:
+                type: string
+              cantidad:
+                type: string
+              codigo_barras:
+                type: string
+              stock:
+                type: string
+              stock_maximo:
+                type: string
+              stock_minimo:
+                type: string
+              categoria_producto:
+                type: string
+              subcategoria_producto:
+                type: string
+              estado:
+                type: string
+              unidad_de_medida:
+                type: string
+              acta_vencimiento:
+                type: string
+              tipo_donacion:
+                type: string
+    responses:
+      200:
+        description: Producto actualizado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -2776,6 +3216,8 @@ def eliminar_producto(codigo):
     """
     Eliminar producto por ID
     ---
+    tags:
+      - producto
     parameters:
       - name: codigo
         in: path
@@ -2804,6 +3246,8 @@ def producto_has_donante():
     """
     Consulta de lista de producto_has_donante
     ---
+    tags:
+      - producto
     responses:
       200:
         description: lista de producto_has_donante
@@ -2835,6 +3279,34 @@ def producto_has_donante():
 # Ruta para registrar un nuevo producto_has_donante
 @app.route("/registro_producto_has_donante", methods=['POST'])
 def registro_producto_has_donante():
+    """
+    Registrar un nuevo producto_has_donante
+    ---
+    tags:
+      - producto_has_donante
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              donante:
+                type: string
+              tipo_documento:
+                type: string
+              tipo_donante:
+                type: string
+              producto:
+                type: string
+              categoria_producto:
+                type: string
+              subcategoria_producto:
+                type: string
+    responses:
+      200:
+        description: Producto registrado
+    """
     try:
         data = request.get_json()
         donante = data['donante']
@@ -2857,6 +3329,39 @@ def registro_producto_has_donante():
 # Ruta para actualizar producto_has_donante
 @app.route("/actualizar_producto_has_donante/<id>", methods=["PUT"])
 def actualizar_producto_has_donante(id):
+    """
+    Actualizar un producto_has_donante existente
+    ---
+    tags:
+      - producto_has_donante
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              donante:
+                type: string
+              tipo_documento:
+                type: string
+              tipo_donante:
+                type: string
+              producto:
+                type: string
+              categoria_producto:
+                type: string
+              subcategoria_producto:
+                type: string
+    responses:
+      200:
+        description: Producto actualizado
+    """
     try:
         data = request.get_json()
         donante = data['donante']
@@ -2884,6 +3389,8 @@ def eliminar_producto_has_donante(codigo):
     """
     Eliminar producto_has_donante por ID
     ---
+    tags:
+      - producto_has_donante
     parameters:
       - name: codigo
         in: path
