@@ -392,6 +392,8 @@ def eliminar_estado(codigo):
     """
     Eliminar un estado
     ---
+    tags:
+      - estado
     parameters:
       - name: codigo
         in: path
@@ -420,6 +422,8 @@ def gasto():
     """
     Consulta de lista de gastos
     ---
+    tags:
+      - gasto
     responses:
       200:
         description: lista de gastos
@@ -449,6 +453,30 @@ def gasto():
 # Ruta para registrar un nuevo gasto
 @app.route("/registro_gasto", methods=['POST'])
 def registro_gasto():
+    """
+    Registrar un nuevo gasto
+    ---
+    tags:
+      - gasto
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            fecha:
+              type: string
+            monto:
+              type: number
+            descripcion:
+              type: string
+            tipo_gasto:
+              type: string
+    responses:
+      200:
+        description: Gasto registrado
+    """
     try:
         data = request.get_json()
         fecha = data['fecha']
@@ -469,6 +497,34 @@ def registro_gasto():
 # Ruta para actualizar un gasto
 @app.route("/actualizar_gasto/<codigo>", methods=["PUT"])
 def actualizar_gasto(codigo):
+    """
+    Actualizar un gasto
+    ---
+    tags:
+      - gasto
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            fecha:
+              type: string
+            monto:
+              type: number
+            descripcion:
+              type: string
+            tipo_gasto:
+              type: string
+    responses:
+      200:
+        description: Gasto actualizado
+    """
     try:
         data = request.get_json()
         fecha = data['fecha']
@@ -493,6 +549,8 @@ def eliminar_gasto(codigo):
     """
     Eliminar un gasto
     ---
+    tags:
+      - gasto
     parameters:
       - name: codigo
         in: path
@@ -520,6 +578,8 @@ def usuarios():
     """
     Consulta de lista de usuarios
     ---
+    tags:
+      - usuario
     responses:
       200:
         description: lista de usuarios
@@ -552,7 +612,36 @@ def usuarios():
 # Ruta para registrar un nuevo usuario
 @app.route("/registro_usuarios", methods=['POST'])
 def registro_usuarios():
-
+    """
+    Registrar un nuevo usuario
+    ---
+    tags:
+      - usuario
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre_completo:
+              type: string
+            numero_documento:
+              type: string
+            gmail:
+              type: string
+            contrasena:
+              type: string
+            tipo_usuario:
+              type: string
+            tipo_documento:
+              type: string
+            estado:
+              type: string
+    responses:
+      200:
+        description: Usuario registrado
+    """
     try:
         data = request.get_json()
         nombre_completo = data['nombre_completo']
@@ -575,6 +664,40 @@ def registro_usuarios():
 # Ruta para actualizar un usuario
 @app.route("/actualizar_usuarios/<codigo>", methods=["PUT"])
 def actualizar_usuarios(codigo):
+    """
+    Actualizar un usuario
+    ---
+    tags:
+      - usuario
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre_completo:
+              type: string
+            numero_documento:
+              type: string
+            gmail:
+              type: string
+            tipo_usuario:
+              type: string
+            tipo_documento:
+              type: string
+            estado:
+              type: string
+            gasto:
+              type: string
+    responses:
+      200:
+        description: Usuario actualizado
+    """
     try:
         data = request.get_json()
         nombre_completo = data['nombre_completo']
@@ -601,6 +724,8 @@ def actualizar_usuarios(codigo):
 def eliminar_usuarios(codigo):
     """Eliminar un usuario por su ID
     ---
+    tags:
+      - usuario
     parameters:
       - name: codigo
         in: path
@@ -628,6 +753,8 @@ def tipo_donante():
     """
     Consulta de lista de tipos de donante
     ---
+    tags:
+      - tipo_donante
     responses:
       200:
         description: lista de tipos de donante
@@ -654,6 +781,24 @@ def tipo_donante():
 # Ruta para registrar un nuevo tipo_donante
 @app.route("/registro_tipo_donante", methods=['POST'])
 def registro_tipo_donante():
+    """
+    Registrar un nuevo tipo de donante
+    ---
+    tags:
+      - tipo_donante
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Tipo de donante registrado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -670,6 +815,28 @@ def registro_tipo_donante():
 # Ruta para actualizar un tipo donante
 @app.route("/actualizar_tipo_donante/<codigo>", methods=["PUT"])
 def actualizar_tipo_donante(codigo):
+    """
+    Actualizar un tipo de donante por su ID
+    ---
+    tags:
+      - tipo_donante
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Tipo de donante actualizado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -691,6 +858,8 @@ def eliminar_tipo_donante(codigo):
     """
     Eliminar un tipo de donante por su ID
     ---
+    tags:
+      - tipo_donante
     parameters:
       - name: codigo
         in: path
@@ -719,6 +888,8 @@ def donante():
     """
     Consulta de lista de donantes
     ---
+    tags:
+      - donante
     responses:
       200:
         description: lista de donantes
@@ -752,6 +923,36 @@ def donante():
 # Ruta para registrar un nuevo donante
 @app.route("/registro_donante", methods=['POST'])
 def registro_donante():
+    """
+    Registrar un nuevo donante
+    ---
+    tags:
+      - donante
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre:
+              type: string
+            telefono:
+              type: string
+            gmail:
+              type: string
+            direccion:
+              type: string
+            estado:
+              type: string
+            tipo_documento:
+              type: string
+            tipo_donante:
+              type: string
+    responses:
+      200:
+        description: Donante registrado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -775,6 +976,40 @@ def registro_donante():
 # Ruta para actualizar un donante
 @app.route("/actualizar_donante/<codigo>", methods=["PUT"])
 def actualizar_donante(codigo):
+    """
+    Actualizar un donante por su ID
+    ---
+    tags:
+      - donante
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre:
+              type: string
+            telefono:
+              type: string
+            gmail:
+              type: string
+            direccion:
+              type: string
+            estado:
+              type: string
+            tipo_documento:
+              type: string
+            tipo_donante:
+              type: string
+    responses:
+      200:
+        description: Donante actualizado
+    """
     try:
         data = request.get_json()
         nombre = data['nombre']
@@ -802,6 +1037,8 @@ def eliminar_donante(codigo):
     """
     Eliminar donante por ID
     ---
+    tags:
+      - donante
     parameters:
       - name: codigo
         in: path
@@ -830,6 +1067,8 @@ def tipo_donacion():
     """
     Consulta de lista de tipos de donación
     ---
+    tags:
+      - tipo_donacion
     responses:
       200:
         description: lista de tipos de donación
@@ -852,9 +1091,28 @@ def tipo_donacion():
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
+      
 # Ruta para registrar un nuevo tipo_donacion
 @app.route("/registro_tipo_donacion", methods=['POST'])
 def registro_tipo_donacion():
+    """
+    Registrar un nuevo tipo de donación
+    ---
+    tags:
+      - tipo_donacion
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Tipo de donación registrado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -871,6 +1129,28 @@ def registro_tipo_donacion():
 # Ruta para actualizar un tipo donacion
 @app.route("/actualizar_tipo_donacion/<codigo>", methods=["PUT"])
 def actualizar_tipo_donacion(codigo):
+    """
+    Actualizar un tipo de donación por su ID
+    ---
+    tags:
+      - tipo_donante
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Tipo de donante actualizado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -892,6 +1172,8 @@ def eliminar_tipo_donacion(codigo):
     """
     Eliminar tipo de donación por ID
     ---
+    tags:
+      - tipo_donacion
     parameters:
       - name: codigo
         in: path
@@ -919,6 +1201,8 @@ def donacion():
     """
     Consulta de lista de donaciones
     ---
+    tags:
+      - donacion
     responses:
       200:
         description: lista de donaciones
@@ -947,6 +1231,30 @@ def donacion():
 # Ruta para registrar un nueva donacion
 @app.route("/registro_donacion", methods=['POST'])
 def registro_donacion():
+    """
+    Registrar una nueva donación
+    ---
+    tags:
+      - donacion
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            cantidad_donada:
+              type: number
+            fecha_donacion:
+              type: string
+            forma_donacion:
+              type: string
+            observaciones:
+              type: string
+    responses:
+      200:
+        description: donación registrada
+    """
     try:
         data = request.get_json()
         cantidad_donada = data['cantidad_donada']
@@ -967,6 +1275,34 @@ def registro_donacion():
 # Ruta para actualizar donacion
 @app.route("/actualizar_donacion/<codigo>", methods=["PUT"])
 def actualizar_donacion(codigo):
+    """
+    Actualizar una donación por su ID
+    ---
+    tags:
+      - donacion
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            cantidad_donada:
+              type: string
+            fecha_donacion:
+              type: string
+            forma_donacion:
+              type: string
+            observaciones:
+              type: string
+    responses:
+      200:
+        description: donación actualizada
+    """
     try:
         data = request.get_json()
         cantidad_donada = data['cantidad_donada']
@@ -991,6 +1327,8 @@ def eliminar_donacion(codigo):
     """
     Eliminar donación por ID
     ---
+    tags:
+      - donacion
     parameters:
       - name: codigo
         in: path
@@ -1019,6 +1357,8 @@ def donacion_has_tipo_donacion():
     """
     Consulta de lista de donacion_has_tipo_donacion
     ---
+    tags:
+      - donacion_has_tipo_donacion
     responses:
       200:
         description: lista de donacion_has_tipo_donacion
@@ -1045,6 +1385,26 @@ def donacion_has_tipo_donacion():
 # Ruta para registrar un nuevo donacion_has_tipo_donacion
 @app.route("/registro_donacion_has_tipo_donacion", methods=['POST'])
 def registro_donacion_has_tipo_donacion():
+    """
+    Registrar una donacion_has_tipo_donacion
+    ---
+    tags:
+      - donacion_has_tipo_donacion
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            donacion:
+              type: string
+            tipo_donacion:
+              type: string
+    responses:
+      200:
+        description: donacion_has_tipo_donacion registrado
+    """
     try:
         data = request.get_json()
         donacion = data['donacion']
@@ -1063,6 +1423,30 @@ def registro_donacion_has_tipo_donacion():
 # Ruta para actualizar una donacion_has_tipo_donacion
 @app.route("/actualizar_donacion_has_tipo_donacion/<codigo>", methods=["PUT"])
 def actualizar_donacion_has_tipo_donacion(codigo):
+    """
+    Actualizar una donacion_has_tipo_donacion por su ID
+    ---
+    tags:
+      - donacion_has_tipo_donacion
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            donacion:
+              type: string
+            tipo_donacion:
+              type: string
+    responses:
+      200:
+        description: donacion_has_tipo_donacion actualizado
+    """
     try:
         data = request.get_json()
         donacion = data['donacion']
@@ -1085,6 +1469,8 @@ def eliminar_donacion_has_tipo_donacion(codigo):
     """
     Eliminar donacion_has_tipo_donacion por ID
     ---
+    tags:
+      - donacion_has_tipo_donacion
     parameters:
       - name: codigo
         in: path
@@ -1109,6 +1495,15 @@ def eliminar_donacion_has_tipo_donacion(codigo):
 # ruta de certificado_donante
 @app.route("/certificado_donante", methods=['GET'])
 def certificado_donante():
+    """
+    Obtener todos los certificados de donante
+    ---
+    tags:
+      - certificado_donante
+    responses:
+      200:
+        description: Lista de certificados de donante
+    """
     try:
         conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
@@ -1137,6 +1532,36 @@ def certificado_donante():
 # Ruta para registrar un nuevo certificado_donante
 @app.route("/registro_certificado_donante", methods=['POST'])
 def registro_certificado_donante():
+    """
+    Registrar un nuevo certificado de donante
+    ---
+    tags:
+      - certificado_donante
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            fecha:
+              type: string
+            firma_representante:
+              type: string
+            donante:
+              type: string
+            estado:
+              type: string
+            tipo_documento:
+              type: string
+            tipo_donante:
+              type: string
+            tipo_donacion:
+              type: string
+    responses:
+      200:
+        description: Certificado de donante registrado
+    """
     try:
         data = request.get_json()
         fecha = data['fecha']
@@ -1160,6 +1585,40 @@ def registro_certificado_donante():
 # Ruta para actualizar un certificado_donante
 @app.route("/actualizar_certificado_donante/<codigo>", methods=["PUT"])
 def actualizar_certificado_donante(codigo):
+    """
+    Actualizar un certificado de donante por su ID
+    ---
+    tags:
+      - certificado_donante
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            fecha:
+              type: string
+            firma_representante:
+              type: string
+            donante:
+              type: string
+            estado:
+              type: string
+            tipo_documento:
+              type: string
+            tipo_donante:
+              type: string
+            tipo_donacion:
+              type: string
+    responses:
+      200:
+        description: Certificado de donante actualizado
+    """
     try:
         data = request.get_json()
         fecha = data['fecha']
@@ -1187,6 +1646,8 @@ def eliminar_certificado_donante(codigo):
     """
     Eliminar certificado_donante por ID
     ---
+    tags:
+      - certificado_donante
     parameters:
       - name: codigo
         in: path
@@ -1215,6 +1676,8 @@ def categoria_producto():
     """
     Consulta de lista de categorias de producto
     ---
+    tags:
+      - categoria_producto
     responses:
       200:
         description: lista de categorias de producto
@@ -1240,6 +1703,24 @@ def categoria_producto():
 # Ruta para registrar un nuevo categoria_producto
 @app.route("/registro_categoria_producto", methods=['POST'])
 def registro_categoria_producto():
+    """
+    Registrar un nuevo categoria_producto
+    ---
+    tags:
+      - categoria_producto
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              descripcion:
+                type: string
+    responses:
+      200:
+        description: Categoria_producto registrado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
@@ -1257,6 +1738,28 @@ def registro_categoria_producto():
 # Ruta para actualizar una categoria_producto
 @app.route("/actualizar_categoria_producto/<codigo>", methods=["PUT"])
 def actualizar_categoria_producto(codigo):
+    """
+    Actualizar una categoria_producto por su ID
+    ---
+    tags:
+      - categoria_producto
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Categoria_producto actualizado
+    """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
