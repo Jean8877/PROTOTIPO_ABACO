@@ -38,3 +38,11 @@ function consulta_general(){
 
 
 // 
+
+function eliminar(){
+    fetch(`${{BASE_URL}/tipo_usuario}`,{ method: 'DELETE'})
+        .then(response=> {
+            if (!response.ok) throw new Error(`Error: ${response.status}`);
+            return response.json();    
+        })
+}
