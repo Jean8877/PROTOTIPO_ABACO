@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Parametrización - Banco de Alimentos</title>
+
+    <!-- icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --panel: #ffffff;
+            --muted: #7f8c8d;
+            --bg: linear-gradient(135deg, #eef2f3, #dfe9f3);
+            --border: #e0e6ef;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        header {
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem
+        }
+
+        header p {
+            color: var(--muted);
+            margin-top: 6px
+        }
+
+        .main-options {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 22px;
+        }
+
+        .option-card {
+            background: var(--panel);
+            width: 260px;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+            transition: transform .22s ease, box-shadow .22s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 30px rgba(16, 24, 40, 0.08)
+        }
+
+        .option-icon {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            display: block
+        }
+
+        .option-card h3 {
+            margin: 4px 0 8px
+        }
+
+        .option-card p {
+            color: var(--muted);
+            font-size: .95rem;
+            margin-bottom: 12px
+        }
+
+        .option-btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            color: #fff;
+            font-weight: 700
+        }
+
+        .init-btn {
+            background: var(--primary)
+        }
+
+        .manage-btn {
+            background: var(--success)
+        }
+
+        /* Dashboard */
+        .dashboard {
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px
+        }
+
+        .dashboard-header h2 {
+            margin: 0
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .add-param-btn {
+            background: var(--success);
+            color: #fff;
+            border-radius: 8px;
+            padding: 9px 14px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .param-type-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px
+        }
+
+        .param-type-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: #f6f8fb;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .param-type-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary)
+        }
+
+        .top-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            min-width: 200px
+        }
+
+        .params-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px
+        }
+
+        .param-card {
+            background: linear-gradient(180deg, #fff, #fbfdff);
+            border-radius: 10px;
+            padding: 14px;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform .18s ease;
+        }
+
+        .param-card:hover {
+            transform: translateY(-6px)
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .param-code {
+            background: var(--dark);
+            color: #fff;
+            padding: 4px 9px;
+            border-radius: 18px;
+            font-size: .85rem;
+            font-weight: 700
+        }
+
+        .param-status {
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 14px;
+            font-size: .82rem
+        }
+
+        .status-active {
+            background: #eafaf1;
+            color: var(--success)
+        }
+
+        .status-inactive {
+            background: #fdeaea;
+            color: var(--danger)
+        }
+
+        .param-name {
+            font-weight: 800;
+            margin: 0;
+            font-size: 1rem
+        }
+
+        .param-desc {
+            color: var(--muted);
+            font-size: .95rem;
+            margin-top: 6px
+        }
+
+        .param-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: auto
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: .88rem
+        }
+
+        .edit-btn {
+            background: var(--primary)
+        }
+
+        .toggle-btn {
+            background: var(--warning)
+        }
+
+        .delete-btn {
+            background: var(--danger)
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 999
+        }
+
+        .modal.show {
+            display: flex
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 12px 30px rgba(16, 24, 40, 0.12)
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--muted)
+        }
+
+        .form-group {
+            margin-bottom: 12px
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            outline: none
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            font-weight: 800;
+            cursor: pointer
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            right: 18px;
+            top: 18px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 800;
+            display: none;
+            z-index: 2000
+        }
+
+        .notification.show {
+            display: block
+        }
+
+        .notification.success {
+            background: var(--success)
+        }
+
+        .notification.error {
+            background: var(--danger)
+        }
+
+        @media (max-width:700px) {
+            .top-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px
+            }
+
+            .search-input {
+                width: 100%
+            }
+
+            .param-type-btn {
+                flex: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Parametrización - Banco de Alimentos</h1>
+            <p>Administra tipos de documento, estados, religiones, salud, sacramentos y más.</p>
+        </header>
+
+        <div class="main-options">
+            <div class="option-card">
+                <i class="fas fa-play-circle option-icon" style="color:var(--primary)"></i>
+                <h3>Inicializar parámetros</h3>
+                <p>Carga valores por defecto (documentos, géneros, estados, etc.)</p>
+                <button id="btnInitialize" class="option-btn init-btn">Ejecutar</button>
+            </div>
+
+            <div class="option-card">
+                <i class="fas fa-sliders-h option-icon" style="color:var(--success)"></i>
+                <h3>Gestionar</h3>
+                <p>Agregar, editar, activar/desactivar y eliminar parámetros</p>
+                <button id="btnManage" class="option-btn manage-btn">Ir a gestión</button>
+            </div>
+        </div>
+
+        <div class="dashboard" id="managementDashboard">
+            <div class="dashboard-header">
+                <h2>Gestión de Parámetros</h2>
+                <div class="controls">
+                    <div class="top-controls">
+                        <input id="searchInput" class="search-input" placeholder="Buscar por nombre o código...">
+                        <button id="openAdd" class="add-param-btn"><i class="fas fa-plus"></i> Agregar
+                            parámetro</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="param-type-selector" id="typeSelector">
+                <!-- botones con data-type -->
+                <button class="param-type-btn active" data-type="all">Todos</button>
+                <button class="param-type-btn" data-type="document">Tipo Documento</button>
+                <button class="param-type-btn" data-type="gender">Género</button>
+                <button class="param-type-btn" data-type="status">Estado Civil</button>
+                <button class="param-type-btn" data-type="religion">Religión</button>
+                <button class="param-type-btn" data-type="health">Salud</button>
+                <button class="param-type-btn" data-type="population">Población</button>
+                <button class="param-type-btn" data-type="sacrament">Sacramento</button>
+                <button class="param-type-btn" data-type="task">Tipo Tarea</button>
+                <button class="param-type-btn" data-type="appointment">Tipo Cita</button>
+            </div>
+
+            <div id="paramsContainer" class="params-grid" aria-live="polite"></div>
+        </div>
+    </div>
+
+    <!-- Modal para add/edit -->
+    <div class="modal" id="modal">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-header">
+                <h3 id="modalTitle">Agregar parámetro</h3>
+                <button class="close-btn" id="closeModalBtn" aria-label="Cerrar">&times;</button>
+            </div>
+
+            <form id="parameterForm">
+                <div class="form-group">
+                    <label for="paramType">Tipo de parámetro</label>
+                    <select id="paramType" required>
+                        <option value="">-- Seleccione --</option>
+                        <option value="document">Tipo de Documento</option>
+                        <option value="gender">Género</option>
+                        <option value="status">Estado Civil</option>
+                        <option value="religion">Religión</option>
+                        <option value="health">Estado de Salud</option>
+                        <option value="population">Tipo de Población</option>
+                        <option value="sacrament">Sacramento</option>
+                        <option value="task">Tipo de Tarea</option>
+                        <option value="appointment">Tipo de Cita</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="code">Código (generado automáticamente)</label>
+                    <input id="code" readonly placeholder="Se generará al escribir el nombre" />
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input id="name" placeholder="Ej: Cédula de Ciudadanía" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción (opcional)</label>
+                    <textarea id="description" rows="2" placeholder="Descripción breve"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="statusSelect">Estado</label>
+                    <select id="statusSelect">
+                        <option value="active">Activo</option>
+                        <option value="inactive">Inactivo</option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="editOldType" value="">
+                <input type="hidden" id="editOldCode" value="">
+
+                <button class="submit-btn" type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification" role="status"></div>
+
+    <script>
+        'use strict';
+
+        /* ---------- Config / datos ---------- */
+        const STORAGE_KEY = 'paramsBancoAlimentos_v1';
+
+        // estructura inicial vacía (se rellenará desde saved o init)
+        const initialStructure = {
+            document: [], gender: [], status: [], religion: [], health: [],
+            population: [], sacrament: [], task: [], appointment: []
+        };
+
+        // valores por defecto (copiados y adaptados de tu base)
+        const defaultParams = {
+            document: [
+                { code: 'CC', name: 'Cédula de Ciudadanía', description: 'Documento de identidad nacional', status: 'active' },
+                { code: 'CE', name: 'Cédula de Extranjería', description: 'Documento para extranjeros', status: 'active' },
+                { code: 'TI', name: 'Tarjeta de Identidad', description: 'Documento para menores', status: 'active' },
+                { code: 'RC', name: 'Registro Civil', description: 'Documento de nacimiento', status: 'active' }
+            ],
+            gender: [
+                { code: 'M', name: 'Masculino', description: '', status: 'active' },
+                { code: 'F', name: 'Femenino', description: '', status: 'active' },
+                { code: 'O', name: 'Otro', description: '', status: 'active' }
+            ],
+            status: [
+                { code: 'SOL', name: 'Soltero/a', description: '', status: 'active' },
+                { code: 'CAS', name: 'Casado/a', description: '', status: 'active' },
+                { code: 'DIV', name: 'Divorciado/a', description: '', status: 'active' },
+                { code: 'VIU', name: 'Viudo/a', description: '', status: 'active' },
+                { code: 'UL', name: 'Unión Libre', description: '', status: 'active' }
+            ],
+            religion: [
+                { code: 'CAT', name: 'Católica', description: '', status: 'active' },
+                { code: 'PRO', name: 'Protestante', description: '', status: 'active' },
+                { code: 'CRI', name: 'Cristiana', description: '', status: 'active' },
+                { code: 'OTR', name: 'Otra', description: '', status: 'active' }
+            ],
+            health: [
+                { code: 'BUE', name: 'Buena', description: '', status: 'active' },
+                { code: 'REG', name: 'Regular', description: '', status: 'active' },
+                { code: 'MAL', name: 'Mala', description: '', status: 'active' },
+                { code: 'DISC', name: 'Discapacidad', description: '', status: 'active' },
+                { code: 'ENF', name: 'Enfermedad', description: '', status: 'active' }
+            ],
+            population: [
+                { code: 'NIN', name: 'Niños', description: 'Población 0-12', status: 'active' },
+                { code: 'ADO', name: 'Adolescentes', description: '13-17', status: 'active' },
+                { code: 'JOV', name: 'Jóvenes', description: '18-35', status: 'active' },
+                { code: 'ADU', name: 'Adultos', description: '36-59', status: 'active' },
+                { code: 'MAY', name: 'Adultos Mayores', description: '60+', status: 'active' }
+            ],
+            sacrament: [
+                { code: 'BAU', name: 'Bautismo', description: '', status: 'active' },
+                { code: 'COM', name: 'Comunión', description: '', status: 'active' },
+                { code: 'CON', name: 'Confirmación', description: '', status: 'active' },
+                { code: 'MAT', name: 'Matrimonio', description: '', status: 'active' },
+                { code: 'UNC', name: 'Unción', description: '', status: 'active' }
+            ],
+            task: [], appointment: []
+        };
+
+        // estado en memoria
+        let systemParams = {};
+
+        /* ---------- helpers ---------- */
+        function saveParams() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(systemParams));
+        }
+
+        function loadParams() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                try {
+                    systemParams = JSON.parse(raw);
+                    // ensure all keys exist
+                    systemParams = Object.assign({}, initialStructure, systemParams);
+                } catch (e) {
+                    console.error('Error parseando params:', e);
+                    systemParams = Object.assign({}, initialStructure);
+                }
+            } else {
+                systemParams = Object.assign({}, initialStructure);
+            }
+        }
+
+        function showNotification(msg, type = 'success') {
+            const n = document.getElementById('notification');
+            n.textContent = msg;
+            n.className = `notification ${type} show`;
+            setTimeout(() => { n.className = `notification ${type}`; }, 2800);
+        }
+
+        // sanitizar código (solo letras/números, mayúsculas)
+        function sanitizeCode(s) {
+            return (s || '').toString().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
+        }
+
+        // genera código base según tipo y nombre
+        function generateBaseCode(type, name) {
+            if (!name) return '';
+            name = name.trim();
+            if (type === 'document' || type === 'gender') {
+                // iniciales de cada palabra
+                return name.split(/\s+/).map(w => w[0] || '').join('').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6);
+            }
+            if (type === 'status' || type === 'religion') {
+                return name.replace(/\s+/g, '').slice(0, 3).toUpperCase().replace(/[^A-Z]/g, '');
+            }
+            // por defecto 3-4 letras
+            return name.replace(/\s+/g, '').slice(0, 4).toUpperCase().replace(/[^A-Z0-9]/g, '');
+        }
+
+        // devuelve código único dentro de un tipo (añade sufijo si ya existe)
+        function makeUniqueCode(type, baseCode) {
+            baseCode = sanitizeCode(baseCode || '');
+            if (!baseCode) baseCode = 'P';
+            const list = systemParams[type] || [];
+            if (!list.some(p => p.code === baseCode)) return baseCode;
+            // añadir sufijo numérico
+            let i = 2;
+            while (list.some(p => p.code === `${baseCode}${i}`)) i++;
+            return `${baseCode}${i}`;
+        }
+
+        /* ---------- UI: render ---------- */
+        const paramsContainer = document.getElementById('paramsContainer');
+
+        function clearParamsGrid() { paramsContainer.innerHTML = ''; }
+
+        function createParamCard(type, param) {
+            const card = document.createElement('article');
+            card.className = 'param-card';
+            card.dataset.type = type;
+            card.dataset.code = param.code;
+
+            // header
+            const header = document.createElement('div');
+            header.className = 'param-header';
+
+            const codeSpan = document.createElement('span');
+            codeSpan.className = 'param-code';
+            codeSpan.textContent = param.code;
+
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'param-status ' + (param.status === 'active' ? 'status-active' : 'status-inactive');
+            statusSpan.textContent = (param.status === 'active') ? 'Activo' : 'Inactivo';
+
+            header.appendChild(codeSpan);
+            header.appendChild(statusSpan);
+
+            // name
+            const nameEl = document.createElement('h3');
+            nameEl.className = 'param-name';
+            nameEl.textContent = param.name;
+
+            // desc (optional)
+            const descEl = document.createElement('div');
+            descEl.className = 'param-desc';
+            descEl.textContent = param.description || '';
+
+            // actions
+            const actions = document.createElement('div');
+            actions.className = 'param-actions';
+
+            const btnEdit = document.createElement('button');
+            btnEdit.className = 'action-btn edit-btn';
+            btnEdit.type = 'button';
+            btnEdit.innerHTML = '<i class="fas fa-edit"></i> Editar';
+            btnEdit.dataset.action = 'edit';
+
+            const btnToggle = document.createElement('button');
+            btnToggle.className = 'action-btn toggle-btn';
+            btnToggle.type = 'button';
+            btnToggle.dataset.action = 'toggle';
+            btnToggle.innerHTML = (param.status === 'active') ? '<i class="fas fa-ban"></i> Desactivar' : '<i class="fas fa-check"></i> Activar';
+
+            const btnDelete = document.createElement('button');
+            btnDelete.className = 'action-btn delete-btn';
+            btnDelete.type = 'button';
+            btnDelete.dataset.action = 'delete';
+            btnDelete.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
+
+            actions.appendChild(btnEdit);
+            actions.appendChild(btnToggle);
+            actions.appendChild(btnDelete);
+
+            card.appendChild(header);
+            card.appendChild(nameEl);
+            if (param.description) card.appendChild(descEl);
+            card.appendChild(actions);
+
+            return card;
+        }
+
+        function renderParams(filterType = 'all', searchTerm = '') {
+            clearParamsGrid();
+            const keys = Object.keys(systemParams);
+            const term = (searchTerm || '').toLowerCase().trim();
+
+            keys.forEach(type => {
+                systemParams[type].forEach(param => {
+                    // filtro por tipo
+                    if (filterType !== 'all' && filterType !== type) return;
+                    // filtro por busqueda (name o code)
+                    if (term) {
+                        if (!(param.name.toLowerCase().includes(term) || param.code.toLowerCase().includes(term))) return;
+                    }
+                    const card = createParamCard(type, param);
+                    paramsContainer.appendChild(card);
+                });
+            });
+
+            // si no hay resultados, mostrar tarjeta vacía
+            if (!paramsContainer.hasChildNodes()) {
+                const empty = document.createElement('div');
+                empty.style.gridColumn = '1/-1';
+                empty.style.textAlign = 'center';
+                empty.style.color = 'var(--muted)';
+                empty.textContent = 'No se encontraron parámetros.';
+                paramsContainer.appendChild(empty);
+            }
+        }
+
+        /* ---------- UI: eventos y lógica ---------- */
+        document.addEventListener('DOMContentLoaded', () => {
+            loadParams();
+            renderParams();
+
+            // botones globales
+            document.getElementById('btnInitialize').addEventListener('click', () => {
+                if (confirm('¿Deseas inicializar el sistema con parámetros por defecto? Se reemplazarán los actuales.')) {
+                    systemParams = JSON.parse(JSON.stringify(Object.assign({}, initialStructure, defaultParams)));
+                    saveParams();
+                    renderParams(getActiveFilter(), document.getElementById('searchInput').value);
+                    showNotification('Sistema inicializado con parámetros por defecto', 'success');
+                }
+            });
+
+            document.getElementById('btnManage').addEventListener('click', () => {
+                document.getElementById('managementDashboard').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // abrir modal
+            document.getElementById('openAdd').addEventListener('click', () => openModalForAdd());
+
+            // cerrar modal
+            document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+            document.getElementById('modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+
+            // form: generar código al escribir nombre o cambiar tipo
+            document.getElementById('name').addEventListener('input', () => updateGeneratedCode());
+            document.getElementById('paramType').addEventListener('change', () => updateGeneratedCode());
+
+            // submit form (add/edit)
+            document.getElementById('parameterForm').addEventListener('submit', handleFormSubmit);
+
+            // filtro por botones y search
+            document.querySelectorAll('.param-type-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.param-type-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const type = btn.dataset.type || 'all';
+                    renderParams(type, document.getElementById('searchInput').value);
+                });
+            });
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const type = getActiveFilter();
+                renderParams(type, e.target.value);
+            });
+
+            // delegación de eventos para actions (edit/toggle/delete)
+            paramsContainer.addEventListener('click', function (e) {
+                const button = e.target.closest('button');
+                if (!button) return;
+                const action = button.dataset.action;
+                const card = button.closest('.param-card');
+                if (!card) return;
+                const type = card.dataset.type;
+                const code = card.dataset.code;
+                if (action === 'edit') { openModalForEdit(type, code); }
+                else if (action === 'toggle') { toggleParamStatus(type, code); }
+                else if (action === 'delete') { deleteParam(type, code); }
+            });
+        });
+
+        function getActiveFilter() {
+            const activeBtn = document.querySelector('.param-type-btn.active');
+            return activeBtn ? (activeBtn.dataset.type || 'all') : 'all';
+        }
+
+        /* ---------- modal / form ---------- */
+        function openModalForAdd() {
+            const modal = document.getElementById('modal');
+            document.getElementById('modalTitle').textContent = 'Agregar parámetro';
+            document.getElementById('parameterForm').reset();
+            document.getElementById('code').value = '';
+            document.getElementById('editOldType').value = '';
+            document.getElementById('editOldCode').value = '';
+            modal.classList.add('show');
+            // focus on type select
+            setTimeout(() => document.getElementById('paramType').focus(), 120);
+        }
+
+        function openModalForEdit(type, code) {
+            const modal = document.getElementById('modal');
+            const param = (systemParams[type] || []).find(p => p.code === code);
+            if (!param) { showNotification('Parámetro no encontrado', 'error'); return; }
+
+            document.getElementById('modalTitle').textContent = `Editar parámetro (${type})`;
+            document.getElementById('paramType').value = type;
+            document.getElementById('code').value = param.code;
+            document.getElementById('name').value = param.name;
+            document.getElementById('description').value = param.description || '';
+            document.getElementById('statusSelect').value = param.status || 'active';
+            document.getElementById('editOldType').value = type;
+            document.getElementById('editOldCode').value = code;
+
+            modal.classList.add('show');
+            setTimeout(() => document.getElementById('name').focus(), 120);
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        function updateGeneratedCode() {
+            const type = document.getElementById('paramType').value;
+            const name = document.getElementById('name').value;
+            const base = generateBaseCode(type, name);
+            const final = makeUniqueCode(type || 'document', base);
+            document.getElementById('code').value = final;
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const type = document.getElementById('paramType').value;
+            let code = document.getElementById('code').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const status = document.getElementById('statusSelect').value;
+            const editOldType = document.getElementById('editOldType').value;
+            const editOldCode = document.getElementById('editOldCode').value;
+
+            if (!type || !name) {
+                showNotification('El tipo y el nombre son obligatorios', 'error');
+                return;
+            }
+
+            // asegurar código único
+            code = makeUniqueCode(type, code || generateBaseCode(type, name));
+
+            // si estamos editando (editOldCode no vacío)
+            if (editOldCode) {
+                // si el tipo cambió -> eliminar del arreglo viejo y agregar al nuevo
+                if (editOldType && editOldType !== type) {
+                    const oldIndex = systemParams[editOldType].findIndex(p => p.code === editOldCode);
+                    if (oldIndex !== -1) systemParams[editOldType].splice(oldIndex, 1);
+                } else {
+                    // si mismo tipo -> remove old (para reemplazar)
+                    const oldIndex = systemParams[type].findIndex(p => p.code === editOldCode);
+                    if (oldIndex !== -1) systemParams[type].splice(oldIndex, 1);
+                }
+                // insertar actualizado
+                systemParams[type].push({ code, name, description, status });
+                showNotification(`Parámetro "${name}" actualizado`, 'success');
+            } else {
+                // nuevo
+                systemParams[type].push({ code, name, description, status });
+                showNotification(`Parámetro "${name}" agregado`, 'success');
+            }
+
+            saveParams();
+            closeModal();
+            renderParams(getActiveFilter(), document.getElementById('searchInput').value);
+        }
+
+        /* ---------- acciones: toggle / delete ---------- */
+        function toggleParamStatus(type, code) {
+            const list = systemParams[type] || [];
+            const idx = list.findIndex(p => p.code === code);
+            if (idx === -1) { showNotification('Parámetro no encontrado', 'error'); return; }
+            list[idx].status = (list[idx].status === 'active') ? 'inactive' : 'active';
+            saveParams();
+            renderParams(getActiveFilter(), document.getElementById('searchInput').value);
+            showNotification(`Parámetro "${list[idx].name}" ${list[idx].status === 'active' ? 'activado' : 'desactivado'}`, 'success');
+        }
+
+        function deleteParam(type, code) {
+            const list = systemParams[type] || [];
+            const idx = list.findIndex(p => p.code === code);
+            if (idx === -1) { showNotification('Parámetro no encontrado', 'error'); return; }
+            const name = list[idx].name;
+            if (!confirm(`¿Eliminar "${name}" (${code})? Esta acción no se puede deshacer.`)) return;
+            list.splice(idx, 1);
+            saveParams();
+            // animación: fade out card
+            const card = document.querySelector(`.param-card[data-type="${type}"][data-code="${code}"]`);
+            if (card) {
+                card.style.transition = 'opacity .35s, transform .35s';
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(-10px)';
+                setTimeout(() => renderParams(getActiveFilter(), document.getElementById('searchInput').value), 360);
+            } else {
+                renderParams(getActiveFilter(), document.getElementById('searchInput').value);
+            }
+            showNotification(`Parámetro "${name}" eliminado`, 'success');
+        }
+
+    </script>
+</body>
+
+</html>
