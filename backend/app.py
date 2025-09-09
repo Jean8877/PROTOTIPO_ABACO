@@ -8,6 +8,7 @@ app = Flask(__name__)
 CORS(app)
 Swagger = Swagger(app)
 
+
 #conexion a la base de datos
 def conectar(vhost, vuser, vpass, vdb):
     conn = pymysql.connect(host=vhost, user=vuser, passwd=vpass, db=vdb, charset='utf8mb4')
