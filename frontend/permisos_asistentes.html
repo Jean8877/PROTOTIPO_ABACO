@@ -315,23 +315,23 @@
                 form.reset();
                 swal("Mensaje", "Usuario guardado correctamente.", "success");
             });
-
-
+            
+            
             function editarUsuario(index) {
                 const usuarios = obtenerUsuarios();
                 const u = usuarios[index];
-
+                
                 document.getElementById('nombreUsuario').value = u.nombre;
                 document.getElementById('username').value = u.username;
                 document.getElementById('correo').value = u.correo;
                 document.getElementById('password').value = u.password;
                 document.getElementById('confirmPassword').value = u.password;
                 document.getElementById('rol').value = u.rol;
-
+                
                 usuarios.splice(index, 1);
                 guardarUsuarios(usuarios);
                 mostrarUsuarios();
-
+                
                 let collapseTwo = new bootstrap.Collapse(document.getElementById('collapseTwo'), { toggle: true });
             }
 
@@ -340,6 +340,7 @@
                 usuarios.splice(index, 1);
                 guardarUsuarios(usuarios);
                 mostrarUsuarios();
+                swal("Mensaje", "Usuario eliminado correctamente.", "warning");
             }
 
             window.addEventListener("load", mostrarUsuarios);
