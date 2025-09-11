@@ -8,10 +8,9 @@ app = Flask(__name__)
 CORS(app)
 Swagger = Swagger(app)
 
-
 #conexion a la base de datos
 def conectar(vhost, vuser, vpass, vdb):
-    conn = pymysql.connect(host=vhost, user=vuser, passwd=vpass, db=vdb, charset='utf8mb4')
+    conn = pymysql.connect(host=vhost, user=vuser, passwd=vpass, db=vdb, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor )
     return conn
 
 # ruta inicial
@@ -37,19 +36,15 @@ def tipo_usuario():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_usuario") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_tipo_usuario':row[0], 
-                'descripcion':row[1]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'tipo_usuario': data, 'mesaje': 'Lista De Tipo Usuario'})
+        if datos:
+          return jsonify({'tipo_usuario':datos, 'mensaje': 'Lista De Tipo Usuario'})
+        else:
+          return jsonify ({'mensaje': 'Tipo de usuario no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
-        return jsonify ({'mesaje': 'Error'})
+        return jsonify ({'mensaje': 'Error'})
     
 
 # Ruta para eliminar registro por ID tipo_usuario
@@ -135,17 +130,13 @@ def tipo_documento():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_documento") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_tipo_documento':row[0], 
-                'nombre':row[1],
-                'abreviatura':row[2]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'tipo_documento': data, 'mensaje': 'Lista De Tipo Documento'})
+        if datos:
+            return jsonify({'tipo_documento': datos, 'mensaje': 'Lista De Tipo Documento'})
+        else:
+            return jsonify({'mensaje': 'Tipo de documento no encontrado'})
+        
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
@@ -235,20 +226,48 @@ def tipo_gasto():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_gasto") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_tipo_gasto':row[0], 
-                'nombre':row[1],
-                'descripcion':row[2]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'tipo_gasto': data, 'mensaje': 'Lista De Tipo Gasto'})
+        if datos:
+            return jsonify({'tipo_gasto': datos, 'mensaje': 'Lista De Tipo Gasto'})
+        else:
+            return jsonify({'mensaje': 'Tipo de gasto no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
+
+# ruta para consultar tipo_gasto por id
+@app.route("/tipo_gasto/<int:codigo>", methods=['GET'])
+def tipo_gasto_por_id(codigo):
+    """
+    Obtener un tipo de gasto por su ID
+    ---
+    tags:
+      - tipo_gasto
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Tipo de gasto encontrado
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM tipo_gasto WHERE id_tipo_gasto = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'tipo_gasto': datos, 'mensaje': 'Tipo de gasto encontrado'})
+        else:
+            return jsonify({'mensaje': 'Tipo de gasto no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 
 # Ruta para registrar un nuevo tipo_gasto
 @app.route("/registro_tipo_gasto", methods=['POST'])
@@ -336,17 +355,12 @@ def estado():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM estado") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_estado':row[0], 
-                'nombre':row[1],
-                'descripcion':row[2]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'estado': data, 'mensaje': 'Lista De Estado'})
+        if datos:
+            return jsonify({'estado': datos, 'mensaje': 'Lista De Estado'})
+        else:
+            return jsonify({'mensaje': 'Estado no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
@@ -436,22 +450,47 @@ def gasto():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM gasto") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_gasto':row[0], 
-                'fecha':row[1],
-                'monto':row[2],
-                'descripcion':row[3],
-                'tipo_gasto':row[4]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'gasto': data, 'mensaje': 'Lista De Gasto'})
+        if datos:
+            return jsonify({'gasto': datos, 'mensaje': 'Lista De Gasto'})
+        else:
+            return jsonify({'mensaje': 'Gasto no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
+
+# consulta de gasto por id
+@app.route("/gasto/<int:codigo>", methods=['GET'])
+def gasto_por_id(codigo):
+    """
+    Obtener un gasto por su ID
+    ---
+    tags:
+      - gasto
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Gasto encontrado
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM gasto WHERE id_gasto = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'gasto': datos, 'mensaje': 'Gasto encontrado'})
+        else:
+            return jsonify({'mensaje': 'Gasto no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
 
 # Ruta para registrar un nuevo gasto
 @app.route("/registro_gasto", methods=['POST'])
@@ -468,6 +507,8 @@ def registro_gasto():
         schema:
           type: object
           properties:
+            id_gasto:
+              type: string
             fecha:
               type: string
             monto:
@@ -475,6 +516,8 @@ def registro_gasto():
             descripcion:
               type: string
             tipo_gasto:
+              type: string
+            usuario:
               type: string
     responses:
       200:
@@ -486,9 +529,10 @@ def registro_gasto():
         monto = data['monto']
         descripcion = data['descripcion']
         tipo_gasto = data['tipo_gasto']
+        usuario = data['usuario']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO gasto (fecha, monto, descripcion, tipo_gasto) VALUES (%s, %s, %s, %s)", (fecha, monto, descripcion, tipo_gasto))
+        cur.execute("INSERT INTO gasto (fecha, monto, descripcion, tipo_gasto, usuario) VALUES (%s, %s, %s, %s, %s)", (fecha, monto, descripcion, tipo_gasto, usuario))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -516,6 +560,8 @@ def actualizar_gasto(codigo):
         schema:
           type: object
           properties:
+            id_gasto:
+              type: string
             fecha:
               type: string
             monto:
@@ -523,6 +569,8 @@ def actualizar_gasto(codigo):
             descripcion:
               type: string
             tipo_gasto:
+              type: string
+            usuario:
               type: string
     responses:
       200:
@@ -534,10 +582,11 @@ def actualizar_gasto(codigo):
         monto = data['monto']
         descripcion = data['descripcion']
         tipo_gasto = data['tipo_gasto']
+        usuario = data['usuario']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE gasto SET fecha=%s, monto=%s, descripcion= %s, tipo_gasto= %s WHERE id_gasto= %s" , 
-                    (fecha,monto,descripcion,tipo_gasto,codigo))
+        cur.execute("UPDATE gasto SET fecha=%s, monto=%s, descripcion= %s, tipo_gasto= %s, usuario= %s WHERE id_gasto= %s" , 
+                    (fecha,monto,descripcion,tipo_gasto,usuario,codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -592,26 +641,47 @@ def usuarios():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM usuario") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_usuario':row[0], 
-                'nombre_completo':row[1], 
-                'numero_documento':row[2], 
-                'gmail':row[3], 
-                'contrasena':row[4], 
-                'tipo_usuario':row[5], 
-                'tipo_documento':row[6], 
-                'estado':row[7]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'usuario': data, 'mesaje': 'Lista De Usuario'})
+        if datos:
+            return jsonify({'usuario': datos, 'mensaje': 'Lista De Usuario'})
+        else:
+            return jsonify({'mensaje': 'Usuario no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
-        return jsonify ({'mesaje': 'Error'})
-    
+        return jsonify ({'mensaje': 'Error'})
+
+@app.route("/usuarios/<int:codigo>", methods=['GET'])
+def usuario_por_id(codigo):
+    """
+    Obtener un usuario por su ID
+    ---
+    tags:
+      - usuario
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Usuario encontrado
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM usuario WHERE id_usuario = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'usuario': datos, 'mensaje': 'Usuario encontrado'})
+        else:
+            return jsonify({'mensaje': 'Usuario no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 # Ruta para registrar un nuevo usuario
 @app.route("/registro_usuarios", methods=['POST'])
 def registro_usuarios():
@@ -627,11 +697,11 @@ def registro_usuarios():
         schema:
           type: object
           properties:
+            id_usuario:
+              type: string
             nombre_completo:
               type: string
             numero_documento:
-              type: string
-            gmail:
               type: string
             contrasena:
               type: string
@@ -647,16 +717,17 @@ def registro_usuarios():
     """
     try:
         data = request.get_json()
+        id_usuario = data['id_usuario']
         nombre_completo = data['nombre_completo']
         numero_documento = data['numero_documento']
-        gmail = data['gmail']
+        correo = data['correo']
         contrasena = data['contrasena']
         tipo_usuario = data['tipo_usuario']
         tipo_documento = data['tipo_documento']
         estado = data['estado']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO usuario (nombre_completo, numero_documento, gmail, contrasena, tipo_usuario, tipo_documento, estado) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre_completo, numero_documento, gmail, contrasena, tipo_usuario, tipo_documento, estado))
+        cur.execute("INSERT INTO usuario (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -705,15 +776,15 @@ def actualizar_usuarios(codigo):
         data = request.get_json()
         nombre_completo = data['nombre_completo']
         numero_documento = data['numero_documento']
-        gmail = data['gmail']
+        correo = data['correo']
         contrasena = data['contrasena']
         tipo_usuario = data['tipo_usuario']
         tipo_documento = data['tipo_documento']
         estado = data['estado']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE usuario SET nombre_completo= %s, numero_documento= %s, gmail= %s, contrasena= %s, tipo_usuario= %s, tipo_documento= %s, estado= %s WHERE id_usuario= %s", 
-                    (nombre_completo, numero_documento, gmail, contrasena, tipo_usuario, tipo_documento, estado, codigo))
+        cur.execute("UPDATE usuario SET nombre_completo= %s, numero_documento= %s, correo= %s, contrasena= %s, tipo_usuario= %s, tipo_documento= %s, estado= %s WHERE id_usuario= %s",
+                    (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -767,17 +838,12 @@ def tipo_donante():
         cur= conn.cursor()
         cur.execute("SELECT * FROM tipo_donante")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'ID':row[0], 
-                'descripcion':row[1]
-            }
-
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'tipo_donante': data, 'mensaje': 'Lista De tipo_Donante'})
+        if datos:
+            return jsonify ({'tipo_donante': datos, 'mensaje': 'Lista De tipo_Donante'})
+        else:
+            return jsonify ({'mensaje': 'Tipo de donante no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
@@ -902,26 +968,46 @@ def donante():
         cur= conn.cursor()
         cur.execute("SELECT * FROM donante")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_donante':row[0], 
-                'nombre':row[1], 
-                'telefono':row[2], 
-                'gmail':row[3], 
-                'direccion':row[4], 
-                'estado':row[5], 
-                'tipo_documento':row[6] , 
-                'tipo_donante':row[7]
-            }
-
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'donante': data, 'mensaje': 'Lista De Donante'})
+        if datos:
+            return jsonify ({'donante': datos, 'mensaje': 'Lista De Donante'})
+        else:
+            return jsonify ({'mensaje': 'Donante no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
+
+@app.route("/donante/<int:codigo>", methods=['GET'])
+def donante_por_id(codigo):
+    """
+    Obtener un donante por su ID
+    ---
+    tags:
+      - donante
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Donante encontrado
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM donante WHERE id_donante = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'donante': datos, 'mensaje': 'Donante encontrado'})
+        else:
+            return jsonify({'mensaje': 'Donante no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
 
 # Ruta para registrar un nuevo donante
 @app.route("/registro_donante", methods=['POST'])
@@ -938,11 +1024,13 @@ def registro_donante():
         schema:
           type: object
           properties:
+            id_donante:
+              type: string
             nombre:
               type: string
             telefono:
               type: string
-            gmail:
+            correo:
               type: string
             direccion:
               type: string
@@ -960,14 +1048,14 @@ def registro_donante():
         data = request.get_json()
         nombre = data['nombre']
         telefono = data['telefono']
-        gmail = data['gmail']
+        correo = data['correo']
         direccion = data['direccion']
         estado = data['estado']
         tipo_documento = data['tipo_documento']
         tipo_donante = data['tipo_donante']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO donante (nombre, telefono, gmail, direccion, estado, tipo_documento, tipo_donante) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre, telefono, gmail, direccion, estado, tipo_documento, tipo_donante))
+        cur.execute("INSERT INTO donante (nombre, telefono, correo, direccion, estado, tipo_documento, tipo_donante) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre, telefono, correo, direccion, estado, tipo_documento, tipo_donante))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -1017,15 +1105,15 @@ def actualizar_donante(codigo):
         data = request.get_json()
         nombre = data['nombre']
         telefono = data['telefono']
-        gmail = data['gmail']
+        correo = data['correo']
         direccion = data['direccion']
         estado = data['estado']
         tipo_documento = data['tipo_documento']
         tipo_donante = data['tipo_donante']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE donante SET nombre= %s, telefono= %s, gmail= %s, direccion= %s, estado= %s, tipo_documento= %s, tipo_donante= %s WHERE id_donante= %s", 
-                    (nombre, telefono, gmail, direccion, estado, tipo_documento, tipo_donante, codigo))
+        cur.execute("UPDATE donante SET nombre= %s, telefono= %s, correo= %s, direccion= %s, estado= %s, tipo_documento= %s, tipo_donante= %s WHERE id_donante= %s",
+                    (nombre, telefono, correo, direccion, estado, tipo_documento, tipo_donante, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -1081,16 +1169,12 @@ def tipo_donacion():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_donacion") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'codigo':row[0], 
-                'descripcion':row[1]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'tipo_donacion': data, 'mensaje': 'Lista De Tipo Donacion'})
+        if datos:
+            return jsonify({'tipo_donacion': datos, 'mensaje': 'Lista De Tipo Donacion'})
+        else:
+            return jsonify({'mensaje': 'Tipo de donacion no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
@@ -1121,7 +1205,7 @@ def registro_tipo_donacion():
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO tipo_donante (descripcion) VALUES (%s)", (descripcion,))
+        cur.execute("INSERT INTO tipo_donacion (descripcion) VALUES (%s)", (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -1136,7 +1220,7 @@ def actualizar_tipo_donacion(codigo):
     Actualizar un tipo de donación por su ID
     ---
     tags:
-      - tipo_donante
+      - tipo_donacion
     parameters:
       - name: codigo
         in: path
@@ -1152,14 +1236,14 @@ def actualizar_tipo_donacion(codigo):
               type: string
     responses:
       200:
-        description: Tipo de donante actualizado
+        description: Tipo de donación actualizado
     """
     try:
         data = request.get_json()
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
+        cur.execute("UPDATE tipo_donacion SET descripcion= %s WHERE codigo= %s",
                     (descripcion,codigo))
         conn.commit()
         cur.close()
@@ -1215,22 +1299,47 @@ def donacion():
         cur= conn.cursor()
         cur.execute("SELECT * FROM donacion")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_donante':row[0], 
-                'cantidad_donada':row[1], 
-                'fecha_donacion':row[2], 
-                'forma_donacion':row[3], 
-                'observaciones':row[4]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'donacion': data, 'mensaje': 'Lista De donacion'})
+        if datos:
+            return jsonify ({'donacion': datos, 'mensaje': 'Lista De donacion'})
+        else:
+            return jsonify ({'mensaje': 'Donacion no encontrada'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
+# Ruta para obtener donacion por id
+@app.route("/donacion/<int:codigo>", methods=['GET'])
+def donacion_por_id(codigo):
+    """
+    Obtener una donación por su ID
+    ---
+    tags:
+      - donacion
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Donación encontrada
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM donacion WHERE id_donacion = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'donacion': datos, 'mensaje': 'Donación encontrada'})
+        else:
+            return jsonify({'mensaje': 'Donación no encontrada'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 # Ruta para registrar un nueva donacion
 @app.route("/registro_donacion", methods=['POST'])
 def registro_donacion():
@@ -1246,13 +1355,17 @@ def registro_donacion():
         schema:
           type: object
           properties:
-            cantidad_donada:
+            id_donacion:
               type: number
-            fecha_donacion:
+            cantidad_donada:
               type: string
             forma_donacion:
               type: string
             observaciones:
+              type: string
+            responsable:
+              type: string
+            donante:
               type: string
     responses:
       200:
@@ -1260,13 +1373,16 @@ def registro_donacion():
     """
     try:
         data = request.get_json()
+        id_donacion = data['id_donacion']
         cantidad_donada = data['cantidad_donada']
         fecha_donacion = data['fecha_donacion']
         forma_donacion = data['forma_donacion']
         observaciones = data['observaciones']
+        responsable = data['responsable']
+        donante = data['donante']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO donacion (cantidad_donada, fecha_donacion, forma_donacion, observaciones) VALUES (%s, %s, %s, %s)", (cantidad_donada, fecha_donacion, forma_donacion, observaciones))
+        cur.execute("INSERT INTO donacion (id_donacion, cantidad_donada, fecha_donacion, forma_donacion, observaciones, responsable, donante) VALUES (%s, %s, %s, %s, %s, %s, %s)", (id_donacion, cantidad_donada, fecha_donacion, forma_donacion, observaciones, responsable, donante))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -1294,6 +1410,8 @@ def actualizar_donacion(codigo):
         schema:
           type: object
           properties:
+            id_donacion:
+              type: string
             cantidad_donada:
               type: string
             fecha_donacion:
@@ -1302,20 +1420,27 @@ def actualizar_donacion(codigo):
               type: string
             observaciones:
               type: string
+            responsable:
+              type: string
+            donante:
+              type: string
     responses:
       200:
         description: donación actualizada
     """
     try:
         data = request.get_json()
+        id_donacion = data['id_donacion']
         cantidad_donada = data['cantidad_donada']
         fecha_donacion = data['fecha_donacion']
         forma_donacion = data['forma_donacion']
         observaciones = data['observaciones']
+        responsable = data['responsable']
+        donante = data['donante']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE donacion SET cantidad_donada= %s, fecha_donacion= %s, forma_donacion= %s, observaciones= %s WHERE id_donacion= %s", 
-                    (cantidad_donada, fecha_donacion, forma_donacion, observaciones, codigo))
+        cur.execute("UPDATE donacion SET cantidad_donada= %s, fecha_donacion= %s, forma_donacion= %s, observaciones= %s, responsable= %s, donante= %s WHERE id_donacion= %s", 
+                    (cantidad_donada, fecha_donacion, forma_donacion, observaciones, responsable, donante, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -1371,17 +1496,12 @@ def donacion_has_tipo_donacion():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM donacion_has_tipo_donacion") 
         datos = cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'ID':row[0], 
-                'donacion':row[1],
-                'tipo_donacion':row[2]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'donacion_has_tipo_donacion': data, 'mensaje': 'Lista De donacion_has_tipo_donacion'})
+        if datos:
+            return jsonify({'donacion_has_tipo_donacion': datos, 'mensaje': 'Lista De donacion_has_tipo_donacion'})
+        else:
+            return jsonify({'mensaje': 'donacion_has_tipo_donacion no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
@@ -1400,6 +1520,8 @@ def registro_donacion_has_tipo_donacion():
         schema:
           type: object
           properties:
+            ID:
+              type: string
             donacion:
               type: string
             tipo_donacion:
@@ -1513,24 +1635,47 @@ def certificado_donante():
         cur.execute("SELECT * FROM certificado_donante") 
         datos = cur.fetchall()
         data = []
-        for row in datos:
-            dato = {
-                'id_certificado':row[0], 
-                'fecha':row[1],
-                'firma_representante':row[2],
-                'donante':row[3],
-                'estado':row[4],
-                'tipo_documento':row[5],
-                'tipo_donante':row[6],
-                'tipo_donacion':row[7]
-            }
-            data.append(dato) # se agrega a la lista
         cur.close()
         conn.close()
-        return jsonify({'certificado_donante': data, 'mensaje': 'Lista De certificado_donante'})
+        if datos:
+            return jsonify({'certificado_donante': datos, 'mensaje': 'Lista De certificado_donante'})
+        else:
+            return jsonify({'mensaje': 'certificado_donante no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
+
+# Ruta para obtener un certificado_donante por ID
+@app.route("/certificado_donante/<int:codigo>", methods=['GET'])
+def certificado_donante_por_id(codigo):
+    """
+    Obtener un certificado de donante por su ID
+    ---
+    tags:
+      - certificado_donante
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Certificado de donante encontrado
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM certificado_donante WHERE id_certificado = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'certificado_donante': datos, 'mensaje': 'Certificado de donante encontrado'})
+        else:
+            return jsonify({'mensaje': 'Certificado de donante no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
 
 # Ruta para registrar un nuevo certificado_donante
 @app.route("/registro_certificado_donante", methods=['POST'])
@@ -1690,16 +1835,12 @@ def categoria_producto():
         cur= conn.cursor()
         cur.execute("SELECT * FROM categoria_producto")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'codigo':row[0], 
-                'descripcion':row[1]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'categoria_producto': data, 'mensaje': 'Lista De categoria_producto'})
+        if datos:
+            return jsonify({'categoria_producto': datos, 'mensaje': 'Lista De categoria_producto'})
+        else:
+            return jsonify({'mensaje': 'categoria_producto no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
@@ -1825,17 +1966,12 @@ def subcategoria_producto():
         cur= conn.cursor()
         cur.execute("SELECT * FROM subcategoria_producto")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'codigo':row[0], 
-                'descripcion':row[1],
-                'categoria_producto':row[2]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'subcategoria_producto': data, 'mensaje': 'Lista De subcategoria_producto'})
+        if datos:
+            return jsonify({'subcategoria_producto': datos, 'mensaje': 'Lista De subcategoria_producto'})
+        else:
+            return jsonify({'mensaje': 'subcategoria_producto no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
@@ -1967,19 +2103,48 @@ def fecha_vencimiento():
         cur= conn.cursor()
         cur.execute("SELECT * FROM fecha_vencimiento")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_fecha_vencimiento':row[0], 
-                'fecha':row[1]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'fecha_vencimiento': data, 'mensaje': 'Lista De fecha_vencimiento'})
+        if datos:
+            return jsonify({'fecha_vencimiento': datos, 'mensaje': 'Lista De fecha_vencimiento'})
+        else:
+            return jsonify({'mensaje': 'fecha_vencimiento no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
+
+# ruta para obtener fecha_vencimiento por id
+@app.route("/fecha_vencimiento/<int:codigo>", methods=['GET'])
+def fecha_vencimiento_por_id(codigo):
+    """
+    Obtener una fecha_vencimiento por su ID
+    ---
+    tags:
+      - fecha_vencimiento
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Fecha de vencimiento encontrada
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM fecha_vencimiento WHERE id_vencimiento = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'fecha_vencimiento': datos, 'mensaje': 'Fecha de vencimiento encontrada'})
+        else:
+            return jsonify({'mensaje': 'Fecha de vencimiento no encontrada'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 # Ruta para registrar un nueva fecha_vencimiento
 @app.route("/registro_fecha_vencimiento", methods=['POST'])
 def registro_fecha_vencimiento():
@@ -2063,17 +2228,12 @@ def acta_vencimiento():
         cur= conn.cursor()
         cur.execute("SELECT * FROM acta_vencimiento")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_acta':row[0], 
-                'fecha':row[1], 
-                'descripcion':row[2]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'acta_vencimiento': data, 'mensaje': 'Lista De acta_vencimiento'})
+        if datos:
+            return jsonify({'acta_vencimiento': datos, 'mensaje': 'Lista De acta_vencimiento'})
+        else:
+            return jsonify({'mensaje': 'acta_vencimiento no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
@@ -2163,21 +2323,49 @@ def bodega():
         cur= conn.cursor()
         cur.execute("SELECT * FROM bodega")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_bodega':row[0], 
-                'nombre_bodega':row[1], 
-                'capacidad':row[2], 
-                'estado':row[3]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'bodega': data, 'mensaje': 'Lista De bodega'})
+        if datos:
+            return jsonify({'bodega': datos, 'mensaje': 'Lista De bodega'})
+        else:
+            return jsonify({'mensaje': 'bodega no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
+
+
+# Ruta para obtener una bodega por su ID
+@app.route("/bodega/<int:codigo>", methods=['GET'])
+def bodega_por_id(codigo):
+    """
+    Obtener una bodega por su ID
+    ---
+    tags:
+      - bodega
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Bodega encontrada
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM bodega WHERE id_bodega = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'bodega': datos, 'mensaje': 'Bodega encontrada'})
+        else:
+            return jsonify({'mensaje': 'Bodega no encontrada'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 # Ruta para registrar un nueva bodega
 @app.route("/registro_bodega", methods=['POST'])
 def registro_bodega():
@@ -2309,20 +2497,15 @@ def unidad_de_medida():
         cur= conn.cursor()
         cur.execute("SELECT * FROM unidad_de_medida")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'codigo':row[0], 
-                'nombre':row[1], 
-                'cantidad':row[2]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'unidad_de_medida': data, 'mensaje': 'Lista De unidad_de_medida'})
+        if datos:
+            return jsonify({'unidad_de_medida': datos, 'mensaje': 'Lista De unidad_de_medida'})
+        else:
+            return jsonify({'mensaje': 'unidad_de_medida no encontrado'})
     except Exception as ex:
-        print(ex)   
-        return jsonify ({'Mensaje': 'Error'})
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
 
 # Ruta para registrar un nueva unidad de medida
 @app.route("/registro_unidad_de_medida", methods=['POST'])
@@ -2340,8 +2523,6 @@ def registro_unidad_de_medida():
             type: object
             properties:
               nombre:
-                type: string
-              cantidad:
                 type: integer
     responses:
       200:
@@ -2350,10 +2531,9 @@ def registro_unidad_de_medida():
     try:
         data = request.get_json()
         nombre = data['nombre']
-        cantidad = data['cantidad']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO unidad_de_medida (nombre, cantidad) VALUES (%s, %s)", (nombre, cantidad))
+        cur.execute("INSERT INTO unidad_de_medida (nombre) VALUES (%s)", (nombre,))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -2379,8 +2559,6 @@ def actualizar_unidad_de_medida(codigo):
             properties:
               nombre:
                 type: string
-              cantidad:
-                type: integer
     responses:
       200:
         description: Unidad de medida actualizada
@@ -2388,11 +2566,10 @@ def actualizar_unidad_de_medida(codigo):
     try:
         data = request.get_json()
         nombre = data['nombre']
-        cantidad = data['cantidad']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE unidad_de_medida SET nombre= %s, cantidad= %s WHERE id_unidad_de_medida= %s", 
-                    (nombre, cantidad, codigo))
+        cur.execute("UPDATE unidad_de_medida SET nombre= %s WHERE id_unidad_de_medida= %s", 
+                    (nombre, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -2449,19 +2626,15 @@ def tipo_organizacion():
         cur= conn.cursor()
         cur.execute("SELECT * FROM tipo_organizacion")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_tipo_organizacion':row[0], 
-                'nombre':row[1]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'tipo_organizacion': data, 'mensaje': 'Lista De tipo_organizacion'})
+        if datos:
+            return jsonify({'tipo_organizacion': datos, 'mensaje': 'Lista De tipo_organizacion'})
+        else:
+            return jsonify({'mensaje': 'tipo_organizacion no encontrado'})
     except Exception as ex:
-        print(ex)   
-        return jsonify ({'Mensaje': 'Error'})
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
 
 # Ruta para registrar un nuevo tipo organizacion
 @app.route("/registro_tipo_organizacion", methods=['POST'])
@@ -2581,19 +2754,48 @@ def tipo_entrega():
         cur= conn.cursor()
         cur.execute("SELECT * FROM tipo_entrega")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_tipo_entrega':row[0], 
-                'nombre':row[1]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'tipo_entrega': data, 'mensaje': 'Lista De tipo_entrega'})
+        if datos:
+            return jsonify({'tipo_entrega': datos, 'mensaje': 'Lista De tipo_entrega'})
+        else:
+            return jsonify({'mensaje': 'tipo_entrega no encontrado'})
     except Exception as ex:
-        print(ex)   
-        return jsonify ({'Mensaje': 'Error'})
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
+
+# ruta para obtener un tipo_entrega por su ID
+@app.route("/tipo_entrega/<int:codigo>", methods=['GET'])
+def tipo_entrega_por_id(codigo):
+    """
+    Obtener un tipo_entrega por su ID
+    ---
+    tags:
+      - tipo_entrega
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Tipo de entrega encontrado
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM tipo_entrega WHERE id_tipo_entrega = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'tipo_entrega': datos, 'mensaje': 'Tipo de entrega encontrado'})
+        else:
+            return jsonify({'mensaje': 'Tipo de entrega no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 # Ruta para registrar un nuevo tipo de entrega
 @app.route("/registro_tipo_entrega", methods=['POST'])
 def registro_tipo_entrega():
@@ -2680,25 +2882,15 @@ def organizacion():
         cur= conn.cursor()
         cur.execute("SELECT * FROM organizacion")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'codigo':row[0], 
-                'descripcion':row[1], 
-                'nombre':row[2], 
-                'responsable':row[3], 
-                'telefono':row[4], 
-                'direccion':row[5], 
-                'tipo_entrega':row[6], 
-                'tipo_organizacion':row[7]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'organizacion': data, 'mensaje': 'Lista De organizacion'})
+        if datos:
+            return jsonify({'organizacion': datos, 'mensaje': 'Lista De organizacion'})
+        else:
+            return jsonify({'mensaje': 'organizacion no encontrado'})
     except Exception as ex:
-        print(ex)   
-        return jsonify ({'Mensaje': 'Error'})
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
     # Ruta para registrar un nueva organizacion
 @app.route("/registro_organizacion", methods=['POST'])
 def registro_organizacion():
@@ -2802,8 +2994,8 @@ def actualizar_organizacion(codigo):
         tipo_organizacion = data['tipo_organizacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE organizacion SET nombre= %s, descripcion= %s, responsable= %s, telefono= %s, direccion= %s, tipo_entrega= %s, tipo_organizacion= %s WHERE codigo= %s", 
-                    (nombre, descripcion, responsable, telefono, direccion, tipo_entrega, tipo_organizacion, codigo))
+        cur.execute("UPDATE organizacion SET descripcion= %s, nombre= %s, responsable= %s, telefono= %s, direccion= %s, tipo_entrega= %s, tipo_organizacion= %s WHERE codigo= %s", 
+                    (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -2859,25 +3051,48 @@ def movimiento_producto():
         cur= conn.cursor()
         cur.execute("SELECT * FROM movimiento_producto")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id':row[0], 
-                'movimiento':row[1], 
-                'cantidad':row[2], 
-                'observacion':row[3], 
-                'tipo_donacion':row[4], 
-                'organizacion':row[5], 
-                'tipo_organizacion':row[6], 
-                'tipo_entrega':row[7] 
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'movimiento_producto': data, 'mensaje': 'Lista De movimiento_producto'})
+        if datos:
+            return jsonify({'movimiento_producto': datos, 'mensaje': 'Lista De movimiento_producto'})
+        else:
+            return jsonify({'mensaje': 'movimiento_producto no encontrado'})
     except Exception as ex:
-        print(ex)   
-        return jsonify ({'Mensaje': 'Error'})
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
+
+# ruta para obtener un movimiento_producto por su ID
+@app.route("/movimiento_producto/<int:codigo>", methods=['GET'])
+def movimiento_producto_por_id(codigo):
+    """
+    Obtener un movimiento_producto por su ID
+    ---
+    tags:
+      - movimiento_producto
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Movimiento encontrado
+    """
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM movimiento_producto WHERE id = %s", (codigo,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'movimiento_producto': datos, 'mensaje': 'Movimiento encontrado'})
+        else:
+            return jsonify({'mensaje': 'Movimiento no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 # Ruta para registrar un nuevo movimiento_producto
 @app.route("/registro_movimiento_producto", methods=['POST'])
 def registro_movimiento_producto():
@@ -2893,8 +3108,10 @@ def registro_movimiento_producto():
           schema:
             type: object
             properties:
-              movimiento:
+              id_producto:
                 type: string
+              movimiento:
+                type: integer
               cantidad:
                 type: integer
               observacion:
@@ -2903,26 +3120,22 @@ def registro_movimiento_producto():
                 type: string
               organizacion:
                 type: string
-              tipo_organizacion:
-                type: string
-              tipo_entrega:
-                type: string
     responses:
       200:
         description: Movimiento registrado
     """
     try:
         data = request.get_json()
+        id_producto = data['id_producto']
         movimiento = data['movimiento']
         cantidad = data['cantidad']
+        fecha = data['fecha']
         observacion = data['observacion']
         tipo_donacion = data['tipo_donacion']
         organizacion = data['organizacion']
-        tipo_organizacion = data['tipo_organizacion']
-        tipo_entrega = data['tipo_entrega']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO movimiento_producto (movimiento, cantidad, observacion, tipo_donacion, organizacion, tipo_organizacion, tipo_entrega) VALUES (%s, %s, %s, %s, %s, %s, %s)", (movimiento, cantidad, observacion, tipo_donacion, organizacion, tipo_organizacion, tipo_entrega))
+        cur.execute("INSERT INTO movimiento_producto (id_producto, movimiento, cantidad, fecha, observacion, tipo_donacion, organizacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (id_producto, movimiento, cantidad, fecha, observacion, tipo_donacion, organizacion))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -3037,31 +3250,15 @@ def producto():
         cur= conn.cursor()
         cur.execute("SELECT * FROM producto")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'id_producto':row[0], 
-                'nombre':row[1], 
-                'descripcion':row[2], 
-                'cantidad':row[3], 
-                'codigo_barras':row[4], 
-                'stock':row[5], 
-                'stock_maximo':row[6], 
-                'categoria_producto':row[7],
-                'subcategoria_producto':row[8],
-                'estado':row[9],
-                'unidad_de_medida':row[10],
-                'acta_vencimiento':row[11],
-                'movimiento_producto':row[12],
-                'tipo_donacion':row[13],
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'movimiento_producto': data, 'mensaje': 'Lista De movimiento_producto'})
+        if datos:
+            return jsonify({'movimiento_producto': datos, 'mensaje': 'Lista De movimiento_producto'})
+        else:
+            return jsonify({'mensaje': 'movimiento_producto no encontrado'})
     except Exception as ex:
-        print(ex)   
-        return jsonify ({'Mensaje': 'Error'})
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
 
 # Ruta para registrar un nuevo producto
 @app.route("/registro_producto", methods=['POST'])
@@ -3248,7 +3445,7 @@ def producto_has_donante():
     Consulta de lista de producto_has_donante
     ---
     tags:
-      - producto
+      - producto_has_donante
     responses:
       200:
         description: lista de producto_has_donante
@@ -3258,24 +3455,15 @@ def producto_has_donante():
         cur= conn.cursor()
         cur.execute("SELECT * FROM producto_has_donante")
         datos= cur.fetchall()
-        data = []
-        for row in datos:
-            dato = {
-                'ID':row[0], 
-                'donante':row[1], 
-                'tipo_documento':row[2], 
-                'tipo_donante':row[3], 
-                'producto':row[4], 
-                'categoria_producto':row[5], 
-                'subcategoria_producto':row[6]
-            }
-            data.append(dato)
         cur.close()
         conn.close()
-        return jsonify ({'producto_has_donante': data, 'mensaje': 'Lista De producto_has_donante'})
+        if datos:
+            return jsonify({'producto_has_donante': datos, 'mensaje': 'Lista De producto_has_donante'})
+        else:
+            return jsonify({'mensaje': 'producto_has_donante no encontrado'})
     except Exception as ex:
-        print(ex)   
-        return jsonify ({'Mensaje': 'Error'})
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
 
 # Ruta para registrar un nuevo producto_has_donante
 @app.route("/registro_producto_has_donante", methods=['POST'])
@@ -3294,15 +3482,13 @@ def registro_producto_has_donante():
             properties:
               donante:
                 type: string
-              tipo_documento:
-                type: string
-              tipo_donante:
-                type: string
               producto:
                 type: string
-              categoria_producto:
+              cantidad:
                 type: string
-              subcategoria_producto:
+              fecha:
+                type: string
+              observacion:
                 type: string
     responses:
       200:
@@ -3311,14 +3497,13 @@ def registro_producto_has_donante():
     try:
         data = request.get_json()
         donante = data['donante']
-        tipo_documento = data['tipo_documento']
-        tipo_donante = data['tipo_donante']
         producto = data['producto']
-        categoria_producto = data['categoria_producto']
-        subcategoria_producto = data['subcategoria_producto']
+        cantidad = data['cantidad']
+        fecha = data['fecha']
+        observacion = data['observacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO donacion_has_tipo_donacion (donante, tipo_donante, producto, categoria_producto, subcategoria_producto) VALUES (%s, %s, %s, %s, %s)", (donante, tipo_donante, producto, categoria_producto, subcategoria_producto))
+        cur.execute("INSERT INTO donacion_has_tipo_donacion (donante, producto, cantidad, fecha, observacion) VALUES (%s, %s, %s, %s, %s)", (donante, producto, cantidad, fecha, observacion))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -3328,8 +3513,8 @@ def registro_producto_has_donante():
         return jsonify({'mensaje': 'Error'})
 
 # Ruta para actualizar producto_has_donante
-@app.route("/actualizar_producto_has_donante/<id>", methods=["PUT"])
-def actualizar_producto_has_donante(id):
+@app.route("/actualizar_producto_has_donante/<codigo>", methods=["PUT"])
+def actualizar_producto_has_donante(codigo):
     """
     Actualizar un producto_has_donante existente
     ---
@@ -3349,15 +3534,13 @@ def actualizar_producto_has_donante(id):
             properties:
               donante:
                 type: string
-              tipo_documento:
-                type: string
-              tipo_donante:
-                type: string
               producto:
                 type: string
-              categoria_producto:
+              cantidad:
                 type: string
-              subcategoria_producto:
+              fecha:
+                type: string
+              observacion:
                 type: string
     responses:
       200:
@@ -3366,15 +3549,14 @@ def actualizar_producto_has_donante(id):
     try:
         data = request.get_json()
         donante = data['donante']
-        tipo_documento = data['tipo_documento']
-        tipo_donante = data['tipo_donante']
         producto = data['producto']
-        categoria_producto = data['categoria_producto']
-        subcategoria_producto = data['subcategoria_producto']
+        cantidad = data['cantidad']
+        fecha = data['fecha']
+        observacion = data['observacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE producto_has_donante SET donante= %s, tipo_documento= %s, tipo_donante= %s, producto= %s, categoria_producto= %s, subcategoria_producto= %s WHERE id= %s", 
-                    (donante, tipo_documento, tipo_donante, producto, categoria_producto, subcategoria_producto, id))
+        cur.execute("UPDATE producto_has_donante SET donante= %s, producto= %s, cantidad= %s, fecha= %s, observacion= %s WHERE ID= %s", 
+                    (donante, producto, cantidad, fecha, observacion, codigo))
         conn.commit()
         cur.close()
         conn.close()
