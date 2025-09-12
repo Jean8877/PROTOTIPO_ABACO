@@ -30,15 +30,11 @@ async function movimiento_producto() {
     }
 }
 
-
-
 // producto
 
-
-
-function mostrar_producto(Producto) {
+function mostrar_producto(producto) {
     let info = "";
-    Producto.producto.forEach(i => {
+    producto.producto.forEach(i => {
         info +=`
         <tr>
                 <td>${i.id_producto}</td>
@@ -71,9 +67,8 @@ function mostrar_producto(Producto) {
             console.error(error)
         }
     }
-
+    
     // categoria producto
-
     
     function mostrar_categoria(categoria) {
         let info = "";
@@ -375,7 +370,7 @@ async function acta_vencimiento() {
     }
 }
 
-//     ================  certificado_donante   ==================   \\
+//   ================  certificado_donante   ==================   \\
 
 
 function mostrarcertificado_donante(certificado_donante) {
@@ -392,8 +387,6 @@ function mostrarcertificado_donante(certificado_donante) {
             <td>${i.tipo_documento}</td>
             <td>${i.tipo_donante}</td>
             <td>${i.tipo_donacion}</td>
-            
-            
         </tr>
         `;
     });
@@ -410,3 +403,36 @@ async function certificado_donante() {
         console.error(error)
     }
 }
+
+//    ========= USUARIO =========   \\
+
+
+function mostrar_usuario(usuario) {
+    let info="";
+    usuario.usuario.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_usuario}</td>
+            <td>${i.nombre_completo}</td>
+            <td>${i.correo}</td>
+            <td>${i.contrasena}</td>
+            <td>${i.tipo_usuario}</td>
+            <td>${i.tipo_documento}</td>
+            <td>${i.estado}</td>
+        </tr>
+        `
+    });
+    document.getElementById("tbodyusuario").innerHTML = info;
+}
+async function usuario() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/usuario`, {method : 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrar_usuario(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+
+
