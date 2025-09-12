@@ -282,3 +282,131 @@ async function gasto() {
         console.error(error)
     }
 }
+
+//     ================   tipo_organizacion   ==================   \\
+
+
+function mostrartipo_organizacion(tipo_organizacion) {
+    let info ="";
+    tipo_organizacion.tipo_organizacion.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_tipo_organizacion}</td>
+            <td>${i.nombre}</td>
+            
+            
+        </tr>
+        `;
+    });
+    document.getElementById("tbodytipo_organizacion").innerHTML = info;
+}
+
+async function tipo_organizacion() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/tipo_organizacion`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrartipo_organizacion(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+//     ================  organizacion   ==================   \\
+
+
+function mostrarorganizacion(organizacion) {
+    let info ="";
+    organizacion.organizacion.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.codigo}</td>
+            <td>${i.descripcion}</td>
+            <td>${i.nombre}</td>
+            <td>${i.responsable}</td>
+            <td>${i.telefono}</td>
+            <td>${i.direccion}</td>
+            <td>${i.tipo_entrega}</td>
+            <td>${i.tipo_organizacion}</td>
+            
+            
+        </tr>
+        `;
+    });
+    document.getElementById("tbodyorganizacion").innerHTML = info;
+}
+
+async function organizacion() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/organizacion`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrarorganizacion(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+//     ================  acta_vencimiento   ==================   \\
+
+
+function mostraracta_vencimiento(acta_vencimiento) {
+    let info ="";
+    acta_vencimiento.acta_vencimiento.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_acta}</td>
+            <td>${i.fecha}</td>
+            <td>${i.descripcion}</td>
+            
+            
+        </tr>
+        `;
+    });
+    document.getElementById("tbodyacta_vencimiento").innerHTML = info;
+}
+
+async function acta_vencimiento() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/acta_vencimiento`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostraracta_vencimiento(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+
+//     ================  certificado_donante   ==================   \\
+
+
+function mostrarcertificado_donante(certificado_donante) {
+    let info ="";
+    certificado_donante.certificado_donante.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_certificado}</td>
+            <td>${i.fecha}</td>
+            <td>${i.valor_donado}</td>
+            <td>${i.firma_representante}</td>
+            <td>${i.donante}</td>
+            <td>${i.estado}</td>
+            <td>${i.tipo_documento}</td>
+            <td>${i.tipo_donante}</td>
+            <td>${i.tipo_donacion}</td>
+            
+            
+        </tr>
+        `;
+    });
+    document.getElementById("tbodycertificado_donante").innerHTML = info;
+}
+
+async function certificado_donante() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/certificado_donante`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrarcertificado_donante(response)
+    }catch(error){
+        console.error(error)
+    }
+}
