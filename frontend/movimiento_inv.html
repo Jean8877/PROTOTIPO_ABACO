@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8" />
   <title>Movimiento de Inventario</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -186,104 +187,11 @@
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodyMovimientos"></tbody>
       </table>
     </div>
   </div>
-
-  <!-- SCRIPT -->
-  <script>
-    const formMovimiento = document.getElementById('formMovimiento');
-    const tablaMovimientos = document.getElementById('tablaMovimientos').querySelector('tbody');
-    const selectBodega = document.getElementById('bodega');
-    let idMovimiento = 1;
-    let editandoMovimiento = null;
-
-    const bodegas = [
-      { id: 1, nombre: 'Bodega Central' },
-      { id: 2, nombre: 'Bodega Norte' },
-      { id: 3, nombre: 'Bodega Sur' }
-    ];
-
-    function cargarBodegas() {
-      bodegas.forEach(bodega => {
-        const option = document.createElement('option');
-        option.value = bodega.nombre;
-        option.textContent = bodega.nombre;
-        selectBodega.appendChild(option);
-      });
-    }
-
-    cargarBodegas();
-    document.getElementById('fechaMovimiento').valueAsDate = new Date();
-
-    formMovimiento.addEventListener('submit', e => {
-      e.preventDefault();
-
-      const producto = document.getElementById('producto').value.trim();
-      const cantidad = Number(document.getElementById('cantidad').value);
-      const tipo = document.getElementById('tipoMovimiento').value;
-      const fecha = document.getElementById('fechaMovimiento').value;
-      const bodega = document.getElementById('bodega').value;
-      const responsable = document.getElementById('responsable').value.trim();
-
-      if (!producto || cantidad <= 0 || !tipo || !fecha || !bodega || !responsable) {
-        alert('Por favor completa todos los campos correctamente.');
-        return;
-      }
-
-      if (editandoMovimiento) {
-        const cells = editandoMovimiento.querySelectorAll('td');
-        cells[1].textContent = producto;
-        cells[2].textContent = cantidad;
-        cells[3].textContent = tipo;
-        cells[4].textContent = fecha;
-        cells[5].textContent = bodega;
-        cells[6].textContent = responsable;
-        editandoMovimiento = null;
-      } else {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${String(idMovimiento).padStart(3, '0')}</td>
-          <td>${producto}</td>
-          <td>${cantidad}</td>
-          <td>${tipo}</td>
-          <td>${fecha}</td>
-          <td>${bodega}</td>
-          <td>${responsable}</td>
-          <td>
-            <button onclick="editarMovimiento(this)">Editar</button>
-            <button onclick="eliminarMovimiento(this)">Eliminar</button>
-          </td>
-        `;
-        tablaMovimientos.appendChild(row);
-        idMovimiento++;
-      }
-
-      formMovimiento.reset();
-      document.getElementById('fechaMovimiento').valueAsDate = new Date();
-    });
-
-    function eliminarMovimiento(btn) {
-      const row = btn.closest('tr');
-      if (editandoMovimiento === row) editandoMovimiento = null;
-      row.remove();
-    }
-
-    function editarMovimiento(btn) {
-      const row = btn.closest('tr');
-      const cells = row.querySelectorAll('td');
-
-      document.getElementById('producto').value = cells[1].textContent;
-      document.getElementById('cantidad').value = cells[2].textContent;
-      document.getElementById('tipoMovimiento').value = cells[3].textContent;
-      document.getElementById('fechaMovimiento').value = cells[4].textContent;
-      document.getElementById('bodega').value = cells[5].textContent;
-      document.getElementById('responsable').value = cells[6].textContent;
-
-      editandoMovimiento = row;
-    }
-  </script>
+<script> mostrar_movimiento(); </script>
 
 </body>
 </html>
