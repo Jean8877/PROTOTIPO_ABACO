@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sistema de Inventario - Parroquias</title>
-  <link rel="shortcut icon" href="../img/imagen.png" type="image/x-icon">
+  <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   <style>
-    body, html {
+    body,
+    html {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -101,7 +104,8 @@
       cursor: pointer;
     }
 
-    .card img, .card svg {
+    .card img,
+    .card svg {
       width: 70px;
       height: 70px;
       margin-bottom: 10px;
@@ -116,16 +120,17 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
   <header>
-    <img src="../img/imagen.png" alt="logo de abaco">
+    <img src="../imagenes/imagen.png" alt="logo de abaco">
     <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
     <div>
       <i class="bi bi-person-circle"></i>
       <span class="me-3"> <strong>Karina</strong> </span>
-      <i class="bi bi-bell-fill me-3"></i>
+      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
     </div>
   </header>
 
@@ -151,7 +156,9 @@
           <div class="col-12 col-sm-4 col-md-3 col-lg-3">
             <div class="card text-center p-3" onclick="window.location.href='crear_organizacion.html'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" viewBox="0 0 512 512">
-                <path fill="none" d="M247.759 14.358L16 125.946V184h480v-58.362ZM464 152H48v-5.946l200.241-96.412L464 146.362ZM16 496h480V392H16Zm32-72h416v40H48Zm24-216h32v160H72zm336 0h32v160h-32zm-224 0h32v160h-32zm112 0h32v160h-32z" stroke="currentColor" stroke-width="6"/>
+                <path fill="none"
+                  d="M247.759 14.358L16 125.946V184h480v-58.362ZM464 152H48v-5.946l200.241-96.412L464 146.362ZM16 496h480V392H16Zm32-72h416v40H48Zm24-216h32v160H72zm336 0h32v160h-32zm-224 0h32v160h-32zm112 0h32v160h-32z"
+                  stroke="currentColor" stroke-width="6" />
               </svg>
               <div class="card-body p-0">
                 <p class="card-text">Tipo de Organización</p>
@@ -163,7 +170,9 @@
           <div class="col-12 col-sm-4 col-md-3 col-lg-3">
             <div class="card text-center p-3" onclick="window.location.href='gestion_parroquia.html'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" viewBox="0 0 64 64">
-                <path fill="none" d="M61.063 60.125h-.938v-15.01c.731.035 1.443-.371 1.739-1.074a1.754 1.754 0 0 0-.965-2.297l-15.774-6.443v-6.386l.348.141c.906.367 1.956-.058 2.329-.944c.376-.887-.059-1.914-.963-2.28l-13.276-5.523V9.813h4.688V6.688h-4.688V2h-3.125v4.688H25.75v3.125h4.688v10.495l-13.276 5.523c-.904.366-1.339 1.394-.963 2.28c.373.887 1.423 1.312 2.327.944l.35-.142V35.3L3.099 41.744a1.754 1.754 0 0 0-.963 2.297c.294.703 1.008 1.11 1.739 1.074v15.01h-.937c-.517 0-.938.422-.938.938s.421.937.938.937h58.125c.514 0 .937-.422.937-.937s-.423-.938-.937-.938m-42.188 0H5.75V44.466l13.125-5.361zm12.188-1.562H28.25V55.75h2.813zm0-4.063H28.25v-2.813c0-1.742 1.199-3.198 2.813-3.617zm4.687 4.063h-2.813V55.75h2.813zm0-4.063h-2.813v-6.429c1.612.419 2.813 1.875 2.813 3.616zm7.5 5.625h-5.625v-8.438a5.625 5.625 0 0 0-11.25 0v8.438H20.75V28.153L32 23.59l11.25 4.564zm15 0H45.125V39.104l13.125 5.361z" stroke="currentColor" stroke-width="1"/>
+                <path fill="none"
+                  d="M61.063 60.125h-.938v-15.01c.731.035 1.443-.371 1.739-1.074a1.754 1.754 0 0 0-.965-2.297l-15.774-6.443v-6.386l.348.141c.906.367 1.956-.058 2.329-.944c.376-.887-.059-1.914-.963-2.28l-13.276-5.523V9.813h4.688V6.688h-4.688V2h-3.125v4.688H25.75v3.125h4.688v10.495l-13.276 5.523c-.904.366-1.339 1.394-.963 2.28c.373.887 1.423 1.312 2.327.944l.35-.142V35.3L3.099 41.744a1.754 1.754 0 0 0-.963 2.297c.294.703 1.008 1.11 1.739 1.074v15.01h-.937c-.517 0-.938.422-.938.938s.421.937.938.937h58.125c.514 0 .937-.422.937-.937s-.423-.938-.937-.938m-42.188 0H5.75V44.466l13.125-5.361zm12.188-1.562H28.25V55.75h2.813zm0-4.063H28.25v-2.813c0-1.742 1.199-3.198 2.813-3.617zm4.687 4.063h-2.813V55.75h2.813zm0-4.063h-2.813v-6.429c1.612.419 2.813 1.875 2.813 3.616zm7.5 5.625h-5.625v-8.438a5.625 5.625 0 0 0-11.25 0v8.438H20.75V28.153L32 23.59l11.25 4.564zm15 0H45.125V39.104l13.125 5.361z"
+                  stroke="currentColor" stroke-width="1" />
               </svg>
               <div class="card-body p-0">
                 <p class="card-text">Parroquias</p>
@@ -174,10 +183,11 @@
           <!-- Fundaciones -->
           <div class="col-12 col-sm-4 col-md-3 col-lg-3">
             <div class="card text-center p-3" onclick="window.location.href='fundaciones.html'">
-              <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="7" width="18" height="14" rx="2" ry="2"/>
-                <path d="M2 7l10-5 10 5"/>
-                <path d="M12 13s-1.5-2-3-2a2 2 0 0 0 0 4c1.5 0 3 2 3 2s1.5-2 3-2a2 2 0 0 0 0-4c-1.5 0-3 2-3 2z"/>
+              <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="7" width="18" height="14" rx="2" ry="2" />
+                <path d="M2 7l10-5 10 5" />
+                <path d="M12 13s-1.5-2-3-2a2 2 0 0 0 0 4c1.5 0 3 2 3 2s1.5-2 3-2a2 2 0 0 0 0-4c-1.5 0-3 2-3 2z" />
               </svg>
               <div class="card-body p-0">
                 <p class="card-text">Gestión Fundaciones</p>
@@ -191,4 +201,5 @@
   </div>
 
 </body>
+
 </html>

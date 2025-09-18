@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestionar Productos</title>
-  <link rel="shortcut icon" href="../img/imagen.png" type="image/x-icon">
+  <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
   <style>
-    body, html {
+    body,
+    html {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -19,7 +21,8 @@
     /* HEADER */
     header {
       height: 60px;
-      background-color: #f8f9fa; /* bg-success */
+      background-color: #f8f9fa;
+      /* bg-success */
       color: rgb(26, 24, 24);
       border-bottom: 1px solid #dee2e6;
       padding: 0 20px;
@@ -36,7 +39,8 @@
     /* LAYOUT GENERAL */
     .main-layout {
       display: flex;
-      height: calc(100vh - 60px); /* Resta el alto del header */
+      height: calc(100vh - 60px);
+      /* Resta el alto del header */
     }
 
     /* SIDEBAR */
@@ -46,8 +50,10 @@
       color: white;
       transition: width 0.3s;
       overflow-x: hidden;
-      display: flex;           /* <--- Agregado */
-      flex-direction: column;  /* <--- Agregado */
+      display: flex;
+      /* <--- Agregado */
+      flex-direction: column;
+      /* <--- Agregado */
     }
 
     .sidebar:hover {
@@ -108,20 +114,21 @@
     }
   </style>
 </head>
+
 <body>
 
- <!-- HEADER -->
+  <!-- HEADER -->
   <header>
-    <img src="../img/imagen.png" alt="logo de abaco">
+    <img src="../imagenes/imagen.png" alt="logo de abaco">
     <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
     <div>
       <i class="bi bi-person-circle"></i>
       <span class="me-3"> <strong>Karina</strong> </span>
-      <i class="bi bi-bell-fill me-3"></i>
+      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
 
     </div>
   </header>
-  
+
   <!-- LAYOUT -->
   <div class="main-layout">
     <!-- SIDEBAR -->
@@ -139,10 +146,15 @@
       <div class="container bg-white p-4 rounded shadow">
         <h1>Gestionar Gastos</h1>
         <div class="row g-4 justify-content-center">
-          
+
           <div class="col-6 col-sm-4 col-md-3 col-lg-3">
             <div class="card text-center p-3" onclick="window.location.href='tipo_gastos.html'">
-              <img src="../img/categoria.png" class="mx-auto" alt="Crear Categoria" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 24 24">
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1">
+                  <path d="M4 2v20l2-1l2 1l2-1l2 1l2-1l2 1l2-1l2 1V2l-2 1l-2-1l-2 1l-2-1l-2 1l-2-1l-2 1Z" />
+                  <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8m4 1.5v-11" />
+                </g>
+              </svg>
               <div class="card-body p-0">
                 <p class="card-text">Tipos de Gastos</p>
               </div>
@@ -151,14 +163,21 @@
 
           <div class="col-6 col-sm-4 col-md-3 col-lg-3">
             <div class="card text-center p-3" onclick="window.location.href='registrar_gastos.html'">
-              <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 24 24"><path fill="currentColor" d="M6 5h2.5a3 3 0 0 1 3-3a3 3 0 0 1 3 3H17a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3m0 1a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1v3H7V6zm2 2h7V6H8zm3.5-5a2 2 0 0 0-2 2h4a2 2 0 0 0-2-2M6 11h11v1H6zm0 3h11v1H6zm0 3h9v1H6z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 16 16">
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="0.6">
+                  <path
+                    d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z" />
+                  <path
+                    d="M2 5.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5" />
+                </g>
+              </svg>
               <div class="card-body p-0">
                 <p class="card-text">Registrar Gastos</p>
               </div>
             </div>
           </div>
 
-          
+
 
         </div>
       </div>
@@ -166,4 +185,5 @@
   </div>
 
 </body>
+
 </html>
