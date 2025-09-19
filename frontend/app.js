@@ -51,8 +51,6 @@ function mostrar_producto(producto) {
                 <td>${i.subcategoria_producto}</td>
                 <td>${i.estado}</td>
                 <td>${i.unidad_de_medida}</td>
-                <td>${i.acta_vencimiento}</td>
-                <td>${i.tipo_donacion}</td>
                 </tr>
                 `;
             });
@@ -384,11 +382,10 @@ function mostrarcertificado_donante(certificado_donante) {
             <td>${i.fecha}</td>
             <td>${i.valor_donado}</td>
             <td>${i.firma_representante}</td>
-            <td>${i.donante}</td>
-            <td>${i.estado}</td>
-            <td>${i.tipo_documento}</td>
-            <td>${i.tipo_donante}</td>
-            <td>${i.tipo_donacion}</td>
+            <td>${i.id_donante}</td>
+            <td>${i.tipo_certificado}</td>
+            <td>${i.id_donacion}</td>
+            <td>${i.id_donacion_monetaria}</td>
         </tr>
         `;
     });
@@ -416,6 +413,7 @@ function mostrar_usuario(usuario) {
         <tr>
             <td>${i.id_usuario}</td>
             <td>${i.nombre_completo}</td>
+            <td>${i.numero_documento}</td>
             <td>${i.correo}</td>
             <td>${i.contrasena}</td>
             <td>${i.tipo_usuario}</td>
@@ -445,12 +443,11 @@ function mostrar_donacion(donacion) {
         info +=`
         <tr>
             <td>${i.id_donacion}</td>
-            <td>${i.cantidad_donada}</td>
-            <td>${i.fecha_donacion}</td>
-            <td>${i.forma_donacion}</td>
-            <td>${i.observaciones}</td>
-            <td>${i.responsable}</td>
             <td>${i.donante}</td>
+            <td>${i.fecha}</td>
+            <td>${i.observaciones}</td>
+            <td>${i.usuario}</td>
+            <td>${i.tipo_donacion}</td>
         </tr>
         `
     });
@@ -462,6 +459,96 @@ async function donacion() {
         const response = await promesa.json();
         console.log(response)
         mostrar_donacion(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+
+
+// donacion_monetaria \\
+function mostrar_donacion_monetaria(monetaria) {
+    let info="";
+    monetaria.donacion_monetaria.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_donacion_monetaria}</td>
+            <td>${i.donante}</td>
+            <td>${i.monto}</td>
+            <td>${i.fecha}</td>
+            <td>${i.banco}</td>
+            <td>${i.numero_transferencia}</td>
+            <td>${i.usuario}</td>
+            <td>${i.tipo_donacion}</td>
+        </tr>
+        `
+    });
+    document.getElementById("tbodydonacion_monetaria").innerHTML = info;
+}
+async function donacion_monetaria() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/donacion_monetaria`, {method : 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrar_donacion_monetaria(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+
+//     ================  fecha_vencimiento   ==================   \\
+
+
+function mostrar_vencimiento(vencimiento) {
+    let info ="";
+    vencimiento.fecha_vencimiento.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_vencimiento}</td>
+            <td>${i.id_producto}</td>
+            <td>${i.id_donacion}</td>
+            <td>${i.fecha}</td>
+            <td>${i.cantidad}</td>
+            <td>${i.id_acta}</td>
+        </tr>
+        `;
+    });
+    document.getElementById("tbodyfecha_vencimiento").innerHTML = info;
+}
+
+async function fecha_vencimiento() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/fecha_vencimiento`, {method : 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrar_vencimiento(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+//     ================  detalle_donacion_producto   ==================   \\
+
+
+function mostrar_detalle_donacion_producto(detalle_donacion_producto) {
+    let info ="";
+    detalle_donacion_producto.detalle_donacion_producto.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.ID}</td>
+            <td>${i.id_producto}</td>
+            <td>${i.id_donacion}</td>
+            <td>${i.cantidad}</td>
+        </tr>
+        `;
+    });
+    document.getElementById("tbodydetalle_donacion_producto").innerHTML = info;
+}
+
+async function detalle_donacion_producto() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/detalle_donacion_producto`, {method : 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrar_detalle_donacion_producto(response)
     }catch(error){
         console.error(error)
     }
