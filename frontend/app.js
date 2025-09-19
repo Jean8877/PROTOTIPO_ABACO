@@ -163,7 +163,7 @@ function mostrartipo_donante(tipo_donante) {
         <tr>
             <td>${i.ID}</td>
             <td>${i.descripcion}</td>
-            
+            <td > <button type="button">Eliminar</button> </td>
         </tr>
         `;
     });

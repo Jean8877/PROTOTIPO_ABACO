@@ -113,7 +113,9 @@ def registro_tipo_usuario():
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO tipo_usuario (descripcion) VALUES (%s)", (descripcion,))
+        cur.execute("""
+                    INSERT INTO tipo_usuario (descripcion) 
+                    VALUES (%s)""", (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -3951,7 +3953,7 @@ def detalle_donacion_producto():
 
 # Ruta para registrar un nuevo detalle_donacion_producto
 @app.route("/registro_detalle_donacion_producto", methods=['POST'])
-def detalle_donacion_producto():
+def registro_detalle_donacion_producto():
     """
     Registrar un nuevo detalle_donacion_producto
     ---
@@ -4046,7 +4048,10 @@ def actualizar_detalle_donacion_producto(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
-# Ruta para eliminar detalle_donacion_producto
+
+# ============================================================
+# ========= RUTA ELIMINAR DETALLE_DONACION_PRODUCTO  =========
+# ============================================================
 @app.route("/eliminar_detalle_donacion_producto/<int:codigo>", methods=['DELETE'])
 def eliminar_detalle_donacion_producto(codigo):
     """

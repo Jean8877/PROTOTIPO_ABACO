@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión de Tipo de Donantes</title>
@@ -144,64 +145,14 @@
           <tr>
             <th>ID</th>
             <th>Tipo de Donante</th>
-            <th>Descripción</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodytipo_donante"></tbody>
       </table>
     </div>
   </div>
 
-  <script>
-    const form = document.getElementById('formTipoDonante');
-    const tabla = document.getElementById('tablaTiposDonantes').querySelector('tbody');
-    let id = 1;
-    let editando = null;
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombreTipo').value.trim();
-      const descripcion = document.getElementById('descripcionTipo').value.trim();
-
-      if (!nombre || !descripcion) return alert("Por favor completa todos los campos");
-
-      if (editando) {
-        editando.querySelector('.col-nombre').textContent = nombre;
-        editando.querySelector('.col-descripcion').textContent = descripcion;
-        editando = null;
-      } else {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${id++}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-descripcion">${descripcion}</td>
-          <td>
-            <button onclick="editar(this)">Editar</button>
-            <button onclick="eliminar(this)" style="background-color:success">Eliminar</button>
-          </td>
-        `;
-        tabla.appendChild(row);
-      }
-
-      form.reset();
-    });
-
-    function editar(btn) {
-      const row = btn.closest('tr');
-      document.getElementById('nombreTipo').value = row.querySelector('.col-nombre').textContent;
-      document.getElementById('descripcionTipo').value = row.querySelector('.col-descripcion').textContent;
-      editando = row;
-    }
-
-    function eliminar(btn) {
-      if (confirm("¿Estás seguro que deseas eliminar este tipo de donante?")) {
-        const row = btn.closest('tr');
-        row.remove();
-        if (editando === row) editando = null;
-      }
-    }
-  </script>
+  <script> tipo_donante();</script>
 </body>
 </html>
