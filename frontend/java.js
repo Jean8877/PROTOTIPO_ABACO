@@ -714,3 +714,4 @@ function visualizarTipoDonacion(data) {
                     <button type='button' class='btn btn-info'
                         onclick="location.href='editar_tipo_donacion.html?id=${item.codigo}'">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 极 24 24"><path fill="currentColor" d="m18.988 2.012l3 3L19.701 7.3l-3-3zM8 16h3极7.287-7.287l-3-3L8 13z"/><path fill="currentColor" d="M19 19H8.158c-.026 0-.053.01-.079.01
+//====== AGREGAR =======//
