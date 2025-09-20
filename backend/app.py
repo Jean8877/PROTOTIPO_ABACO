@@ -35,7 +35,7 @@ def get_donantes():
                 LEFT JOIN tipo_documento td ON d.tipo_documento = td.id_tipo_documento
                 LEFT JOIN tipo_donante tdo ON d.tipo_donante = tdo.ID
             """)
-        return jsonify(result)
+        return jsonify('result')
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:

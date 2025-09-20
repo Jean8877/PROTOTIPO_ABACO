@@ -700,18 +700,51 @@ function actualizarDonante(id, nombre, telefono, gmail, direccion, estado, tipo_
     .catch(error => console.error('Error:', error));
 }
 
-// ========== TIPO DONACION ==========
+// ========== METODO AGREGAR  ==========
 
-function visualizarTipoDonacion(data) {
-    let tabla = "";
+function agregarDonante(nombre, numero_documento, telefono, gmail, direccion, tipo_documento, tipo_donante, estado = 1) {
+    fetch('http://127.0.0.1:5000/donantes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            nombre: nombre,
+            numero_documento: numero_documento,
+            telefono: telefono,
+            gmail: gmail,
+            direccion: direccion,
+            tipo_documento: tipo_documento,
+            tipo_donante: tipo_donante,
+            estado: estado
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Donante agregado correctamente');
+            // Si quieres actualizar la tabla, llama aquí a consultarDonante()
+        } else {
+            alert('Error al agregar donante: ' + (data.message || data.error));
+        }
+    })
+    .catch(error => {
+        alert('Error de red: ' + error);
+    });
+}
 
-    data.tipo_donacion.forEach(item => {
-        tabla += `
-            <tr data-id="${item.codigo}">
-                <td>${item.codigo}</td>
-                <td>${item.descripcion}</td>
-                <td>
-                    <button type='button' class='btn btn-info'
-                        onclick="location.href='editar_tipo_donacion.html?id=${item.codigo}'">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 极 24 24"><path fill="currentColor" d="m18.988 2.012l3 3L19.701 7.3l-3-3zM8 16h3极7.287-7.287l-3-3L8 13z"/><path fill="currentColor" d="M19 19H8.158c-.026 0-.053.01-.079.01
-//====== AGREGAR =======//
+// Conecta el formulario con la función agregarDonante
+document.getElementById('formDonante').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const nombre = document.getElementById('nombreDonante').value.trim();
+    const tipo_documento = document.getElementById('tipoDocumento').value;
+    const numero_documento = document.getElementById('numeroDocumento').value.trim();
+    const tipo_donante = document.getElementById('tipoDonante').value;
+    const telefono = document.getElementById('telefono').value.trim();
+    const gmail = document.getElementById('correo').value.trim();
+    const direccion = document.getElementById('direccion').value.trim();
+
+    agregarDonante(nombre, numero_documento, telefono, gmail, direccion, tipo_documento, tipo_donante);
+    this.reset();
+});
