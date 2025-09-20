@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Registrar Productos</title>
@@ -200,133 +201,25 @@
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-
-            <th>Stock</th>
-
-            <th>Peso Unitario</th>
             <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Codigo De Barras</th>
+            <th>Stock</th>
+            <th>Stock Maximo</th>
+            <th>Stock Minimo</th>
+            <th>Categoria</th>
+            <th>SubCategoria</th>
+            <th>Estado</th>
+            <th>Unidad De Medida</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Filas de productos se agregarán aquí dinámicamente -->
-        </tbody>
+        <tbody id="tbodyproducto"> </tbody>
       </table>
     </div>
   </div>
-
-  <script>
-    // Datos de ejemplo
-    const categorias = [
-      { id: 1, nombre: "Alimentos" },
-      { id: 2, nombre: "Limpieza" },
-      { id: 3, nombre: "Tecnología" }
-    ];
-    const subcategorias = [
-      { id: 1, categoriaId: 1, nombre: "Frutas" },
-      { id: 2, categoriaId: 1, nombre: "Verduras" },
-      { id: 3, categoriaId: 2, nombre: "Detergentes" },
-      { id: 4, categoriaId: 3, nombre: "Computadoras" },
-      { id: 5, categoriaId: 3, nombre: "Celulares" }
-    ];
-
-    // Elementos
-    const form = document.getElementById('formProducto');
-    const categoriaSelect = document.getElementById('categoriaSelect');
-    const subcategoriaSelect = document.getElementById('subcategoriaSelect');
-    const tablaBody = document.querySelector('#tablaProductos tbody');
-    let idProducto = 1;
-    let editandoFila = null;
-
-    // Cargar categorías
-    categorias.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.id;
-      opt.textContent = c.nombre;
-      categoriaSelect.appendChild(opt);
-    });
-
-    // Subcategorías dinámicas
-    categoriaSelect.addEventListener('change', () => {
-      subcategoriaSelect.innerHTML = '<option value="">Selecciona una subcategoría</option>';
-      const filtradas = subcategorias.filter(s => s.categoriaId == categoriaSelect.value);
-      filtradas.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = s.nombre;
-        subcategoriaSelect.appendChild(opt);
-      });
-      subcategoriaSelect.disabled = filtradas.length === 0;
-    });
-
-    // Guardar producto
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const nombre = document.getElementById('productoSelect').value.trim();
-      const stock = document.getElementById('cantidadProducto').value;
-      const peso = document.getElementById('pesoUnitario').value.trim();
-      const descripcion = document.getElementById('descripcionProducto').value.trim();
-
-      if (!nombre || !stock || !peso) {
-        swal("Error", "Completa todos los campos requeridos", "error");
-        return;
-      }
-
-      if (editandoFila) {
-        // Editar fila existente
-        editandoFila.querySelector('.col-nombre').textContent = nombre;
-        editandoFila.querySelector('.col-stock').textContent = stock;
-        editandoFila.querySelector('.col-peso').textContent = peso;
-        editandoFila.querySelector('.col-desc').textContent = descripcion;
-        swal("Actualizado", "Producto editado correctamente", "success");
-        editandoFila = null;
-      } else {
-        // Agregar nueva fila
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-          <td>${idProducto++}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-stock">${stock}</td>
-          <td class="col-peso">${peso}</td>
-          <td class="col-desc">${descripcion}</td>
-          <td>
-            <button class="btn btn-warning btn-sm" onclick="editarProducto(this)">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(this)">Eliminar</button>
-          </td>
-        `;
-        tablaBody.appendChild(fila);
-        swal("Guardado", "Producto agregado exitosamente", "success");
-      }
-
-      form.reset();
-      subcategoriaSelect.disabled = true;
-    });
-
-    // Funciones globales para botones
-    window.editarProducto = (btn) => {
-      const fila = btn.closest('tr');
-      editandoFila = fila;
-      document.getElementById('productoSelect').value = fila.querySelector('.col-nombre').textContent;
-      document.getElementById('cantidadProducto').value = fila.querySelector('.col-stock').textContent;
-      document.getElementById('pesoUnitario').value = fila.querySelector('.col-peso').textContent;
-      document.getElementById('descripcionProducto').value = fila.querySelector('.col-desc').textContent;
-    };
-
-    window.eliminarProducto = (btn) => {
-      swal({
-        title: "¿Eliminar?",
-        text: "Este producto se borrará de la lista.",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      }).then((ok) => {
-        if (ok) {
-          btn.closest('tr').remove();
-          swal("Eliminado", "Producto borrado correctamente", "success");
-        }
-      });
-    };
-  </script>
+<script> producto();</script>
+  
 </body>
 
 </html>

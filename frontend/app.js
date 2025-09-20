@@ -31,6 +31,7 @@ async function movimiento_producto() {
         console.error(error)
     }
 }
+// ==== Agregar movimiento de producto ==== \\
 
 // producto
 
@@ -93,6 +94,32 @@ function mostrar_producto(producto) {
             console.error(error)
         }
     }
+
+    // agregar categoria \\
+
+async function agregar_categoria() {
+    try {
+        const nombre_categoria = document.getElementById("nombreCategoria").value;
+
+        const categoria = {
+      "descripcion": nombre_categoria
+    }
+
+    const promesa = await fetch(`${URL_BASE}/registro_categoria_producto`, {
+        method: 'POST',
+        body : JSON.stringify(categoria),
+        headers: {
+            "Content-type" : "application/json"
+        }
+    })
+
+    const response = await promesa.json()
+    console.log(response)
+
+    } catch (error) {
+        console.error(error)
+    }
+}
 
 
 // subcategoria 
@@ -191,12 +218,12 @@ function mostrar_donante(donante) {
         <tr>
             <td>${i.id_donante}</td>
             <td>${i.nombre}</td>
+            <td>${i.tipo_documento}</td>
             <td>${i.numero_documento}</td>
             <td>${i.telefono}</td>
             <td>${i.correo}</td>
             <td>${i.direccion}</td>
             <td>${i.estado}</td>
-            <td>${i.tipo_documento}</td>
             <td>${i.tipo_donante}</td>
             </tr>
         `

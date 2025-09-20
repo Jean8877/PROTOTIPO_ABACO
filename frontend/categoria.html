@@ -1,6 +1,7 @@
 <!DOCTYPE html> 
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión Categorías</title>
@@ -158,82 +159,25 @@
     <!-- CONTENIDO -->
     <div class="content">
       
-      <form id="formCategoria">
+      <form id="formCategoria" onsubmit="event.preventDefault(); agregar_categoria()">
         <h1>Registrar Nueva Categoría</h1>
         <input type="text" id="nombreCategoria" placeholder="Nombre de la categoría" required>
-        <input type="text" id="descripcionCategoria" placeholder="Descripción de la categoría" required>
         <button type="submit">Guardar Categoría</button>
       </form>
-
+      
       <h2>Lista de Categorías</h2>
       <table id="tablaCategorias">
         <thead>
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Descripción</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodycategoria_producto"></tbody>
       </table>
     </div>
   </div>
-
-  <script>
-    const formCategoria = document.getElementById('formCategoria');
-    const tablaCategorias = document.getElementById('tablaCategorias').querySelector('tbody');
-    let editandoCategoria = null;
-    let idCategoria = 1; // Contador autoincremental
-
-    formCategoria.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombreCategoria').value.trim();
-      const descripcion = document.getElementById('descripcionCategoria').value.trim();
-
-      if (!nombre || !descripcion) return;
-
-      if (editandoCategoria) {
-        // Editar fila existente
-        editandoCategoria.querySelector('.col-nombre').textContent = nombre;
-        editandoCategoria.querySelector('.col-descripcion').textContent = descripcion;
-        editandoCategoria = null;
-      } else {
-        // Agregar nueva fila con ID auto
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="col-id">${String(idCategoria).padStart(3, '0')}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-descripcion">${descripcion}</td>
-          <td>
-            <button onclick="editarCategoria(this)">Editar</button>
-            <button onclick="eliminarCategoria(this)">Eliminar</button>
-          </td>
-        `;
-        tablaCategorias.appendChild(row);
-        idCategoria++;
-      }
-
-      formCategoria.reset();
-    });
-
-    function eliminarCategoria(btn) {
-      const row = btn.closest('tr');
-      row.remove();
-    }
-
-    function editarCategoria(btn) {
-      const row = btn.closest('tr');
-      const nombre = row.querySelector('.col-nombre').textContent;
-      const descripcion = row.querySelector('.col-descripcion').textContent;
-
-      document.getElementById('nombreCategoria').value = nombre;
-      document.getElementById('descripcionCategoria').value = descripcion;
-
-      editandoCategoria = row;
-    }
-  </script>
-
+<script>categoria_producto();</script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html> 
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión de Subcategorías</title>
@@ -176,88 +177,15 @@
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Descripción</th>
             <th>Categoría</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodysubcategoria_producto"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- SCRIPT -->
-  <script>
-    const categorias = [
-      { id: 1, nombre: "Alimentos" },
-      { id: 2, nombre: "Limpieza" },
-      { id: 3, nombre: "Tecnología" }
-    ];
-
-    const categoriaSelect = document.getElementById('categoriaSelect');
-    const formSubcategoria = document.getElementById('formSubcategoria');
-    const tablaSubcategorias = document.getElementById('tablaSubcategorias').querySelector('tbody');
-
-    let idSubcategoria = 1;
-    let editandoSubcategoria = null;
-
-    function cargarCategorias() {
-      categorias.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.nombre;
-        option.textContent = cat.nombre;
-        categoriaSelect.appendChild(option);
-      });
-    }
-
-    cargarCategorias();
-
-    formSubcategoria.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const categoria = categoriaSelect.value;
-      const nombre = document.getElementById('nombreSubcategoria').value.trim();
-      const descripcion = document.getElementById('descripcionSubcategoria').value.trim();
-
-      if (!categoria || !nombre || !descripcion) return;
-
-      if (editandoSubcategoria) {
-        editandoSubcategoria.querySelector('.col-categoria').textContent = categoria;
-        editandoSubcategoria.querySelector('.col-nombre').textContent = nombre;
-        editandoSubcategoria.querySelector('.col-descripcion').textContent = descripcion;
-        editandoSubcategoria = null;
-      } else {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="col-id">${String(idSubcategoria).padStart(3, '0')}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-descripcion">${descripcion}</td>
-          <td class="col-categoria">${categoria}</td>
-          <td>
-            <button onclick="editarSubcategoria(this)">Editar</button>
-            <button onclick="eliminarSubcategoria(this)">Eliminar</button>
-          </td>
-        `;
-        tablaSubcategorias.appendChild(row);
-        idSubcategoria++;
-      }
-
-      formSubcategoria.reset();
-    });
-
-    function eliminarSubcategoria(btn) {
-      const row = btn.closest('tr');
-      row.remove();
-    }
-
-    function editarSubcategoria(btn) {
-      const row = btn.closest('tr');
-      document.getElementById('nombreSubcategoria').value = row.querySelector('.col-nombre').textContent;
-      document.getElementById('descripcionSubcategoria').value = row.querySelector('.col-descripcion').textContent;
-      categoriaSelect.value = row.querySelector('.col-categoria').textContent;
-
-      editandoSubcategoria = row;
-    }
-  </script>
+  <script>subcategoria_producto();</script>
 </body>
 </html>

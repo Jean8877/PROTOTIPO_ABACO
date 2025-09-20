@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Registro de Gastos</title>
@@ -180,61 +181,19 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Tipo</th>
-            <th>Descripción</th>
-            <th>Monto</th>
             <th>Fecha</th>
+            <th>Monto</th>
+            <th>Descripción</th>
+            <th>Tipo de gasto</th>
+            <th>Usuario</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodygasto"></tbody>
       </table>
     </div>
   </div>
-
-  <!-- SCRIPT -->
-  <script>
-    const formGasto = document.getElementById('formGasto');
-    const tablaGastos = document.getElementById('tablaGastos').querySelector('tbody');
-    let idGasto = 1;
-
-    formGasto.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const tipo = document.getElementById('tipoGasto').value;
-      const descripcion = document.getElementById('descripcion').value;
-      const monto = document.getElementById('monto').value;
-      const fecha = document.getElementById('fecha').value;
-
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${String(idGasto).padStart(3, '0')}</td>
-        <td>${tipo}</td>
-        <td>${descripcion}</td>
-        <td>$${parseFloat(monto).toLocaleString()}</td>
-        <td>${fecha}</td>
-        <td><button onclick="editarGasto(this)">Editar</button> <button onclick="eliminarGasto(this)">Eliminar</button></td>
-      `;
-
-      tablaGastos.appendChild(row);
-      formGasto.reset();
-      idGasto++;
-    });
-
-    function eliminarGasto(btn) {
-      const row = btn.parentElement.parentElement;
-      row.remove();
-    }
-
-    function editarGasto(btn) {
-      const row = btn.parentElement.parentElement;
-      const cells = row.querySelectorAll('td');
-      document.getElementById('tipoGasto').value = cells[1].textContent;
-      document.getElementById('descripcion').value = cells[2].textContent;
-      document.getElementById('monto').value = cells[3].textContent.replace(/[^\d.-]/g, '');
-      document.getElementById('fecha').value = cells[4].textContent;
-      eliminarGasto(btn);
-    }
-  </script>
+<script>gasto();</script>
+  
 </body>
 </html>

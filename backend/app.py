@@ -2698,6 +2698,7 @@ def bodega():
         cur= conn.cursor()
         cur.execute("SELECT * FROM bodega")
         datos= cur.fetchall()
+        print(datos)
         cur.close()
         conn.close()
         if datos:

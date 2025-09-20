@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestión de Bodegas - Sistema</title>
@@ -173,71 +174,17 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nombre</th>
+            <th>Nombre De La Bodega</th>
             <th>Dirección</th>
             <th>Capacidad</th>
+            <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodybodega"></tbody>
       </table>
 
-      <script>
-        const formBodega = document.getElementById('formBodega');
-        const tablaBodegas = document.getElementById('tablaBodegas').querySelector('tbody');
-        let idBodega = 1;
-        let editandoBodega = null;
-
-        formBodega.addEventListener('submit', e => {
-          e.preventDefault();
-
-          const nombre = document.getElementById('nombreBodega').value.trim();
-          const direccion = document.getElementById('direccionBodega').value.trim();
-          const capacidad = document.getElementById('capacidadBodega').value;
-
-          if (!nombre || !direccion || !capacidad || capacidad <= 0) {
-            alert('Por favor completa todos los campos correctamente.');
-            return;
-          }
-
-          if (editandoBodega) {
-            editandoBodega.querySelector('.col-nombre').textContent = nombre;
-            editandoBodega.querySelector('.col-direccion').textContent = direccion;
-            editandoBodega.querySelector('.col-capacidad').textContent = capacidad;
-            editandoBodega = null;
-          } else {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${String(idBodega).padStart(3, '0')}</td>
-              <td class="col-nombre">${nombre}</td>
-              <td class="col-direccion">${direccion}</td>
-              <td class="col-capacidad">${capacidad}</td>
-              <td>
-                <button onclick="editarBodega(this)">Editar</button>
-                <button onclick="eliminarBodega(this)">Eliminar</button>
-              </td>
-            `;
-            tablaBodegas.appendChild(row);
-            idBodega++;
-          }
-
-          formBodega.reset();
-        });
-
-        function eliminarBodega(btn) {
-          const row = btn.closest('tr');
-          if (editandoBodega === row) editandoBodega = null;
-          row.remove();
-        }
-
-        function editarBodega(btn) {
-          const row = btn.closest('tr');
-          document.getElementById('nombreBodega').value = row.querySelector('.col-nombre').textContent;
-          document.getElementById('direccionBodega').value = row.querySelector('.col-direccion').textContent;
-          document.getElementById('capacidadBodega').value = row.querySelector('.col-capacidad').textContent;
-          editandoBodega = row;
-        }
-      </script>
+      <script>bodega();</script>
     </div>
   </div>
 </body>

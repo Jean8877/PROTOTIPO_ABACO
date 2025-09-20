@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestión de Tipos de Gasto</title>
@@ -171,63 +172,11 @@
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodytipo_gasto"></tbody>
       </table>
     </div>
   </div>
-
-  <script>
-    const formGasto = document.getElementById('formGasto');
-    const tablaGastos = document.getElementById('tablaGastos').querySelector('tbody');
-    let editandoGasto = null;
-    let idGasto = 1;
-
-    formGasto.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombreGasto').value.trim();
-      const descripcion = document.getElementById('descripcionGasto').value.trim();
-
-      if (!nombre || !descripcion) return;
-
-      if (editandoGasto) {
-        editandoGasto.querySelector('.col-nombre').textContent = nombre;
-        editandoGasto.querySelector('.col-descripcion').textContent = descripcion;
-        editandoGasto = null;
-      } else {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="col-id">${String(idGasto).padStart(3, '0')}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-descripcion">${descripcion}</td>
-          <td>
-            <button onclick="editarGasto(this)">Editar</button>
-            <button onclick="eliminarGasto(this)">Eliminar</button>
-          </td>
-        `;
-        tablaGastos.appendChild(row);
-        idGasto++;
-      }
-
-      formGasto.reset();
-    });
-
-    function eliminarGasto(btn) {
-      const row = btn.closest('tr');
-      row.remove();
-    }
-
-    function editarGasto(btn) {
-      const row = btn.closest('tr');
-      const nombre = row.querySelector('.col-nombre').textContent;
-      const descripcion = row.querySelector('.col-descripcion').textContent;
-
-      document.getElementById('nombreGasto').value = nombre;
-      document.getElementById('descripcionGasto').value = descripcion;
-
-      editandoGasto = row;
-    }
-  </script>
+<script>tipo_gasto();</script>
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="app.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestión de Tipos de Organización</title>
@@ -167,67 +168,15 @@
           <tr>
             <th>ID</th>
             <th>Organización</th>
-            <th>Descripción</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="tbodytipo_organizacion"></tbody>
       </table>
     </div>
   </div>
 
-  <script>
-    const formOrganizacion = document.getElementById('formOrganizacion');
-    const tablaOrganizaciones = document.getElementById('tablaOrganizaciones').querySelector('tbody');
-    let editandoOrganizacion = null;
-    let idOrganizacion = 1;
-
-    formOrganizacion.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombreOrganizacion').value.trim();
-      const descripcion = document.getElementById('descripcionOrganizacion').value.trim();
-
-      if (!nombre || !descripcion) return;
-
-      if (editandoOrganizacion) {
-        editandoOrganizacion.querySelector('.col-nombre').textContent = nombre;
-        editandoOrganizacion.querySelector('.col-descripcion').textContent = descripcion;
-        editandoOrganizacion = null;
-      } else {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="col-id">${String(idOrganizacion).padStart(3, '0')}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-descripcion">${descripcion}</td>
-          <td>
-            <button onclick="editarOrganizacion(this)">Editar</button>
-            <button onclick="eliminarOrganizacion(this)">Eliminar</button>
-          </td>
-        `;
-        tablaOrganizaciones.appendChild(row);
-        idOrganizacion++;
-      }
-
-      formOrganizacion.reset();
-    });
-
-    function eliminarOrganizacion(btn) {
-      const row = btn.closest('tr');
-      row.remove();
-    }
-
-    function editarOrganizacion(btn) {
-      const row = btn.closest('tr');
-      const nombre = row.querySelector('.col-nombre').textContent;
-      const descripcion = row.querySelector('.col-descripcion').textContent;
-
-      document.getElementById('nombreOrganizacion').value = nombre;
-      document.getElementById('descripcionOrganizacion').value = descripcion;
-
-      editandoOrganizacion = row;
-    }
-  </script>
+  <script>tipo_organizacion();</script>
 
 </body>
 </html>
