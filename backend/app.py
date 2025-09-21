@@ -10,8 +10,8 @@ CORS(app)
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': '1234',
-    'db': 'proyecto',
+    'password': 'lupi19',  
+    'db': 'base_backend',
     'charset': 'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor
 }
@@ -322,7 +322,7 @@ def create_donacion():
     finally:
         conn.close()
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     print("🚀 Iniciando API Banco de Alimentos...")
     print("📍 URL: http://localhost:5000")
     app.run(debug=True)
