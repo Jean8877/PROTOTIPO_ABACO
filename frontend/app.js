@@ -1,7 +1,10 @@
 const URL_BASE = "http://127.0.0.1:5000";
 
 
-// ==== movimiento de producto ==== \\
+// ==========================================================================
+// ================= GET, MOVIMIENTO DE PRODUCTO   =========================
+// ==========================================================================
+
 function mostrar_movimiento(movimientos){
     let info = "";
     movimientos.movimiento_producto.forEach(i => {
@@ -31,9 +34,9 @@ async function movimiento_producto() {
         console.error(error)
     }
 }
-// ==== Agregar movimiento de producto ==== \\
-
-// producto
+// ==========================================================================
+// ===================  GET, PRODUCTO   ==============================
+// ==========================================================================
 
 function mostrar_producto(producto) {
     let info = "";
@@ -69,7 +72,9 @@ function mostrar_producto(producto) {
         }
     }
     
-    // categoria producto
+// ==========================================================================
+// =================== GET, CATEGORIA PORDUCTO ==============================
+// ==========================================================================
     
     function mostrar_categoria(categoria) {
         let info = "";
@@ -78,6 +83,10 @@ function mostrar_producto(producto) {
             <tr>
             <td>${i.codigo}</td>
             <td>${i.descripcion}</td>
+            <td>
+                <button type="button" onclick="eliminar_categoria(${i.codigo})">Eliminar</button>
+                <button type="button" onclick="mostrar_categoria(${i.codigo})">Editar</button>
+            </td>
             </tr>
             `;
         });
@@ -94,15 +103,15 @@ function mostrar_producto(producto) {
             console.error(error)
         }
     }
-
-    // agregar categoria \\
+// ==========================================================================
+// =================== POST, CATEGORIA PRODUCTO==============================
+// ==========================================================================
 
 async function agregar_categoria() {
     try {
         const nombre_categoria = document.getElementById("nombreCategoria").value;
-
         const categoria = {
-      "descripcion": nombre_categoria
+    "descripcion": nombre_categoria
     }
 
     const promesa = await fetch(`${URL_BASE}/registro_categoria_producto`, {
@@ -112,18 +121,36 @@ async function agregar_categoria() {
             "Content-type" : "application/json"
         }
     })
-
     const response = await promesa.json()
     console.log(response)
+        document.getElementById("nombreCategoria").value = "";
+    categoria_producto();
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+// ==========================================================================
+// =================== DELETE, CATEGORIA PRODUCTO==============================
+// ==========================================================================
+
+async function eliminar_categoria(codigo) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/eliminar_categoria_producto/${codigo}`, {method: 'DELETE',});
+        const response = await promesa.json()
+        console.log("Categoría eliminada:", response)
+
+        categoria_producto();
+        return response
 
     } catch (error) {
         console.error(error)
     }
 }
 
-
-// subcategoria 
-
+// ==========================================================================
+// ================= GET, SUBCATEGORIA PRODUCTO ============================
+// ==========================================================================
 
 function mostrar_subcategoria(subcategoria) {
     let info ="";
@@ -133,6 +160,9 @@ function mostrar_subcategoria(subcategoria) {
             <td>${i.codigo}</td>
             <td>${i.descripcion}</td>
             <td>${i.categoria_producto}</td>
+            <td>
+            <button type="button" onclick="eliminar_subcategoria_producto(${i.codigo})">Eliminar</button>
+            </td>
         </tr>
         `;
     });
@@ -146,13 +176,82 @@ async function subcategoria_producto() {
         console.log(response)
         mostrar_subcategoria(response)
     }catch(error){
+        console.error("Error al obtener subcategorías:", error)
+    }
+}
+
+// ==========================================================================
+// =================== POST, SUBCATEGORIA PRODUCTO==============================
+// ==========================================================================
+
+async function agregar_subcategoria() {
+    try {
+        const nombre_subcategoria = document.getElementById("nombreSubcategoria").value;
+    
+        const subcategoria = {
+    "descripcion": nombre_subcategoria,
+    "categoria_producto": document.getElementById("categoria").value
+    }
+
+    const promesa = await fetch(`${URL_BASE}/registro_subcategoria_producto`, {
+        method: 'POST',
+        body : JSON.stringify(subcategoria),
+        headers: {
+            "Content-type" : "application/json"
+        }
+    })
+    const response = await promesa.json()
+    subcategoria_producto();
+        document.getElementById("nombreSubcategoria").value = "";
+    console.log(response)
+    
+    } catch (error) {
         console.error(error)
     }
 }
 
+// ==========================================================================
+// =================== LLAMAR CATEGORIA A SUBCATEGORIA =========================
+// ==========================================================================
+async function llamar_categoria() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/categoria_producto`, {method: 'GET'});
+        const response = await promesa.json();
 
-//       ===============bodega===================     \\
+        const select = document.getElementById("categoria");
+        select.innerHTML = "";
 
+        response.categoria_producto.forEach(categoria => {
+            const option = document.createElement("option");
+            option.value = categoria.codigo;
+            option.text = categoria.descripcion;
+            select.appendChild(option);
+        });
+    }catch(error){
+        console.error("Error al cargar categorías:", error)
+    }   
+}
+
+// ==========================================================================
+// =================== DELETE, SUBCATEGORIA PRODUCTO ========================
+// ==========================================================================
+
+async function eliminar_subcategoria_producto(codigo) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/eliminar_subcategoria_producto/${codigo}`, {method: 'DELETE',});
+        const response = await promesa.json();
+        console.log("Subcategoría eliminada:", response)
+        
+        subcategoria_producto();
+        return response;
+    } catch (error) {
+        console.error("Error al eliminar subcategoría:", error);
+    }
+}
+
+// ==========================================================================
+// ======================== GET, BODEGA   ===================================
+// ==========================================================================
 
 function mostrarbodega(bodega){
     let info ="";
@@ -181,7 +280,10 @@ async function bodega() {
     }
 }
 
-//    ==================  tipo_donante  ======================     \\
+
+// ==========================================================================
+// ====================== GET, TIPO DONANTE =================================
+// ==========================================================================
 
 function mostrartipo_donante(tipo_donante) {
     let info ="";
@@ -208,8 +310,11 @@ async function tipo_donante() {
     }
 }
 
-//     ================   donante   =====================       \\
 
+
+// ==========================================================================
+// ======================== GET, DONANTE ====================================
+// ==========================================================================
 
 function mostrar_donante(donante) {
     let info ="";
@@ -241,10 +346,9 @@ async function donante() {
     }
 }
 
-
-
-//     ================    tipo_gasto   ==================   \\
-
+// ==========================================================================
+// ====================  GET, TIPO GASTO  ===================================
+// ==========================================================================
 
 function mostrartipo_gasto(tipo_gasto) {
     let info ="";
@@ -273,8 +377,10 @@ async function tipo_gasto() {
 }
 
 
-//     ================   gasto   ==================   \\
 
+// ==========================================================================
+// =========================  GET, GASTOS   =================================
+// ==========================================================================
 
 function mostrargasto(gasto) {
     let info ="";
@@ -305,7 +411,28 @@ async function gasto() {
     }
 }
 
-//     ================   tipo_organizacion   ==================   \\
+
+// ==========================================================================
+// ================  CONSULTA GASTO INDIVIDUAL    ===========================
+// ==========================================================================
+
+async function gasto_id(id) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/gasto/${id}`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+
+        document.getElementById()
+    
+    } catch (error) {
+        console.error((error))
+    }
+}
+
+// ==========================================================================
+// ===================  GET, TIPO ORGANIZACION   ===========================
+// ==========================================================================
+
 
 
 function mostrartipo_organizacion(tipo_organizacion) {
@@ -333,8 +460,11 @@ async function tipo_organizacion() {
         console.error(error)
     }
 }
-//     ================  organizacion   ==================   \\
 
+
+// ==========================================================================
+// ===================  GET, ORGANIZACION  =================================
+// ==========================================================================
 
 function mostrarorganizacion(organizacion) {
     let info ="";
@@ -367,8 +497,10 @@ async function organizacion() {
         console.error(error)
     }
 }
-//     ================  acta_vencimiento   ==================   \\
 
+// ==========================================================================
+// ===================  GET, ACTA VENCIMIENTO  ==============================
+// ==========================================================================
 
 function mostraracta_vencimiento(acta_vencimiento) {
     let info ="";
@@ -397,7 +529,9 @@ async function acta_vencimiento() {
     }
 }
 
-//   ================  certificado_donante   ==================   \\
+// ==========================================================================
+// =================  GET, CERTIFICADO DONANTE ==============================
+// ==========================================================================
 
 
 function mostrarcertificado_donante(certificado_donante) {
@@ -430,7 +564,10 @@ async function certificado_donante() {
     }
 }
 
-//    ========= USUARIO =========   \\
+
+// ==========================================================================
+// ======================   GET, USUARIO   =================================
+// ==========================================================================
 
 
 function mostrar_usuario(usuario) {
@@ -463,7 +600,10 @@ async function usuario() {
 }
 
 
-// donacion \\
+
+// ==========================================================================
+// ====================    GET, DONACION       ==============================
+// ==========================================================================
 function mostrar_donacion(donacion) {
     let info="";
     donacion.donacion.forEach(i => {
@@ -492,7 +632,9 @@ async function donacion() {
 }
 
 
-// donacion_monetaria \\
+// ==========================================================================
+// =================== GET, DONACION MONETARIA ==============================
+// ==========================================================================
 function mostrar_donacion_monetaria(monetaria) {
     let info="";
     monetaria.donacion_monetaria.forEach(i => {
@@ -522,8 +664,10 @@ async function donacion_monetaria() {
     }
 }
 
-//     ================  fecha_vencimiento   ==================   \\
 
+// ==========================================================================
+// =================== GET, FECHA VENCIMIENTO ==============================
+// ==========================================================================
 
 function mostrar_vencimiento(vencimiento) {
     let info ="";
@@ -552,8 +696,10 @@ async function fecha_vencimiento() {
         console.error(error)
     }
 }
-//     ================  detalle_donacion_producto   ==================   \\
 
+// ==========================================================================
+// ===============  GET, DETALLE DONACION PRODUCTO  =========================
+// ==========================================================================
 
 function mostrar_detalle_donacion_producto(detalle_donacion_producto) {
     let info ="";

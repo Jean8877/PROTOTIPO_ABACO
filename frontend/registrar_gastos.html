@@ -162,18 +162,25 @@
     <div class="content">
       <h1>Registrar Gasto</h1>
 
-      <form id="formGasto">
-        <select id="tipoGasto" required>
-          <option value="">Seleccione tipo de gasto</option>
-          <option value="Servicios públicos">Servicios públicos</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Papelería">Papelería</option>
-          <option value="Otros">Otros</option>
+      <form id="formGasto" onsubmit="event.preventDefault(); actualizar_gasto(id_url)">
+        
+        <input type="date" id="fecha" name="fecha" required title="Seleccione la fecha del gasto" placeholder="Seleccione la fecha" />
+        
+        <input type="number" id="monto" name="monto" required title="Ingrese el monto del gasto" placeholder="Ingrese el monto" />
+        
+        <input type="text" id="descripcion" name="descripcion" required title="Ingrese la descripcion" placeholder="Ingrese la descripcion">
+        
+        <label for="tipo_gasto">Tipo de gasto:</label>
+        <select id="tipo_gasto" name="tipo_gasto" required title="Seleccione el tipo de gasto">
+          <!-- Las opciones deben ser llenadas dinámicamente desde la tabla de tipos de gastos -->
         </select>
-        <input type="text" id="descripcion" placeholder="Descripción del gasto" required />
-        <input type="number" id="monto" placeholder="Monto en pesos" required />
-        <input type="date" id="fecha" required />
+        <label for="usuario">Usuario:</label>
+        <select id="usuario" name="usuario" required title="Seleccione el usuario">
+          <!-- Las opciones deben ser llenadas dinámicamente desde la tabla de usuarios -->
+        </select>
+
         <button type="submit">Guardar Gasto</button>
+
       </form>
 
       <h2>Lista de Gastos Registrados</h2>

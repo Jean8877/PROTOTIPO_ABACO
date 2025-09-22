@@ -99,7 +99,7 @@
         <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
         <div>
             <i class="bi bi-person-circle"></i>
-            <span class="me-3"><strong>Karina</strong></span>
+            <span class="me-3"><strong>Usuario</strong></span>
             <i class="bi bi-bell-fill me-3" style="cursor:pointer;" onclick="swal('Notificaciones')"></i>
         </div>
     </header>
@@ -259,50 +259,6 @@
             tablaProducto.classList.add('d-none');
         });
 
-        // Funcionalidad Eliminar
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.btn-delete')) {
-                const row = e.target.closest('tr');
-                swal({
-                    title: "¿Eliminar donación?",
-                    text: "Esta acción no se puede deshacer.",
-                    icon: "warning",
-                    buttons: ["Cancelar", "Eliminar"],
-                    dangerMode: true,
-                }).then((willDelete) => {
-                    if (willDelete) {
-                        row.remove();
-                        swal("Donación eliminada", { icon: "success" });
-                    }
-                });
-            }
-        });
-
-        // Funcionalidad Editar
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.btn-edit')) {
-                const row = e.target.closest('tr');
-                const celdas = row.querySelectorAll('td');
-                const valores = Array.from(celdas).map(td => td.innerText);
-
-                swal({
-                    title: "Editar donación",
-                    content: {
-                        element: "input",
-                        attributes: {
-                            value: valores[1] + " - " + valores[2],
-                            placeholder: "Producto o monto",
-                        },
-                    },
-                    buttons: ["Cancelar", "Guardar"]
-                }).then((nuevoValor) => {
-                    if (nuevoValor) {
-                        celdas[1].innerText = nuevoValor; // reemplaza columna 2 (Producto/Donante)
-                        swal("Actualizado correctamente", { icon: "success" });
-                    }
-                });
-            }
-        });
     </script>
 </body>
 

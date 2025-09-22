@@ -124,6 +124,51 @@ def registro_tipo_usuario():
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
+# ============================================================
+# ===============   RUTA PARA ACTUALIZAR TIPO USUARIO   ========
+# ============================================================
+@app.route("/actualizar_tipo_usuario/<codigo>", methods=["PUT"])
+def actualizar_tipo_usuario(codigo):
+    """
+    Actualizar un tipo de usuario
+    ---
+    tags:
+      - tipo_usuario
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Tipo de usuario actualizado
+    """
+    try:
+        data = request.get_json()
+        descripcion = data['descripcion']
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("""
+                    UPDATE tipo_usuario
+                    SET descripcion = %s
+                    WHERE id_tipo_usuario = %s
+                    """, (descripcion, codigo))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'mensaje': 'Tipo de usuario actualizado exitosamente'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
 
 # ============================================================
 # ===============   RUTA PARA TIPO_DOCUMENTO   ===============
@@ -157,7 +202,7 @@ def tipo_documento():
         return jsonify ({'mensaje': 'Error'})
 
 # ============================================================
-# ===============   RUTA PARA REGISTRO TIPO_DOCUMENTO   ===============
+# ===========   RUTA PARA REGISTRO TIPO_DOCUMENTO   ==========
 # ============================================================
 
 @app.route("/registro_tipo_documento", methods=['POST'])
@@ -198,7 +243,55 @@ def registro_tipo_documento():
         return jsonify({'mensaje': 'Error'})
     
 # ============================================================
-# ===============   RUTA PARA ELIMINAR TIPO_DOCUMENTO   ===============
+# ===============   RUTA PARA ACTUALIZAR TIPO USUARIO   ========
+# ============================================================
+@app.route("/actualizar_tipo_documento/<codigo>", methods=["PUT"])
+def actualizar_tipo_documento(codigo):
+    """
+    Actualizar un tipo de documento
+    ---
+    tags:
+      - tipo_documento
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre:
+              type: string
+            abreviatura:
+              type: string
+    responses:
+      200:
+        description: Tipo de documento actualizado
+    """
+    try:
+        data = request.get_json()
+        nombre = data['nombre']
+        abreviatura = data['abreviatura']
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("""
+                    UPDATE tipo_documento
+                    SET nombre = %s, abreviatura = %s
+                    WHERE id_tipo_documento = %s
+                    """, (nombre, abreviatura, codigo))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'mensaje': 'Tipo de documento actualizado exitosamente'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
+# ============================================================
+# ===========   RUTA PARA ELIMINAR TIPO_DOCUMENTO   =============
 # ============================================================
 
 @app.route("/eliminar_tipo_documento/<int:codigo>", methods=['DELETE'])
@@ -340,6 +433,54 @@ def registro_tipo_gasto():
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
+# ============================================================
+# =============== ACTUALIZAR TIPO_GASTO =======================
+# ============================================================
+
+@app.route("/actualizar_tipo_gasto/<int:codigo>", methods=['PUT'])
+def actualizar_tipo_gasto(codigo):
+    """
+    Actualizar un tipo de gasto
+    ---
+    tags:
+      - tipo_gasto
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre:
+              type: string
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Tipo de gasto actualizado
+    """
+    try:
+        data = request.get_json()
+        nombre = data['nombre']
+        descripcion = data['descripcion']
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("""
+                    UPDATE tipo_gasto
+                    SET nombre = %s, descripcion = %s
+                    WHERE id_tipo_gasto = %s
+                    """, (nombre, descripcion, codigo))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'mensaje': 'Tipo de gasto actualizado exitosamente'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
 
 # ============================================================
 # =============== ELIMINAR TIPO_GASTO =======================
@@ -445,6 +586,46 @@ def registro_estado():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
+# ============================================================
+# ===============   ACTUALIZAR ESTADO   ======================
+# ============================================================
+
+@app.route("/actualizar_estado/<int:codigo>", methods=['PUT'])
+def actualizar_estado(codigo):
+    """
+    Actualizar un estado
+    ---
+    tags:
+      - estado
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            nombre:
+              type: string
+            descripcion:
+              type: string
+    responses:
+      200:
+        description: Estado registrado
+    """
+    try:
+        data = request.get_json()
+        nombre = data['nombre']
+        descripcion = data['descripcion']
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("UPDATE estado SET nombre = %s, descripcion = %s WHERE id_estado = %s", (nombre, descripcion, codigo))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'mensaje': 'Registro actualizado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
 
 # ============================================================
 # ===============   ELIMINAR ESTADO   ===============
@@ -884,7 +1065,9 @@ def actualizar_usuarios(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar usuario
+# ============================================================
+# ===============   ELIMINAR USUARIO   ======================
+# ============================================================
 @app.route("/eliminar_usuarios/<int:codigo>", methods=['DELETE'])
 def eliminar_usuarios(codigo):
     """Eliminar un usuario por su ID
@@ -913,7 +1096,7 @@ def eliminar_usuarios(codigo):
         return jsonify({'mensaje': 'Error'})
       
   # ============================================================
-  # =============   RUTA PARA CONSULTAR TIPOS DE DONANTE   ===========
+  # ========  RUTA PARA CONSULTAR TIPOS DE DONANTE   ===========
   # ============================================================
 
 @app.route("/tipo_donante", methods=['GET'])
@@ -1093,9 +1276,8 @@ def donante():
         return jsonify ({'Mensaje': 'Error'})
 
 # ============================================================
-# =============   RUTA PARA CONSULTAR DONANTES POR ID   ===========
+# ==========  RUTA PARA CONSULTAR DONANTES POR ID   ===========
 # ============================================================
-
 @app.route("/donante/<int:codigo>", methods=['GET'])
 def donante_por_id(codigo):
     """
@@ -1128,9 +1310,8 @@ def donante_por_id(codigo):
         return jsonify({'mensaje': 'Error'})
 
 # ============================================================
-# =============   RUTA PARA REGISTRAR DONANTE   ===========
+# =============   RUTA PARA REGISTRAR DONANTE   ==============
 # ============================================================
-
 @app.route("/registro_donante", methods=['POST'])
 def registro_donante():
     """
@@ -1194,7 +1375,6 @@ def registro_donante():
 # ============================================================
 # =============   RUTA PARA ACTUALIZAR DONANTE   ===========
 # ============================================================
-
 @app.route("/actualizar_donante/<codigo>", methods=["PUT"])
 def actualizar_donante(codigo):
     """
@@ -1256,10 +1436,10 @@ def actualizar_donante(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
+
 # ============================================================
 # =============   RUTA PARA ELIMINAR DONANTE   ===========
 # ============================================================
-
 @app.route("/eliminar_donante/<int:codigo>", methods=['DELETE'])
 def eliminar_donante(codigo):
     """
@@ -1289,11 +1469,9 @@ def eliminar_donante(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
-
 # ============================================================
 # =========   RUTA PARA CONSULTAR TIPO DONACION   ===========
 # ============================================================
-
 @app.route("/tipo_donacion", methods=['GET'])
 def tipo_donacion():
     """
@@ -1651,9 +1829,8 @@ def eliminar_donacion(codigo):
 
 
 # ============================================================
-# ============= DONACION_MONETARIA ===========
+# ================= DONACION_MONETARIA =======================
 # ============================================================
-
 @app.route("/donacion_monetaria", methods=['GET'])
 def donacion_monetaria():
     """
@@ -1681,12 +1858,9 @@ def donacion_monetaria():
         return jsonify ({'mensaje': 'Error'})
 
 
-
-
 # ============================================================
-# ============= REGISTRO DONACION MONETARIA ===========
+# ============= REGISTRO DONACION MONETARIA =================
 # ============================================================
-
 @app.route("/registro_donacion_monetaria", methods=['POST'])
 def registro_donacion_monetaria():
     """
@@ -1748,7 +1922,6 @@ def registro_donacion_monetaria():
 # ============================================================
 # =============   ACTUALIZAR DONACION MONETARIA ===========
 # ============================================================
-
 @app.route("/actualizar_donacion_monetaria/<codigo>", methods=["PUT"])
 def actualizar_donacion_monetaria(codigo):
     """
@@ -1814,7 +1987,6 @@ def actualizar_donacion_monetaria(codigo):
 # ============================================================
 # =============   ELIMINAR DONACION MONETARIA ===========
 # ============================================================
-  
 @app.route("/eliminar_donacion_monetaria/<int:codigo>", methods=['DELETE'])
 def eliminar_donacion_monetaria(codigo):
     """
@@ -1846,7 +2018,6 @@ def eliminar_donacion_monetaria(codigo):
 # ============================================================
 # =============   CERTIFICADO DONANTE ===========
 # ============================================================
-
 @app.route("/certificado_donante", methods=['GET'])
 def certificado_donante():
     """
@@ -1877,8 +2048,6 @@ def certificado_donante():
 # ============================================================
 # =============   CERTIFICADO DONANTE POR ID  ===========
 # ============================================================
-
-
 @app.route("/certificado_donante/<int:codigo>", methods=['GET'])
 def certificado_donante_por_id(codigo):
     """
@@ -1913,8 +2082,7 @@ def certificado_donante_por_id(codigo):
 
 # ============================================================
 # =============  ACTUALIZAR CERTIFICADO DONANTE  ===========
-# ============================================================
-
+# ===========================================================
 @app.route("/registro_certificado_donante", methods=['POST'])
 def registro_certificado_donante():
     """
@@ -1972,7 +2140,6 @@ def registro_certificado_donante():
 # ============================================================
 # =============   ACTUALIZAR CERTIFICADO DONANTE  ===========
 # ============================================================
-
 @app.route("/actualizar_certificado_donante/<codigo>", methods=["PUT"])
 def actualizar_certificado_donante(codigo):
     """
@@ -2037,7 +2204,6 @@ def actualizar_certificado_donante(codigo):
 # ============================================================
 # =============   ELIMINAR CERTIFICADO DONANTE  ===========
 # ============================================================
-
 @app.route("/eliminar_certificado_donante/<int:codigo>", methods=['DELETE'])
 def eliminar_certificado_donante(codigo):
     """
@@ -2070,7 +2236,6 @@ def eliminar_certificado_donante(codigo):
 # ============================================================
 # =============  RUTA CATEGORIA PRODUCTO  ===========
 # ============================================================
-
 @app.route("/categoria_producto", methods=['GET'])
 def categoria_producto():
     """
@@ -2101,7 +2266,6 @@ def categoria_producto():
 # ============================================================
 # ============= RUTA REGISTRO CATEGORIA PRODUCTO ===========
 # ============================================================
-
 @app.route("/registro_categoria_producto", methods=['POST'])
 def registro_categoria_producto():
     """
@@ -2139,10 +2303,8 @@ def registro_categoria_producto():
         return jsonify({'mensaje': 'Error'})
 
 # ============================================================
-# =============  RUTA ACTUALIZAR CATEGORIA PRODUCTO  ===========
+# =============  RUTA ACTUALIZAR CATEGORIA PRODUCTO  =========
 # ============================================================
-
-
 @app.route("/actualizar_categoria_producto/<codigo>", methods=["PUT"])
 def actualizar_categoria_producto(codigo):
     """
@@ -2185,9 +2347,8 @@ def actualizar_categoria_producto(codigo):
 
 
 # ============================================================
-# =============   RUTA ELIMINAR CATEGORIA PRODUCTO  ===========
+# =============   RUTA ELIMINAR CATEGORIA PRODUCTO  ==========
 # ============================================================
-
 @app.route("/eliminar_categoria_producto/<int:codigo>", methods=['DELETE'])
 def eliminar_categoria_producto(codigo):
     """
@@ -2295,7 +2456,6 @@ def registro_subcategoria_producto():
 # ============================================================
 # =============  RUTA ACTUALIZAR SUBCATEGORIA ===========
 # ============================================================
-
 @app.route("/actualizar_subcategoria_producto/<codigo>", methods=["PUT"])
 def actualizar_subcategoria_producto(codigo):
     """
@@ -2342,7 +2502,6 @@ def actualizar_subcategoria_producto(codigo):
 # ============================================================
 # ================ ELIMINAR SUBCATEGORIA  ====================
 # ============================================================
-
 @app.route("/eliminar_subcategoria_producto/<int:codigo>", methods=['DELETE'])
 def eliminar_subcategoria_producto(codigo):
     """
@@ -2375,7 +2534,6 @@ def eliminar_subcategoria_producto(codigo):
 # ============================================================
 # ============= RUTA FECHA VENCIMIENTO  ===========
 # ============================================================
-
 @app.route("/fecha_vencimiento", methods=['GET'])
 def fecha_vencimiento():
     """
@@ -2487,7 +2645,6 @@ def registro_fecha_vencimiento():
 # ============================================================
 # ============= RUTA ELIMINAR FECHA VENCIMIENTO   ===========
 # ============================================================
-
 @app.route("/eliminar_fecha_vencimiento/<int:codigo>", methods=['DELETE'])
 def eliminar_fecha_vencimiento(codigo):
     """
@@ -2681,7 +2838,6 @@ def eliminar_acta_vencimiento(codigo):
 # ============================================================
 # ================= RUTA DE PARA BODEGA   ====================
 # ============================================================
-
 @app.route("/bodega", methods=['GET'])
 def bodega():
     """
@@ -2711,7 +2867,7 @@ def bodega():
 
 
 # ============================================================
-# ============= RUTA DE BODEGA POR ID   ================
+# ============= RUTA DE BODEGA POR ID   =====================
 # ============================================================
 
 @app.route("/bodega/<int:codigo>", methods=['GET'])
