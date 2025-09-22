@@ -582,19 +582,15 @@ async function detalle_donacion_producto() {
     }
 }
 
+//========== agregar ==========//
 
 //==================   Tipo Donante    =====================//
 
-function agregar_tipo_donante(tipo_donante) {
-    let info ="";
-    tipo_donante.tipo_donante.forEach(i => {
-        info +=`
-        <tr>
-            <td>${i.ID}</td>
-            <td>${i.tipo_donante}</td>
-            <td>${i.id_descripcion}</td>
-        </tr>
-        `;
-    });
-    document.getElementById("tbodydetalle_donacion_producto").innerHTML = info;
+async function agregar_tipo_donante() {
+    try {
+        const 
+    }
 }
+
+
+
