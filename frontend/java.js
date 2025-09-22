@@ -591,9 +591,8 @@ function agregar_tipo_donante(tipo_donante) {
         info +=`
         <tr>
             <td>${i.ID}</td>
-            <td>${i.id_donante}</td>
+            <td>${i.tipo_donante}</td>
             <td>${i.id_descripcion}</td>
-            <td>${i.cantidad}</td>
         </tr>
         `;
     });
