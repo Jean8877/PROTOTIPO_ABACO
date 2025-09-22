@@ -1,12 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS # para permitir el acceso a la API desde el frontend
 import pymysql
+# import pymysql.cursors
 import bcrypt # incriptar contrasena
 from flasgger import Swagger
 
 app = Flask(__name__)
 CORS(app)
-Swagger = Swagger(app)
+# CORS(app, origins=["http://localhost:65233/", "http://10.4.215.103:5000"])
+
+swagger = Swagger(app)
 
 #conexion a la base de datos
 def conectar(vhost, vuser, vpass, vdb):
@@ -18,8 +21,10 @@ def conectar(vhost, vuser, vpass, vdb):
 def index():
     return jsonify({"mensaje": "API del Banco de Alimentos"})
 
+# ============================================================
+# ===============   RUTA PARA TIPO_USUARIO   ===============
+# ============================================================
 
-# consulta de tipo de usuario
 @app.route("/tipo_usuario", methods=['GET'])
 def tipo_usuario():
     """
@@ -43,10 +48,12 @@ def tipo_usuario():
         else:
           return jsonify ({'mensaje': 'Tipo de usuario no encontrado'})
     except Exception as ex:
-        print(ex) # imprime el error
+        print(ex)
         return jsonify ({'mensaje': 'Error'})
     
-
+# ============================================================
+# ===============   ELIMINAR TIPO USUARIO   ===============
+# ============================================================
 # Ruta para eliminar registro por ID tipo_usuario
 @app.route("/eliminar_tipo_usuario/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_usuario(codigo):
@@ -71,13 +78,16 @@ def eliminar_tipo_usuario(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado el tipo de usuario exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
 
-    # Ruta para registrar un nuevo tipo_usuario
+# ============================================================
+# ===============   RUTA PARA REGISTRO TIPO USUARIO   ========
+# ============================================================
+
 @app.route("/registro_tipo_usuario", methods=['POST'])
 def registro_tipo_usuario():
     """
@@ -103,17 +113,22 @@ def registro_tipo_usuario():
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO tipo_usuario (descripcion) VALUES (%s)", (descripcion,))
+        cur.execute("""
+                    INSERT INTO tipo_usuario (descripcion) 
+                    VALUES (%s)""", (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+        return jsonify({'mensaje': 'Registro agregado exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
 
-# ruta de tipo_documento
+# ============================================================
+# ===============   RUTA PARA TIPO_DOCUMENTO   ===============
+# ============================================================
+
 @app.route("/tipo_documento", methods=['GET'])
 def tipo_documento():
     """
@@ -141,7 +156,10 @@ def tipo_documento():
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
 
-# Ruta para registrar un nuevo tipo_documento
+# ============================================================
+# ===============   RUTA PARA REGISTRO TIPO_DOCUMENTO   ===============
+# ============================================================
+
 @app.route("/registro_tipo_documento", methods=['POST'])
 def registro_tipo_documento():
     """
@@ -162,7 +180,7 @@ def registro_tipo_documento():
                 type: string
     responses:
       200:
-        description: Tipo de documento registrado
+        description: Tipo de documento registrado exitosamente
     """
     try:
         data = request.get_json()
@@ -174,12 +192,15 @@ def registro_tipo_documento():
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+        return jsonify({'mensaje': 'Registro agregado exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# Ruta para eliminar tipo_documento
+# ============================================================
+# ===============   RUTA PARA ELIMINAR TIPO_DOCUMENTO   ===============
+# ============================================================
+
 @app.route("/eliminar_tipo_documento/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_documento(codigo):
     """
@@ -204,12 +225,19 @@ def eliminar_tipo_documento(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# ruta tipo_gasto
+
+
+
+# ============================================================
+# ===============   RUTA PARA TIPO_GASTO   ===============
+# ============================================================
+
+
 @app.route("/tipo_gasto", methods=['GET'])
 def tipo_gasto():
     """
@@ -236,7 +264,10 @@ def tipo_gasto():
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
 
-# ruta para consultar tipo_gasto por id
+# ============================================================
+# ===============   RUTA PARA CONSULTAR TIPO_GASTO POR ID   ===============
+# ============================================================
+
 @app.route("/tipo_gasto/<int:codigo>", methods=['GET'])
 def tipo_gasto_por_id(codigo):
     """
@@ -268,8 +299,10 @@ def tipo_gasto_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
+# ============================================================
+# ===============   RUTA PARA REGISTRAR TIPO_GASTO   ===============
+# ============================================================
 
-# Ruta para registrar un nuevo tipo_gasto
 @app.route("/registro_tipo_gasto", methods=['POST'])
 def registro_tipo_gasto():
     """
@@ -308,7 +341,10 @@ def registro_tipo_gasto():
         return jsonify({'mensaje': 'Error'})
     
 
-# Ruta para eliminar tipo_gasto
+# ============================================================
+# =============== ELIMINAR TIPO_GASTO =======================
+# ============================================================
+
 @app.route("/eliminar_tipo_gasto/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_gasto(codigo):
     """
@@ -337,8 +373,10 @@ def eliminar_tipo_gasto(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
+# ============================================================
+# ===============   ESTADO   ===============
+# ============================================================
 
-# ruta para estado
 @app.route("/estado", methods=['GET'])
 def estado():
     """
@@ -364,8 +402,12 @@ def estado():
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
+      
 
-# Ruta para registrar un nuevo estado
+# ============================================================
+# ===============   REGISTRAR ESTADO   ===============
+# ============================================================
+
 @app.route("/registro_estado", methods=['POST'])
 def registro_estado():
     """
@@ -403,7 +445,11 @@ def registro_estado():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar estado
+
+# ============================================================
+# ===============   ELIMINAR ESTADO   ===============
+# ============================================================
+
 @app.route("/eliminar_estado/<int:codigo>", methods=['DELETE'])
 def eliminar_estado(codigo):
     """
@@ -433,7 +479,11 @@ def eliminar_estado(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
-# ruta de gasto
+
+# ============================================================
+# ===============   RUTA PARA GASTO   ===============
+# ============================================================
+
 @app.route("/gasto", methods=['GET'])
 def gasto():
     """
@@ -460,7 +510,11 @@ def gasto():
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
 
-# consulta de gasto por id
+
+# ============================================================
+# ===============   RUTA PARA CONSULTAR GASTO POR ID   ===============
+# ============================================================
+
 @app.route("/gasto/<int:codigo>", methods=['GET'])
 def gasto_por_id(codigo):
     """
@@ -492,7 +546,11 @@ def gasto_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nuevo gasto
+
+# ============================================================
+# ===============   RUTA PARA REGISTRAR GASTO   ===============
+# ============================================================
+
 @app.route("/registro_gasto", methods=['POST'])
 def registro_gasto():
     """
@@ -541,7 +599,11 @@ def registro_gasto():
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# Ruta para actualizar un gasto
+
+# ============================================================
+# ===============   RUTA PARA ACTUALIZAR GASTO   ===============
+# ============================================================
+
 @app.route("/actualizar_gasto/<codigo>", methods=["PUT"])
 def actualizar_gasto(codigo):
     """
@@ -595,7 +657,11 @@ def actualizar_gasto(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar gasto
+
+# ============================================================
+# ===============   ELIMINAR GASTO   ===============
+# ============================================================
+
 @app.route("/eliminar_gasto/<int:codigo>", methods=['DELETE'])
 def eliminar_gasto(codigo):
     """
@@ -624,7 +690,10 @@ def eliminar_gasto(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# ruta consultar usuario 
+# ============================================================
+# ===========   RUTA PARA CONSULTAR USUARIOS   ==============
+# ============================================================
+
 @app.route("/usuarios", methods=['GET'])
 def usuarios():
     """
@@ -650,6 +719,10 @@ def usuarios():
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
+      
+# ============================================================
+# =======   RUTA PARA CONSULTAR USUARIO POR ID   ============
+# ============================================================
 
 @app.route("/usuarios/<int:codigo>", methods=['GET'])
 def usuario_por_id(codigo):
@@ -682,7 +755,10 @@ def usuario_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nuevo usuario
+# ============================================================
+# ===============   RUTA PARA REGISTRAR USUARIOS   ===============
+# ============================================================
+
 @app.route("/registro_usuarios", methods=['POST'])
 def registro_usuarios():
     """
@@ -697,11 +773,11 @@ def registro_usuarios():
         schema:
           type: object
           properties:
-            id_usuario:
-              type: string
             nombre_completo:
               type: string
             numero_documento:
+              type: string
+            correo:
               type: string
             contrasena:
               type: string
@@ -717,7 +793,6 @@ def registro_usuarios():
     """
     try:
         data = request.get_json()
-        id_usuario = data['id_usuario']
         nombre_completo = data['nombre_completo']
         numero_documento = data['numero_documento']
         correo = data['correo']
@@ -725,17 +800,32 @@ def registro_usuarios():
         tipo_usuario = data['tipo_usuario']
         tipo_documento = data['tipo_documento']
         estado = data['estado']
+        
+        # Validación extra
+        if not all([nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado]):
+            return jsonify({'mensaje': 'Faltan campos obligatorios'}), 400
+
+        # ENCRIPTAR CONTRASEÑA
+        hashed_password = bcrypt.hashpw(contrasena.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO usuario (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+            INSERT INTO usuario (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (nombre_completo, numero_documento, correo, hashed_password, tipo_usuario, tipo_documento, estado))
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
-# Ruta para actualizar un usuario
+
+# ============================================================
+# =============   RUTA PARA ACTUALIZAR USUARIOS   ===========
+# ============================================================
+
 @app.route("/actualizar_usuarios/<codigo>", methods=["PUT"])
 def actualizar_usuarios(codigo):
     """
@@ -783,8 +873,9 @@ def actualizar_usuarios(codigo):
         estado = data['estado']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE usuario SET nombre_completo= %s, numero_documento= %s, correo= %s, contrasena= %s, tipo_usuario= %s, tipo_documento= %s, estado= %s WHERE id_usuario= %s",
-                    (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado, codigo))
+        cur.execute("""
+                    UPDATE usuario SET nombre_completo= %s, numero_documento= %s, correo= %s, contrasena= %s, tipo_usuario= %s, tipo_documento= %s, estado= %s WHERE id_usuario= %s
+                    """, (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -820,8 +911,11 @@ def eliminar_usuarios(codigo):
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
+      
+  # ============================================================
+  # =============   RUTA PARA CONSULTAR TIPOS DE DONANTE   ===========
+  # ============================================================
 
-# ruta de tipo_donante
 @app.route("/tipo_donante", methods=['GET'])
 def tipo_donante():
     """
@@ -847,7 +941,11 @@ def tipo_donante():
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
-# Ruta para registrar un nuevo tipo_donante
+      
+# ============================================================
+# ========   RUTA PARA REGISTRAR TIPOS DE DONANTE   ==========
+# ============================================================
+  
 @app.route("/registro_tipo_donante", methods=['POST'])
 def registro_tipo_donante():
     """
@@ -873,7 +971,9 @@ def registro_tipo_donante():
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO tipo_donante (descripcion) VALUES (%s)", (descripcion,))
+        cur.execute("""
+                    INSERT INTO tipo_donante (descripcion) VALUES (%s)
+                    """, (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -881,7 +981,11 @@ def registro_tipo_donante():
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
-# Ruta para actualizar un tipo donante
+
+# ============================================================
+# ======   RUTA PARA ACTUALIZAR TIPOS DE DONANTE   ==========
+# ============================================================
+
 @app.route("/actualizar_tipo_donante/<codigo>", methods=["PUT"])
 def actualizar_tipo_donante(codigo):
     """
@@ -911,8 +1015,9 @@ def actualizar_tipo_donante(codigo):
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
-                    (descripcion,codigo))
+        cur.execute("""
+                    UPDATE tipo_donante SET descripcion= %s WHERE id_tipo_donante= %s
+                    """, (descripcion,codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -921,7 +1026,11 @@ def actualizar_tipo_donante(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar tipo_donante
+
+# ============================================================
+# ========   RUTA PARA ELIMINAR TIPOS DE DONANTE   ===========
+# ============================================================
+
 @app.route("/eliminar_tipo_donante/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_donante(codigo):
     """
@@ -941,7 +1050,9 @@ def eliminar_tipo_donante(codigo):
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("DELETE FROM tipo_donante WHERE id_tipo_donante = %s", (codigo,))
+        cur.execute("""
+                  DELETE FROM tipo_donante WHERE id_tipo_donante = %s
+                  """, (codigo,))
         conn.commit()
         cur.close()
         conn.close()
@@ -951,6 +1062,9 @@ def eliminar_tipo_donante(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
+# ============================================================
+# =============   RUTA PARA CONSULTAR DONANTES   ===========
+# ============================================================
 
 @app.route("/donante", methods=['GET'])
 def donante():
@@ -977,6 +1091,10 @@ def donante():
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
+
+# ============================================================
+# =============   RUTA PARA CONSULTAR DONANTES POR ID   ===========
+# ============================================================
 
 @app.route("/donante/<int:codigo>", methods=['GET'])
 def donante_por_id(codigo):
@@ -1009,7 +1127,10 @@ def donante_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nuevo donante
+# ============================================================
+# =============   RUTA PARA REGISTRAR DONANTE   ===========
+# ============================================================
+
 @app.route("/registro_donante", methods=['POST'])
 def registro_donante():
     """
@@ -1027,6 +1148,8 @@ def registro_donante():
             id_donante:
               type: string
             nombre:
+              type: string
+            numero_documento:
               type: string
             telefono:
               type: string
@@ -1047,6 +1170,7 @@ def registro_donante():
     try:
         data = request.get_json()
         nombre = data['nombre']
+        numero_documento = data['numero_documento']
         telefono = data['telefono']
         correo = data['correo']
         direccion = data['direccion']
@@ -1055,7 +1179,9 @@ def registro_donante():
         tipo_donante = data['tipo_donante']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO donante (nombre, telefono, correo, direccion, estado, tipo_documento, tipo_donante) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre, telefono, correo, direccion, estado, tipo_documento, tipo_donante))
+        cur.execute("""
+                    INSERT INTO donante (nombre, numero_documento, telefono, correo, direccion, estado, tipo_documento, tipo_donante)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", (nombre, numero_documento, telefono, correo, direccion, estado, tipo_documento, tipo_donante))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -1064,7 +1190,11 @@ def registro_donante():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar un donante
+
+# ============================================================
+# =============   RUTA PARA ACTUALIZAR DONANTE   ===========
+# ============================================================
+
 @app.route("/actualizar_donante/<codigo>", methods=["PUT"])
 def actualizar_donante(codigo):
     """
@@ -1085,9 +1215,11 @@ def actualizar_donante(codigo):
           properties:
             nombre:
               type: string
+            numero_documento:
+              type: string
             telefono:
               type: string
-            gmail:
+            correo:
               type: string
             direccion:
               type: string
@@ -1104,6 +1236,7 @@ def actualizar_donante(codigo):
     try:
         data = request.get_json()
         nombre = data['nombre']
+        numero_documento = data['numero_documento']
         telefono = data['telefono']
         correo = data['correo']
         direccion = data['direccion']
@@ -1112,8 +1245,9 @@ def actualizar_donante(codigo):
         tipo_donante = data['tipo_donante']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE donante SET nombre= %s, telefono= %s, correo= %s, direccion= %s, estado= %s, tipo_documento= %s, tipo_donante= %s WHERE id_donante= %s",
-                    (nombre, telefono, correo, direccion, estado, tipo_documento, tipo_donante, codigo))
+        cur.execute("""
+                    UPDATE donante SET nombre= %s, numero_documento= %s, telefono= %s, correo= %s, direccion= %s, estado= %s, tipo_documento= %s, tipo_donante= %s WHERE id_donante= %s
+                    """, (nombre, numero_documento, telefono, correo, direccion, estado, tipo_documento, tipo_donante, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -1122,7 +1256,10 @@ def actualizar_donante(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar donante
+# ============================================================
+# =============   RUTA PARA ELIMINAR DONANTE   ===========
+# ============================================================
+
 @app.route("/eliminar_donante/<int:codigo>", methods=['DELETE'])
 def eliminar_donante(codigo):
     """
@@ -1152,7 +1289,11 @@ def eliminar_donante(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
-# ruta de tipo_donacion
+
+# ============================================================
+# =========   RUTA PARA CONSULTAR TIPO DONACION   ===========
+# ============================================================
+
 @app.route("/tipo_donacion", methods=['GET'])
 def tipo_donacion():
     """
@@ -1165,7 +1306,7 @@ def tipo_donacion():
         description: lista de tipos de donación
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','Es1084734914','proyecto')
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_donacion") 
         datos = cur.fetchall()
@@ -1179,7 +1320,12 @@ def tipo_donacion():
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
       
-# Ruta para registrar un nuevo tipo_donacion
+
+
+# ============================================================
+# ==========   RUTA PARA REGISTRAR TIPO DONACION   ===========
+# ============================================================
+
 @app.route("/registro_tipo_donacion", methods=['POST'])
 def registro_tipo_donacion():
     """
@@ -1205,15 +1351,22 @@ def registro_tipo_donacion():
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO tipo_donacion (descripcion) VALUES (%s)", (descripcion,))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO tipo_donacion (descripcion) 
+                    VALUES (%s)""", (descripcion,))
+        conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+        return jsonify({'mensaje': 'Registro agregado correctamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
-# Ruta para actualizar un tipo donacion
+
+
+# ============================================================
+# =========   RUTA PARA ACTUALIZAR TIPO DONACION   ===========
+# ============================================================
+
 @app.route("/actualizar_tipo_donacion/<codigo>", methods=["PUT"])
 def actualizar_tipo_donacion(codigo):
     """
@@ -1243,17 +1396,21 @@ def actualizar_tipo_donacion(codigo):
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE tipo_donacion SET descripcion= %s WHERE codigo= %s",
+        cur.execute("""
+                    UPDATE tipo_donacion SET descripcion= %s WHERE codigo= %s""",
                     (descripcion,codigo))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
+        return jsonify({'mensaje': 'Registro Actualizado correctamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar tipo_donacion
+# ============================================================
+# ===========   RUTA PARA ELIMINAR TIPO DONACION   ===========
+# ============================================================
+
 @app.route("/eliminar_tipo_donacion/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_donacion(codigo):
     """
@@ -1277,11 +1434,14 @@ def eliminar_tipo_donacion(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado correctamente'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al eliminar'})
 
+# ============================================================
+# =============   RUTA PARA CONSULTAR DONACIONES   ===========
+# ============================================================
 
 @app.route("/donacion", methods=['GET'])
 def donacion():
@@ -1295,20 +1455,24 @@ def donacion():
         description: lista de donaciones
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','Es1084734914','proyecto',)
         cur= conn.cursor()
         cur.execute("SELECT * FROM donacion")
         datos= cur.fetchall()
         cur.close()
         conn.close()
         if datos:
-            return jsonify ({'donacion': datos, 'mensaje': 'Lista De donacion'})
+            return jsonify({'donacion': datos, 'mensaje': 'donacion'})
         else:
             return jsonify ({'mensaje': 'Donacion no encontrada'})
     except Exception as ex:
         print(ex)
-        return jsonify ({'Mensaje': 'Error'})
-# Ruta para obtener donacion por id
+        return jsonify ({'Mensaje': 'Error al consultar'})
+      
+# ============================================================
+# ========   RUTA PARA CONSULTAR DONACION POR ID   ==========
+# ============================================================
+
 @app.route("/donacion/<int:codigo>", methods=['GET'])
 def donacion_por_id(codigo):
     """
@@ -1338,9 +1502,12 @@ def donacion_por_id(codigo):
             return jsonify({'mensaje': 'Donación no encontrada'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al consultar'})
 
-# Ruta para registrar un nueva donacion
+# ============================================================
+# =============   RUTA PARA REGISTRAR DONACION   ===========
+# ============================================================
+
 @app.route("/registro_donacion", methods=['POST'])
 def registro_donacion():
     """
@@ -1357,41 +1524,45 @@ def registro_donacion():
           properties:
             id_donacion:
               type: number
-            cantidad_donada:
-              type: string
-            forma_donacion:
-              type: string
-            observaciones:
-              type: string
-            responsable:
-              type: string
             donante:
               type: string
+            fecha:
+                type: string
+            observaciones:
+                type: string
+            usuario:
+                type: string
+            tipo_donacion:
+                type: string
     responses:
       200:
         description: donación registrada
     """
     try:
         data = request.get_json()
-        id_donacion = data['id_donacion']
-        cantidad_donada = data['cantidad_donada']
-        fecha_donacion = data['fecha_donacion']
-        forma_donacion = data['forma_donacion']
-        observaciones = data['observaciones']
-        responsable = data['responsable']
         donante = data['donante']
+        fecha = data['fecha']
+        observaciones = data['observaciones']
+        usuario = data['usuario']
+        tipo_donacion = data['tipo_donacion']
+        
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO donacion (id_donacion, cantidad_donada, fecha_donacion, forma_donacion, observaciones, responsable, donante) VALUES (%s, %s, %s, %s, %s, %s, %s)", (id_donacion, cantidad_donada, fecha_donacion, forma_donacion, observaciones, responsable, donante))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO donacion (donante, fecha, observaciones, usuario, tipo_donacion)
+                    VALUES (%s, %s, %s, %s, %s)""", (donante, fecha, observaciones, usuario, tipo_donacion))
+        conn.commit() 
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al registrar la donación'})
 
-# Ruta para actualizar donacion
+# # ============================================================
+# =============   RUTA PARA ACTUALIZAR DONACION   ===========
+# ============================================================
+
 @app.route("/actualizar_donacion/<codigo>", methods=["PUT"])
 def actualizar_donacion(codigo):
     """
@@ -1412,17 +1583,15 @@ def actualizar_donacion(codigo):
           properties:
             id_donacion:
               type: string
-            cantidad_donada:
+            donante:
               type: string
-            fecha_donacion:
-              type: string
-            forma_donacion:
+            fecha:
               type: string
             observaciones:
               type: string
-            responsable:
+            usuario:
               type: string
-            donante:
+            tipo_donacion:
               type: string
     responses:
       200:
@@ -1431,25 +1600,27 @@ def actualizar_donacion(codigo):
     try:
         data = request.get_json()
         id_donacion = data['id_donacion']
-        cantidad_donada = data['cantidad_donada']
-        fecha_donacion = data['fecha_donacion']
-        forma_donacion = data['forma_donacion']
-        observaciones = data['observaciones']
-        responsable = data['responsable']
         donante = data['donante']
+        fecha = data['fecha']
+        observaciones = data['observaciones']
+        usuario = data['usuario']
+        tipo_donacion = data['tipo_donacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE donacion SET cantidad_donada= %s, fecha_donacion= %s, forma_donacion= %s, observaciones= %s, responsable= %s, donante= %s WHERE id_donacion= %s", 
-                    (cantidad_donada, fecha_donacion, forma_donacion, observaciones, responsable, donante, codigo))
+        cur.execute("""UPDATE donacion SET donante= %s, fecha= %s, observaciones= %s, usuario= %s, tipo_donacion= %s WHERE id_donacion= %s""",
+                    (donante, fecha, observaciones, usuario, tipo_donacion, id_donacion))
         conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro Actualizado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al actualizar la donación'})
 
-# Ruta para eliminar donacion
+# ============================================================
+# ============= RUTA ELIMINAR DONACION  ===========
+# ============================================================
+
 @app.route("/eliminar_donacion/<int:codigo>", methods=['DELETE'])
 def eliminar_donacion(codigo):
     """
@@ -1469,50 +1640,60 @@ def eliminar_donacion(codigo):
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("DELETE FROM donacion WHERE id_donante = %s", (codigo,))
+        cur.execute("DELETE FROM donacion WHERE id_donacion = %s", (codigo,))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al eliminar la donación'})
 
 
-# ruta de donacion_has_tipo_donacion
-@app.route("/donacion_has_tipo_donacion", methods=['GET'])
-def donacion_has_tipo_donacion():
+# ============================================================
+# ============= DONACION_MONETARIA ===========
+# ============================================================
+
+@app.route("/donacion_monetaria", methods=['GET'])
+def donacion_monetaria():
     """
-    Consulta de lista de donacion_has_tipo_donacion
+    Consulta de lista de donacion_monetaria
     ---
     tags:
-      - donacion_has_tipo_donacion
+      - donacion_monetaria
     responses:
       200:
-        description: lista de donacion_has_tipo_donacion
+        description: lista de donacion_monetaria
     """
     try:
         conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
-        cur.execute("SELECT * FROM donacion_has_tipo_donacion") 
+        cur.execute("SELECT * FROM donacion_monetaria") 
         datos = cur.fetchall()
         cur.close()
         conn.close()
         if datos:
-            return jsonify({'donacion_has_tipo_donacion': datos, 'mensaje': 'Lista De donacion_has_tipo_donacion'})
+            return jsonify({'donacion_monetaria': datos, 'mensaje': 'Lista De donacion_monetaria'})
         else:
-            return jsonify({'mensaje': 'donacion_has_tipo_donacion no encontrado'})
+            return jsonify({'mensaje': 'donacion_monetaria no encontrado'})
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
-# Ruta para registrar un nuevo donacion_has_tipo_donacion
-@app.route("/registro_donacion_has_tipo_donacion", methods=['POST'])
-def registro_donacion_has_tipo_donacion():
+
+
+
+
+# ============================================================
+# ============= REGISTRO DONACION MONETARIA ===========
+# ============================================================
+
+@app.route("/registro_donacion_monetaria", methods=['POST'])
+def registro_donacion_monetaria():
     """
-    Registrar una donacion_has_tipo_donacion
+    Registrar una donacion_monetaria
     ---
     tags:
-      - donacion_has_tipo_donacion
+      - donacion_monetaria
     parameters:
       - name: body
         in: body
@@ -1522,37 +1703,59 @@ def registro_donacion_has_tipo_donacion():
           properties:
             ID:
               type: string
-            donacion:
+            id_donacion_monetaria:
+              type: string
+            donante:
+              type: string
+            monto:
+              type: string
+            fecha:
+              type: string
+            banco:
+              type: string
+            numero_transferencia:
+              type: string
+            usuario:
               type: string
             tipo_donacion:
               type: string
     responses:
       200:
-        description: donacion_has_tipo_donacion registrado
+        description: donacion_monetaria registrado
     """
     try:
         data = request.get_json()
-        donacion = data['donacion']
+        donante = data['donante']
+        monto = data['monto']
+        fecha = data['fecha']
+        banco = data['banco']
+        numero_transferencia = data['numero_transferencia']
+        usuario = data['usuario']
         tipo_donacion = data['tipo_donacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO donacion_has_tipo_donacion (donacion, tipo_donacion) VALUES (%s, %s)", (donacion, tipo_donacion))
+        cur.execute("""
+                    INSERT INTO donacion_monetaria (donante, monto, fecha, banco, numero_transferencia, usuario, tipo_donacion) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)""", (donante, monto, fecha, banco, numero_transferencia, usuario, tipo_donacion))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al registrar la donacion_monetaria'})
 
-# Ruta para actualizar una donacion_has_tipo_donacion
-@app.route("/actualizar_donacion_has_tipo_donacion/<codigo>", methods=["PUT"])
-def actualizar_donacion_has_tipo_donacion(codigo):
+# ============================================================
+# =============   ACTUALIZAR DONACION MONETARIA ===========
+# ============================================================
+
+@app.route("/actualizar_donacion_monetaria/<codigo>", methods=["PUT"])
+def actualizar_donacion_monetaria(codigo):
     """
-    Actualizar una donacion_has_tipo_donacion por su ID
+    Actualizar una donacion_monetaria por su ID
     ---
     tags:
-      - donacion_has_tipo_donacion
+      - donacion_monetaria
     parameters:
       - name: codigo
         in: path
@@ -1564,38 +1767,61 @@ def actualizar_donacion_has_tipo_donacion(codigo):
         schema:
           type: object
           properties:
-            donacion:
+            id_donacion_monetaria:
+              type: string
+            donante:
+              type: string
+            monto:
+              type: string
+            fecha:
+              type: string
+            banco:
+              type: string 
+            numero_transferencia:
+              type: string
+            usuario:
               type: string
             tipo_donacion:
               type: string
+      
     responses:
       200:
-        description: donacion_has_tipo_donacion actualizado
+        description: donacion_monetaria actualizado
     """
     try:
         data = request.get_json()
-        donacion = data['donacion']
+        id_donacion_monetaria = data['id_donacion_monetaria']
+        donante = data['donante']
+        monto = data['monto']
+        fecha = data['fecha']
+        banco = data['banco']
+        numero_transferencia = data['numero_transferencia']
+        usuario = data['usuario']
         tipo_donacion = data['tipo_donacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE donacion_has_tipo_donacion SET donacion= %s, tipo_donacion= %s WHERE id_donacion= %s", 
-                    (donacion, tipo_donacion, codigo))
+        cur.execute("""
+                    UPDATE donacion_monetaria SET donante= %s, monto= %s, fecha= %s, banco= %s, numero_transferencia= %s, usuario= %s, tipo_donacion= %s WHERE id_donacion_monetaria= %s""",
+                    (donante, monto, fecha, banco, numero_transferencia, usuario, tipo_donacion, id_donacion_monetaria))
         conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro Actualizado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al actualizar la donacion_monetaria'})
 
-# Ruta para eliminar donacion_has_tipo_donacion
-@app.route("/eliminar_donacion_has_tipo_donacion/<int:codigo>", methods=['DELETE'])
-def eliminar_donacion_has_tipo_donacion(codigo):
+# ============================================================
+# =============   ELIMINAR DONACION MONETARIA ===========
+# ============================================================
+  
+@app.route("/eliminar_donacion_monetaria/<int:codigo>", methods=['DELETE'])
+def eliminar_donacion_monetaria(codigo):
     """
-    Eliminar donacion_has_tipo_donacion por ID
+    Eliminar donacion_monetaria por ID
     ---
     tags:
-      - donacion_has_tipo_donacion
+      - donacion_monetaria
     parameters:
       - name: codigo
         in: path
@@ -1603,21 +1829,24 @@ def eliminar_donacion_has_tipo_donacion(codigo):
         type: integer
     responses:
       200:
-        description: donacion_has_tipo_donacion eliminado
+        description: donacion_monetaria eliminado
     """
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("DELETE FROM donacion_has_tipo_donacion WHERE ID = %s", (codigo,))
+        cur.execute("DELETE FROM donacion_monetaria WHERE ID = %s", (codigo,))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al eliminar la donacion_monetaria'})
 
-# ruta de certificado_donante
+# ============================================================
+# =============   CERTIFICADO DONANTE ===========
+# ============================================================
+
 @app.route("/certificado_donante", methods=['GET'])
 def certificado_donante():
     """
@@ -1634,7 +1863,6 @@ def certificado_donante():
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM certificado_donante") 
         datos = cur.fetchall()
-        data = []
         cur.close()
         conn.close()
         if datos:
@@ -1645,7 +1873,12 @@ def certificado_donante():
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
 
-# Ruta para obtener un certificado_donante por ID
+
+# ============================================================
+# =============   CERTIFICADO DONANTE POR ID  ===========
+# ============================================================
+
+
 @app.route("/certificado_donante/<int:codigo>", methods=['GET'])
 def certificado_donante_por_id(codigo):
     """
@@ -1677,7 +1910,11 @@ def certificado_donante_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nuevo certificado_donante
+
+# ============================================================
+# =============  ACTUALIZAR CERTIFICADO DONANTE  ===========
+# ============================================================
+
 @app.route("/registro_certificado_donante", methods=['POST'])
 def registro_certificado_donante():
     """
@@ -1694,17 +1931,17 @@ def registro_certificado_donante():
           properties:
             fecha:
               type: string
+            valor_donado:
+              type: string
             firma_representante:
               type: string
-            donante:
+            id_donante:
               type: string
-            estado:
+            tipo_certificado:
               type: string
-            tipo_documento:
+            id_donacion:
               type: string
-            tipo_donante:
-              type: string
-            tipo_donacion:
+            id_donacion_monetaria:
               type: string
     responses:
       200:
@@ -1713,24 +1950,29 @@ def registro_certificado_donante():
     try:
         data = request.get_json()
         fecha = data['fecha']
+        valor_donado = data['valor_donado']
         firma_representante = data['firma_representante']
-        donante = data['donante']
-        estado = data['estado']
-        tipo_documento = data['tipo_documento']
-        tipo_donante = data['tipo_donante']
-        tipo_donacion = data['tipo_donacion']
+        id_donante = data['id_donante']
+        tipo_certificado = data['tipo_certificado']
+        id_donacion = data['id_donacion']
+        id_donacion_monetaria = data['id_donacion_monetaria']
+
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO certificado_donante (fecha, firma_representante, donante, estado, tipo_documento, tipo_donante, tipo_donacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (fecha, firma_representante, donante, estado, tipo_documento, tipo_donante, tipo_donacion))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""INSERT INTO certificado_donante (fecha, valor_donado, firma_representante, id_donante, tipo_certificado, id_donacion, id_donacion_monetaria) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)""", (fecha, valor_donado, firma_representante, id_donante, tipo_certificado, id_donacion, id_donacion_monetaria))
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al registrar el certificado de donante'})
 
-# Ruta para actualizar un certificado_donante
+# ============================================================
+# =============   ACTUALIZAR CERTIFICADO DONANTE  ===========
+# ============================================================
+
 @app.route("/actualizar_certificado_donante/<codigo>", methods=["PUT"])
 def actualizar_certificado_donante(codigo):
     """
@@ -1751,17 +1993,17 @@ def actualizar_certificado_donante(codigo):
           properties:
             fecha:
               type: string
+            valor_donado:
+              type: string
             firma_representante:
               type: string
-            donante:
+            id_donante:
               type: string
-            estado:
+            tipo_certificado:
               type: string
-            tipo_documento:
-              type: string
-            tipo_donante:
-              type: string
-            tipo_donacion:
+            id_donacion:
+              type: string  
+            id_donacion_monetaria:
               type: string
     responses:
       200:
@@ -1770,25 +2012,32 @@ def actualizar_certificado_donante(codigo):
     try:
         data = request.get_json()
         fecha = data['fecha']
+        valor_donado = data['valor_donado']
         firma_representante = data['firma_representante']
-        donante = data['donante']
-        estado = data['estado']
-        tipo_documento = data['tipo_documento']
-        tipo_donante = data['tipo_donante']
+        id_donante = data['id_donante']
+        tipo_certificado = data['tipo_certificado']
+        id_donacion = data['id_donacion']
+        id_donacion_monetaria = data['id_donacion_monetaria']
         tipo_donacion = data['tipo_donacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE certificado_donante SET fecha= %s, firma_representante= %s, donante= %s, estado= %s, tipo_documento= %s, tipo_donante= %s, tipo_donacion= %s WHERE id_certificado= %s", 
-                    (fecha, firma_representante, donante, estado, tipo_documento, tipo_donante, tipo_donacion, codigo))
+        cur.execute("""
+                    UPDATE certificado_donante SET fecha= %s, valor_donado= %s, firma_representante= %s, id_donante= %s, tipo_certificado= %s, id_donacion= %s, id_donacion_monetaria= %s, tipo_donacion= %s WHERE id_certificado= %s
+                    """, (fecha, valor_donado, firma_representante, id_donante, tipo_certificado, id_donacion, id_donacion_monetaria, tipo_donacion, codigo))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
+        return jsonify({'mensaje': 'Registro Actualizado correctamente'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al actualizar el certificado de donante'})
 
-# Ruta para eliminar certificado_donante
+
+
+# ============================================================
+# =============   ELIMINAR CERTIFICADO DONANTE  ===========
+# ============================================================
+
 @app.route("/eliminar_certificado_donante/<int:codigo>", methods=['DELETE'])
 def eliminar_certificado_donante(codigo):
     """
@@ -1812,13 +2061,16 @@ def eliminar_certificado_donante(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado correctamente'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al eliminar el certificado de donante'})
 
 
-# ruta para categoria_producto
+# ============================================================
+# =============  RUTA CATEGORIA PRODUCTO  ===========
+# ============================================================
+
 @app.route("/categoria_producto", methods=['GET'])
 def categoria_producto():
     """
@@ -1844,7 +2096,12 @@ def categoria_producto():
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
-# Ruta para registrar un nuevo categoria_producto
+
+
+# ============================================================
+# ============= RUTA REGISTRO CATEGORIA PRODUCTO ===========
+# ============================================================
+
 @app.route("/registro_categoria_producto", methods=['POST'])
 def registro_categoria_producto():
     """
@@ -1870,8 +2127,10 @@ def registro_categoria_producto():
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO categoria_producto (descripcion) VALUES (%s)", (descripcion,))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO categoria_producto (descripcion)
+                    VALUES (%s)""", (descripcion,))
+        conn.commit() 
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -1879,7 +2138,11 @@ def registro_categoria_producto():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar una categoria_producto
+# ============================================================
+# =============  RUTA ACTUALIZAR CATEGORIA PRODUCTO  ===========
+# ============================================================
+
+
 @app.route("/actualizar_categoria_producto/<codigo>", methods=["PUT"])
 def actualizar_categoria_producto(codigo):
     """
@@ -1909,17 +2172,22 @@ def actualizar_categoria_producto(codigo):
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
-                    (descripcion,codigo))
+        cur.execute("""
+                    UPDATE categoria_producto SET descripcion= %s WHERE id_categoria_producto= %s
+                    """, (descripcion,codigo))
         conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro Actualizado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al actualizar categoria_producto'})
 
-# Ruta para eliminar categoria_producto
+
+# ============================================================
+# =============   RUTA ELIMINAR CATEGORIA PRODUCTO  ===========
+# ============================================================
+
 @app.route("/eliminar_categoria_producto/<int:codigo>", methods=['DELETE'])
 def eliminar_categoria_producto(codigo):
     """
@@ -1943,13 +2211,17 @@ def eliminar_categoria_producto(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado correctamente'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al eliminar categoria_producto'})
 
 
-    # ruta para consultar subcategoria_producto
+
+# ============================================================
+# ============= RUTA SUBCATEGORIA  ===========
+# ============================================================
+
 @app.route("/subcategoria_producto", methods=['GET'])
 def subcategoria_producto():
     """
@@ -1974,8 +2246,13 @@ def subcategoria_producto():
             return jsonify({'mensaje': 'subcategoria_producto no encontrado'})
     except Exception as ex:
         print(ex)
-        return jsonify ({'Mensaje': 'Error'})
-# Ruta para registrar un nuevo subcategoria_producto
+        return jsonify ({'Mensaje': 'Error '})
+      
+      
+# ============================================================
+# ============= RUTA REGISTRO SUBCATEGORIA  ===========
+# ============================================================
+      
 @app.route("/registro_subcategoria_producto", methods=['POST'])
 def registro_subcategoria_producto():
     """
@@ -2004,8 +2281,10 @@ def registro_subcategoria_producto():
         categoria_producto = data['categoria_producto']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO subcategoria_producto (descripcion, categoria_producto) VALUES (%s, %s)", (descripcion, categoria_producto))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO subcategoria_producto (descripcion, categoria_producto)
+                    VALUES (%s, %s)""", (descripcion, categoria_producto))
+        conn.commit()  
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -2013,7 +2292,10 @@ def registro_subcategoria_producto():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar un subcategoria_producto
+# ============================================================
+# =============  RUTA ACTUALIZAR SUBCATEGORIA ===========
+# ============================================================
+
 @app.route("/actualizar_subcategoria_producto/<codigo>", methods=["PUT"])
 def actualizar_subcategoria_producto(codigo):
     """
@@ -2046,17 +2328,21 @@ def actualizar_subcategoria_producto(codigo):
         categoria_producto = data['categoria_producto']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE subcategoria_producto SET descripcion= %s, categoria_producto= %s WHERE id_subcategoria= %s", 
+        cur.execute("""
+                    UPDATE subcategoria_producto SET descripcion= %s, categoria_producto= %s WHERE id_subcategoria= %s""", 
                     (descripcion,categoria_producto,codigo))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
+        return jsonify({'mensaje': 'Registro Actualizado Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
+      
+# ============================================================
+# ================ ELIMINAR SUBCATEGORIA  ====================
+# ============================================================
 
-# Ruta para eliminar subcategoria_producto
 @app.route("/eliminar_subcategoria_producto/<int:codigo>", methods=['DELETE'])
 def eliminar_subcategoria_producto(codigo):
     """
@@ -2080,13 +2366,16 @@ def eliminar_subcategoria_producto(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
 
-# ruta para fecha_vencimiento
+# ============================================================
+# ============= RUTA FECHA VENCIMIENTO  ===========
+# ============================================================
+
 @app.route("/fecha_vencimiento", methods=['GET'])
 def fecha_vencimiento():
     """
@@ -2113,7 +2402,10 @@ def fecha_vencimiento():
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
 
-# ruta para obtener fecha_vencimiento por id
+# ============================================================
+# ============= RUTA FECHA VENCIMIENTO POR ID ==============
+# ============================================================
+
 @app.route("/fecha_vencimiento/<int:codigo>", methods=['GET'])
 def fecha_vencimiento_por_id(codigo):
     """
@@ -2145,7 +2437,10 @@ def fecha_vencimiento_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nueva fecha_vencimiento
+# ============================================================
+# ============= RUTA REGISTRO FECHA VENCIMIENTO  ===========
+# ============================================================
+
 @app.route("/registro_fecha_vencimiento", methods=['POST'])
 def registro_fecha_vencimiento():
     """
@@ -2160,7 +2455,11 @@ def registro_fecha_vencimiento():
           schema:
             type: object
             properties:
-              fecha:
+              id_donacion:
+                type: string
+              id_producto:
+                type: string
+              cantidad:
                 type: string
     responses:
       200:
@@ -2168,10 +2467,14 @@ def registro_fecha_vencimiento():
     """
     try:
         data = request.get_json()
-        fecha = data['fecha']
+        id_donacion = data['id_donacion']
+        id_producto = data['id_producto']
+        cantidad = data['cantidad']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO fecha_vencimiento (fecha) VALUES (%s)", (fecha,))
+        cur.execute("""
+                    INSERT INTO fecha_vencimiento (id_donacion, id_producto, cantidad)
+                    VALUES (%s, %s, %s)""", (id_donacion, id_producto, cantidad))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -2181,7 +2484,10 @@ def registro_fecha_vencimiento():
         return jsonify({'mensaje': 'Error'})
 
 
-# Ruta para eliminar fecha_vencimiento
+# ============================================================
+# ============= RUTA ELIMINAR FECHA VENCIMIENTO   ===========
+# ============================================================
+
 @app.route("/eliminar_fecha_vencimiento/<int:codigo>", methods=['DELETE'])
 def eliminar_fecha_vencimiento(codigo):
     """
@@ -2201,7 +2507,7 @@ def eliminar_fecha_vencimiento(codigo):
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("DELETE FROM fecha_vencimiento WHERE id_fecha_vencimiento = %s", (codigo,))
+        cur.execute("DELETE FROM fecha_vencimiento WHERE id_vencimiento = %s", (codigo,))
         conn.commit()
         cur.close()
         conn.close()
@@ -2210,8 +2516,63 @@ def eliminar_fecha_vencimiento(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
+# ============================================================
+# =============   ACTUALIZAR FECHA VENCIMIENTO  ===========
+# ============================================================
 
-# ruta para acta_vencimiento
+@app.route("/actualizar_fecha_vencimiento/<codigo>", methods=["PUT"])
+def actualizar_fecha_vencimiento(codigo):
+    """
+    Actualizar una fecha de vencimiento por su ID
+    ---
+    tags:
+      - fecha vencimiento
+    parameters:
+      - name: codigo
+        in: path
+        required: true
+        type: integer
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            id_donacion:
+              type: string
+            id_producto:
+              type: string
+            cantidad:
+              type: string
+    responses:
+      200:
+        description: Fecha de vencimiento actualizada
+    """
+    try:
+        data = request.get_json()
+        id_donacion= ['id_donacion']
+        id_producto= ['id_producto']
+        cantidad= ['cantidad']
+        
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("""
+                    UPDATE fecha_vencimiento SET id_donacion= %s, id_producto= %s, cantidad= %s WHERE id_vencimiento= %s""",
+                    (id_donacion,id_producto,cantidad,codigo))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'mensaje': 'Registro Actualizado correctamente'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error al actualizar la fecha de vencimiento'})
+
+
+# ============================================================
+# =============  RUTA DE ACTA DE VENCIMIENTO ===========
+# ============================================================
+
 @app.route("/acta_vencimiento", methods=['GET'])
 def acta_vencimiento():
     """
@@ -2238,7 +2599,11 @@ def acta_vencimiento():
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
       
-# Ruta para registrar un nuevo acta_vencimiento
+
+# ============================================================
+# ============= RUTA ATUALIZAR ACTA VENCIMIENTO  =============
+# ============================================================
+
 @app.route("/registro_acta_vencimiento", methods=['POST'])
 def registro_acta_vencimiento():
     """
@@ -2267,8 +2632,10 @@ def registro_acta_vencimiento():
         descripcion = data['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO acta_vencimiento (fecha, descripcion) VALUES (%s, %s)", (fecha, descripcion))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO acta_vencimiento (fecha, descripcion)
+                    VALUES (%s, %s)""", (fecha, descripcion))
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -2276,7 +2643,12 @@ def registro_acta_vencimiento():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar acta_vencimiento
+
+
+# ============================================================
+# ============= ELIMINAR ACTA DE VENCIMIENTO  ================
+# ============================================================
+
 @app.route("/eliminar_acta_vencimiento/<int:codigo>", methods=['DELETE'])
 def eliminar_acta_vencimiento(codigo):
     """
@@ -2300,13 +2672,16 @@ def eliminar_acta_vencimiento(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
 
-# ruta para bodega
+# ============================================================
+# ================= RUTA DE PARA BODEGA   ====================
+# ============================================================
+
 @app.route("/bodega", methods=['GET'])
 def bodega():
     """
@@ -2334,7 +2709,10 @@ def bodega():
         return jsonify ({'Mensaje': 'Error'})
 
 
-# Ruta para obtener una bodega por su ID
+# ============================================================
+# ============= RUTA DE BODEGA POR ID   ================
+# ============================================================
+
 @app.route("/bodega/<int:codigo>", methods=['GET'])
 def bodega_por_id(codigo):
     """
@@ -2366,7 +2744,10 @@ def bodega_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nueva bodega
+# ============================================================
+# =============  RUTA PARA AGREGAR BODEGA  ==================
+# ============================================================
+
 @app.route("/registro_bodega", methods=['POST'])
 def registro_bodega():
     """
@@ -2394,12 +2775,13 @@ def registro_bodega():
     try:
         data = request.get_json()
         nombre_bodega = data['nombre_bodega']
+        ubicacion =['ubicacion']
         capacidad = data['capacidad']
         estado = data['estado']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO bodega (nombre_bodega, capacidad, estado) VALUES (%s, %s, %s)", (nombre_bodega, capacidad, estado))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("INSERT INTO bodega (nombre_bodega, ubicacion, capacidad, estado) VALUES (%s, %s, %s, %s)", (nombre_bodega, ubicacion, capacidad, estado))
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -2407,7 +2789,10 @@ def registro_bodega():
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# Ruta para actualizar una bodega
+# ============================================================
+# ============= RUTA PARA ACTUALIZAR BODEGA   ================
+# ============================================================
+
 @app.route("/actualizar_bodega/<codigo>", methods=["PUT"])
 def actualizar_bodega(codigo):
     """
@@ -2435,12 +2820,13 @@ def actualizar_bodega(codigo):
     try:
         data = request.get_json()
         nombre_bodega = data['nombre_bodega']
+        ubicacion = ['ubicacion']
         capacidad = data['capacidad']
         estado = data['estado']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE bodega SET nombre_bodega= %s, capacidad= %s, estado= %s WHERE id_bodega= %s", 
-                    (nombre_bodega, capacidad, estado, codigo))
+        cur.execute("UPDATE bodega SET nombre_bodega= %s, ubicacion=%s, capacidad= %s, estado= %s WHERE id_bodega= %s", 
+                    (nombre_bodega, ubicacion, capacidad, estado, codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -2449,7 +2835,10 @@ def actualizar_bodega(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar bodega
+# ============================================================
+# ============= RUTA PARA ELIMINAR BODEGA  ================
+# ============================================================
+
 @app.route("/eliminar_bodega/<int:codigo>", methods=['DELETE'])
 def eliminar_bodega(codigo):
     """
@@ -2473,13 +2862,15 @@ def eliminar_bodega(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminada Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
     
-# ruta unidad_de_medida
+# ============================================================
+# ============= RUTA PARA UNIDAD DE MEDIDA  ==================
+# ============================================================
 
 @app.route("/unidad_de_medida", methods=['GET'])
 def unidad_de_medida():
@@ -2506,8 +2897,11 @@ def unidad_de_medida():
     except Exception as ex:
         print(ex)
         return jsonify({'Mensaje': 'Error'})
+        
+# ============================================================
+# ========== RUTA PARA AGREGAR UNIDAD DE MEDIDA  =============
+# ============================================================
 
-# Ruta para registrar un nueva unidad de medida
 @app.route("/registro_unidad_de_medida", methods=['POST'])
 def registro_unidad_de_medida():
     """
@@ -2534,7 +2928,7 @@ def registro_unidad_de_medida():
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO unidad_de_medida (nombre) VALUES (%s)", (nombre,))
-        conn.commit()  # Para confirmar la inserción de la información
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -2542,7 +2936,10 @@ def registro_unidad_de_medida():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar una unidad de medida
+# ============================================================
+# =========== RUTA PARA ACTUALIZAR UNIDAD MEDIDA  ============
+# ============================================================
+
 @app.route("/actualizar_unidad_de_medida/<codigo>", methods=["PUT"])
 def actualizar_unidad_de_medida(codigo):
     """
@@ -2568,7 +2965,8 @@ def actualizar_unidad_de_medida(codigo):
         nombre = data['nombre']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE unidad_de_medida SET nombre= %s WHERE id_unidad_de_medida= %s", 
+        cur.execute("""
+                    UPDATE unidad_de_medida SET nombre= %s WHERE id_unidad_de_medida= %s""", 
                     (nombre, codigo))
         conn.commit()
         cur.close()
@@ -2578,7 +2976,10 @@ def actualizar_unidad_de_medida(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar unidad_de_medida
+# ============================================================
+# ===========   RUTA PARA ELIMINAR UNDAD MEDIDA  =============
+# ============================================================
+
 @app.route("/eliminar_unidad_de_medida/<int:codigo>", methods=['DELETE'])
 def eliminar_unidad_de_medida(codigo):
     """
@@ -2609,7 +3010,10 @@ def eliminar_unidad_de_medida(codigo):
 
 
 
-# ruta para tipo_organizacion
+# ============================================================
+# =============  RUTA PARA TIPO ORGANIZACION  ================
+# ============================================================
+
 @app.route("/tipo_organizacion", methods=['GET'])
 def tipo_organizacion():
     """
@@ -2636,7 +3040,10 @@ def tipo_organizacion():
         print(ex)
         return jsonify({'Mensaje': 'Error'})
 
-# Ruta para registrar un nuevo tipo organizacion
+# ============================================================
+# =========  RUTA PARA AGREGAR TIPO ORGANIZACION =============
+# ============================================================
+
 @app.route("/registro_tipo_organizacion", methods=['POST'])
 def registro_tipo_organizacion():
     """
@@ -2653,6 +3060,8 @@ def registro_tipo_organizacion():
             properties:
               nombre:
                 type: string
+              descripcion:
+                type: string
     responses:
       200:
         description: Tipo de organización registrado
@@ -2660,10 +3069,13 @@ def registro_tipo_organizacion():
     try:
         data = request.get_json()
         nombre = data['nombre']
+        descripcion = ['descripcion']
+        
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO tipo_organizacion (nombre) VALUES (%s)", (nombre,))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute(""" 
+                    INSERT INTO tipo_organizacion (nombre, descripcion) VALUES (%s, %s)""", (nombre, descripcion))
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -2671,7 +3083,10 @@ def registro_tipo_organizacion():
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# Ruta para actualizar un tipo_organizacion
+# ============================================================
+# ============ RUTA ACTUALIZAR TIPO ORGANIZACION =============
+# ============================================================
+
 @app.route("/actualizar_tipo_organizacion/<codigo>", methods=["PUT"])
 def actualizar_tipo_organizacion(codigo):
     """
@@ -2688,6 +3103,8 @@ def actualizar_tipo_organizacion(codigo):
             properties:
               nombre:
                 type: string
+              descripcion:
+                type: string
     responses:
       200:
         description: Tipo de organización actualizado
@@ -2695,10 +3112,11 @@ def actualizar_tipo_organizacion(codigo):
     try:
         data = request.get_json()
         nombre = data['nombre']
+        descripcion =['descripcion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE tipo_organizacion SET nombre= %s WHERE id_tipo_organizacion= %s", 
-                    (nombre,codigo))
+        cur.execute("UPDATE tipo_organizacion SET nombre= %s, descripcion= %s, WHERE id_tipo_organizacion= %s", 
+                    (nombre,descripcion,codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -2707,7 +3125,10 @@ def actualizar_tipo_organizacion(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar tipo_organizacion
+# ============================================================
+# =========== RUTA ELIMINAR TIPO ORGANIZACION ================
+# ============================================================
+
 @app.route("/eliminar_tipo_organizacion/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_organizacion(codigo):
     """
@@ -2722,7 +3143,7 @@ def eliminar_tipo_organizacion(codigo):
         type: integer
     responses:
       200:
-        description: tipo_organizacion eliminado
+        description: tipo_organizacion eliminada
     """
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
@@ -2731,13 +3152,16 @@ def eliminar_tipo_organizacion(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
     
-# ruta para tipo_entrega
+# ============================================================
+# ===============  RUTA PARA TIPO ENTREGA ====================
+# ============================================================
+
 @app.route("/tipo_entrega", methods=['GET'])
 def tipo_entrega():
     """
@@ -2764,7 +3188,10 @@ def tipo_entrega():
         print(ex)
         return jsonify({'Mensaje': 'Error'})
 
-# ruta para obtener un tipo_entrega por su ID
+# ============================================================
+# =============  RUTA DE TIPO ENTREGA POR ID =================
+# ============================================================
+
 @app.route("/tipo_entrega/<int:codigo>", methods=['GET'])
 def tipo_entrega_por_id(codigo):
     """
@@ -2796,7 +3223,10 @@ def tipo_entrega_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nuevo tipo de entrega
+# ============================================================
+# =============  RUTA PARA AGREGAR TIPO ENTREGA ==============
+# ============================================================
+
 @app.route("/registro_tipo_entrega", methods=['POST'])
 def registro_tipo_entrega():
     """
@@ -2826,7 +3256,7 @@ def registro_tipo_entrega():
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_entrega (nombre, descripcion) VALUES (%s, %s)", (nombre, descripcion))
-        conn.commit()  # Para confirmar la inserción de la información
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -2834,7 +3264,10 @@ def registro_tipo_entrega():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar tipo_entrega
+# ============================================================
+# ============ RUTA PARA ELIMINAR TIPO ENTREGA  ==============
+# ============================================================
+
 @app.route("/eliminar_tipo_entrega/<int:codigo>", methods=['DELETE'])
 def eliminar_tipo_entrega(codigo):
     """
@@ -2858,14 +3291,17 @@ def eliminar_tipo_entrega(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
 
 
-# ruta para organizacion
+# ============================================================
+# ================  RUTA PARA ORGANIZACION ===================
+# ============================================================
+
 @app.route("/organizacion", methods=['GET'])
 def organizacion():
     """
@@ -2891,7 +3327,11 @@ def organizacion():
     except Exception as ex:
         print(ex)
         return jsonify({'Mensaje': 'Error'})
-    # Ruta para registrar un nueva organizacion
+
+# ============================================================
+# =============  RUTA AGREGAR ORGANIZACION   =================
+# ============================================================
+
 @app.route("/registro_organizacion", methods=['POST'])
 def registro_organizacion():
     """
@@ -2935,7 +3375,9 @@ def registro_organizacion():
         tipo_organizacion = data['tipo_organizacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO organizacion (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion))
+        cur.execute("""
+                    INSERT INTO organizacion (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)""", (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -2944,7 +3386,10 @@ def registro_organizacion():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar organizacion
+# ============================================================
+# =========== RUTA PARA ACTUALIZAR ORGANIZACION   ============
+# ============================================================
+
 @app.route("/actualizar_organizacion/<codigo>", methods=["PUT"])
 def actualizar_organizacion(codigo):
     """
@@ -2994,7 +3439,8 @@ def actualizar_organizacion(codigo):
         tipo_organizacion = data['tipo_organizacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE organizacion SET descripcion= %s, nombre= %s, responsable= %s, telefono= %s, direccion= %s, tipo_entrega= %s, tipo_organizacion= %s WHERE codigo= %s", 
+        cur.execute("""
+                    UPDATE organizacion SET descripcion= %s, nombre= %s, responsable= %s, telefono= %s, direccion= %s, tipo_entrega= %s, tipo_organizacion= %s WHERE codigo= %s""", 
                     (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion, codigo))
         conn.commit()
         cur.close()
@@ -3004,7 +3450,10 @@ def actualizar_organizacion(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar organizacion
+# ============================================================
+# =========== RUTA PARA ELIMINAR ORGANIZACION  ===============
+# ============================================================
+
 @app.route("/eliminar_organizacion/<int:codigo>", methods=['DELETE'])
 def eliminar_organizacion(codigo):
     """
@@ -3034,7 +3483,10 @@ def eliminar_organizacion(codigo):
         return jsonify({'mensaje': 'Error'})
     
     
-# ruta para movimiento_producto
+# ============================================================
+# ============= RUTA PARA MOVIMIENTO PRODUCTO  ===============
+# ============================================================
+
 @app.route("/movimiento_producto", methods=['GET'])
 def movimiento_producto():
     """
@@ -3061,7 +3513,10 @@ def movimiento_producto():
         print(ex)
         return jsonify({'Mensaje': 'Error'})
 
-# ruta para obtener un movimiento_producto por su ID
+# ============================================================
+# =========== RUTA MOVIMIENTO PRODUCTO POR ID  ===============
+# ============================================================
+
 @app.route("/movimiento_producto/<int:codigo>", methods=['GET'])
 def movimiento_producto_por_id(codigo):
     """
@@ -3081,7 +3536,7 @@ def movimiento_producto_por_id(codigo):
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("SELECT * FROM movimiento_producto WHERE id = %s", (codigo,))
+        cur.execute("SELECT * FROM movimiento_producto WHERE ID = %s", (codigo,))
         datos = cur.fetchone()
         cur.close()
         conn.close()
@@ -3093,7 +3548,10 @@ def movimiento_producto_por_id(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para registrar un nuevo movimiento_producto
+# ============================================================
+# =========== RUTA AGREGAR MOVIMIENTO PRODUCTO  ==============
+# ============================================================
+
 @app.route("/registro_movimiento_producto", methods=['POST'])
 def registro_movimiento_producto():
     """
@@ -3112,6 +3570,8 @@ def registro_movimiento_producto():
                 type: string
               movimiento:
                 type: integer
+              fecha:
+                type: string
               cantidad:
                 type: integer
               observacion:
@@ -3135,8 +3595,11 @@ def registro_movimiento_producto():
         organizacion = data['organizacion']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO movimiento_producto (id_producto, movimiento, cantidad, fecha, observacion, tipo_donacion, organizacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (id_producto, movimiento, cantidad, fecha, observacion, tipo_donacion, organizacion))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO movimiento_producto (id_producto, movimiento, cantidad, fecha, observacion, tipo_donacion, organizacion)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)""", 
+                    (id_producto, movimiento, cantidad, fecha, observacion, tipo_donacion, organizacion))
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -3144,7 +3607,10 @@ def registro_movimiento_producto():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar movimiento_producto
+# ============================================================
+# ========== RUTA ACTUALIZAR MOVIMIENTO PRODUCTO  ============
+# ============================================================
+
 @app.route("/actualizar_movimiento_producto/<id>", methods=["PUT"])
 def actualizar_movimiento_producto(id):
     """
@@ -3164,6 +3630,8 @@ def actualizar_movimiento_producto(id):
           schema:
             type: object
             properties:
+              id_producto:
+                type: string
               movimiento:
                 type: string
               cantidad:
@@ -3184,6 +3652,7 @@ def actualizar_movimiento_producto(id):
     """
     try:
         data = request.get_json()
+        id_producto =['id_producto']
         movimiento = data['movimiento']
         cantidad = data['cantidad']
         observacion = data['observacion']
@@ -3193,8 +3662,9 @@ def actualizar_movimiento_producto(id):
         tipo_entrega = data['tipo_entrega']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE movimiento_producto SET movimiento= %s, cantidad= %s, observacion= %s, tipo_donacion= %s, organizacion= %s, tipo_organizacion= %s, tipo_entrega= %s WHERE id= %s", 
-                    (movimiento, cantidad, observacion, tipo_donacion, organizacion, tipo_organizacion, tipo_entrega, id))
+        cur.execute("""
+                    UPDATE movimiento_producto SET id_producto= %s, movimiento= %s, cantidad= %s, observacion= %s, tipo_donacion= %s, organizacion= %s, tipo_organizacion= %s, tipo_entrega= %s WHERE id= %s""", 
+                    (id_producto,movimiento, cantidad, observacion, tipo_donacion, organizacion, tipo_organizacion, tipo_entrega, id))
         conn.commit()
         cur.close()
         conn.close()
@@ -3203,7 +3673,10 @@ def actualizar_movimiento_producto(id):
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para eliminar movimiento_producto
+# ============================================================
+# ========== RUTA ELIMINAR MOVIMIENTO PRODUCTO   =============
+# ============================================================
+
 @app.route("/eliminar_movimiento_producto/<int:codigo>", methods=['DELETE'])
 def eliminar_movimiento_producto(codigo):
     """
@@ -3227,12 +3700,17 @@ def eliminar_movimiento_producto(codigo):
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# ruta para producto
+
+
+# ============================================================
+# ================= RUTA PARA PRODUCTO  ======================
+# ============================================================
+
 @app.route("/producto", methods=['GET'])
 def producto():
 
@@ -3253,14 +3731,17 @@ def producto():
         cur.close()
         conn.close()
         if datos:
-            return jsonify({'movimiento_producto': datos, 'mensaje': 'Lista De movimiento_producto'})
+            return jsonify({'producto': datos})
         else:
-            return jsonify({'mensaje': 'movimiento_producto no encontrado'})
+            return jsonify({'mensaje': 'producto no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify({'Mensaje': 'Error'})
 
-# Ruta para registrar un nuevo producto
+# ============================================================
+# ============== RUTA AGREGAR PRODUCTOS   ====================
+# ============================================================
+
 @app.route("/registro_producto", methods=['POST'])
 def registro_producto():
     """
@@ -3297,10 +3778,6 @@ def registro_producto():
                 type: string
               unidad_de_medida:
                 type: string
-              acta_vencimiento:
-                type: string
-              tipo_donacion:
-                type: string
     responses:
       200:
         description: Producto registrado
@@ -3318,12 +3795,14 @@ def registro_producto():
         subcategoria_producto = data['subcategoria_producto']
         estado = data['estado']
         unidad_de_medida = data['unidad_de_medida']
-        acta_vencimiento = data['acta_vencimiento']
-        tipo_donacion = data['tipo_donacion']
+        
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO producto (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida, acta_vencimiento, tipo_donacion) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida, acta_vencimiento, tipo_donacion))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO producto (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                    (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida))
+        conn.commit()
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -3331,7 +3810,10 @@ def registro_producto():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar producto
+# ============================================================
+# =============  RUTA PARA ACTUALIZAR PRODUCTO ===============
+# ============================================================
+
 @app.route("/actualizar_producto/<id>", methods=["PUT"])
 def actualizar_producto(id):
     """
@@ -3373,10 +3855,6 @@ def actualizar_producto(id):
                 type: string
               unidad_de_medida:
                 type: string
-              acta_vencimiento:
-                type: string
-              tipo_donacion:
-                type: string
     responses:
       200:
         description: Producto actualizado
@@ -3394,12 +3872,12 @@ def actualizar_producto(id):
         subcategoria_producto = data['subcategoria_producto']
         estado = data['estado']
         unidad_de_medida = data['unidad_de_medida']
-        acta_vencimiento = data['acta_vencimiento']
-        tipo_donacion = data['tipo_donacion']
+
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE producto SET nombre= %s, descripcion= %s, cantidad= %s, codigo_barras= %s, stock= %s, stock_maximo= %s, stock_minimo= %s, categoria_producto= %s, subcategoria_producto= %s, estado= %s, unidad_de_medida= %s, acta_vencimiento= %s, tipo_donacion= %s WHERE id_producto= %s", 
-                    (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida, acta_vencimiento, tipo_donacion, id))
+        cur.execute("""
+                    UPDATE producto SET nombre= %s, descripcion= %s, cantidad= %s, codigo_barras= %s, stock= %s, stock_maximo= %s, stock_minimo= %s, categoria_producto= %s, subcategoria_producto= %s, estado= %s, unidad_de_medida= %s WHERE id_producto= %s""", 
+                    (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida,id))
         conn.commit()
         cur.close()
         conn.close()
@@ -3408,7 +3886,12 @@ def actualizar_producto(id):
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-# Ruta para eliminar producto
+
+
+# ============================================================
+# =============  RUTA PARA ELIMINAR PRODUCTO  ================
+# ============================================================
+
 @app.route("/eliminar_producto/<int:codigo>", methods=['DELETE'])
 def eliminar_producto(codigo):
     """
@@ -3438,41 +3921,44 @@ def eliminar_producto(codigo):
         return jsonify({'mensaje': 'Error'})
     
 
-# ruta para producto_has_donante
-@app.route("/producto_has_donante", methods=['GET'])
-def producto_has_donante():
+# ============================================================
+# ==============  DETALLE_DONACION_PRODUCTO   ================
+# ============================================================
+
+@app.route("/detalle_donacion_producto", methods=['GET'])
+def detalle_donacion_producto():
     """
-    Consulta de lista de producto_has_donante
+    Consulta de lista de detalle_donacion_producto
     ---
     tags:
-      - producto_has_donante
+      - detalle_donacion_producto
     responses:
       200:
-        description: lista de producto_has_donante
+        description: lista de detalle_donacion_producto
     """
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
-        cur.execute("SELECT * FROM producto_has_donante")
+        cur.execute("SELECT * FROM detalle_donacion_producto")
         datos= cur.fetchall()
         cur.close()
         conn.close()
         if datos:
-            return jsonify({'producto_has_donante': datos, 'mensaje': 'Lista De producto_has_donante'})
+            return jsonify({'detalle_donacion_producto': datos, 'mensaje': 'Lista De detalle_donacion_producto'})
         else:
-            return jsonify({'mensaje': 'producto_has_donante no encontrado'})
+            return jsonify({'mensaje': 'detalle_donacion_producto no encontrado'})
     except Exception as ex:
         print(ex)
         return jsonify({'Mensaje': 'Error'})
 
-# Ruta para registrar un nuevo producto_has_donante
-@app.route("/registro_producto_has_donante", methods=['POST'])
-def registro_producto_has_donante():
+# Ruta para registrar un nuevo detalle_donacion_producto
+@app.route("/registro_detalle_donacion_producto", methods=['POST'])
+def registro_detalle_donacion_producto():
     """
-    Registrar un nuevo producto_has_donante
+    Registrar un nuevo detalle_donacion_producto
     ---
     tags:
-      - producto_has_donante
+      - detalle_donacion_producto
     requestBody:
       required: true
       content:
@@ -3480,15 +3966,11 @@ def registro_producto_has_donante():
           schema:
             type: object
             properties:
-              donante:
+              id_donacion:
                 type: string
-              producto:
+              id_producto:
                 type: string
               cantidad:
-                type: string
-              fecha:
-                type: string
-              observacion:
                 type: string
     responses:
       200:
@@ -3496,15 +3978,16 @@ def registro_producto_has_donante():
     """
     try:
         data = request.get_json()
-        donante = data['donante']
-        producto = data['producto']
+        id_donacion = data['id_donacion']
+        id_producto = data['id_producto']
         cantidad = data['cantidad']
-        fecha = data['fecha']
-        observacion = data['observacion']
+
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("INSERT INTO donacion_has_tipo_donacion (donante, producto, cantidad, fecha, observacion) VALUES (%s, %s, %s, %s, %s)", (donante, producto, cantidad, fecha, observacion))
-        conn.commit()  # Para confirmar la inserción de la información
+        cur.execute("""
+                    INSERT INTO detalle_donacion_producto (id_donacion, id_producto, cantidad) 
+                    VALUES (%s, %s, %s)""", (id_donacion, id_producto, cantidad))
+        conn.commit()  
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
@@ -3512,14 +3995,17 @@ def registro_producto_has_donante():
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
-# Ruta para actualizar producto_has_donante
-@app.route("/actualizar_producto_has_donante/<codigo>", methods=["PUT"])
-def actualizar_producto_has_donante(codigo):
+# ============================================================
+# ============= RUTA DETALLE_DONACION_PRODUCTO  ==============
+# ============================================================
+
+@app.route("/detalle_donacion_producto/<codigo>", methods=["PUT"])
+def actualizar_detalle_donacion_producto(codigo):
     """
-    Actualizar un producto_has_donante existente
+    Actualizar un detalle_donacion_producto existente
     ---
     tags:
-      - producto_has_donante
+      - detalle_donacion_producto
     parameters:
       - name: id
         in: path
@@ -3532,15 +4018,11 @@ def actualizar_producto_has_donante(codigo):
           schema:
             type: object
             properties:
-              donante:
+              id_donacion:
                 type: string
-              producto:
+              id_producto:
                 type: string
               cantidad:
-                type: string
-              fecha:
-                type: string
-              observacion:
                 type: string
     responses:
       200:
@@ -3548,15 +4030,15 @@ def actualizar_producto_has_donante(codigo):
     """
     try:
         data = request.get_json()
-        donante = data['donante']
-        producto = data['producto']
+        id_donacion = data['id_donacion']
+        id_producto = data['id_producto']
         cantidad = data['cantidad']
-        fecha = data['fecha']
-        observacion = data['observacion']
+        
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("UPDATE producto_has_donante SET donante= %s, producto= %s, cantidad= %s, fecha= %s, observacion= %s WHERE ID= %s", 
-                    (donante, producto, cantidad, fecha, observacion, codigo))
+        cur.execute("""
+                    UPDATE detalle_donacion_producto SET id_donacion= %s, id_producto= %s, cantidad= %s WHERE ID= %s""", 
+                    (id_donacion, id_producto, cantidad,  codigo))
         conn.commit()
         cur.close()
         conn.close()
@@ -3566,14 +4048,17 @@ def actualizar_producto_has_donante(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
-# Ruta para eliminar producto_has_donante
-@app.route("/eliminar_producto_has_donante/<int:codigo>", methods=['DELETE'])
-def eliminar_producto_has_donante(codigo):
+
+# ============================================================
+# ========= RUTA ELIMINAR DETALLE_DONACION_PRODUCTO  =========
+# ============================================================
+@app.route("/eliminar_detalle_donacion_producto/<int:codigo>", methods=['DELETE'])
+def eliminar_detalle_donacion_producto(codigo):
     """
-    Eliminar producto_has_donante por ID
+    Eliminar detalle_donacion_producto por ID
     ---
     tags:
-      - producto_has_donante
+      - detalle_donacion_producto
     parameters:
       - name: codigo
         in: path
@@ -3581,12 +4066,12 @@ def eliminar_producto_has_donante(codigo):
         type: integer
     responses:
       200:
-        description: producto_has_donante eliminado
+        description: detalle_donacion_producto eliminado
     """
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("DELETE FROM producto_has_donante WHERE ID = %s", (codigo,))
+        cur.execute("DELETE FROM detalle_donacion_producto WHERE ID = %s", (codigo,))
         conn.commit()
         cur.close()
         conn.close()
@@ -3597,4 +4082,5 @@ def eliminar_producto_has_donante(codigo):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True)
+      app.run(debug=True)
