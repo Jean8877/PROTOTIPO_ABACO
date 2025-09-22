@@ -199,29 +199,4 @@
   </div>
 
 </body>
-<script>
-  const ctx = document.getElementById('graficoProductos');
-  new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['Arroz', 'frijol', 'Lentejas', 'Leche en polvo'],
-    datasets: [{
-      label: 'Kilos Donados',
-      data: [120, 50, 65, 40],
-      backgroundColor: ['#198754', '#20c997', '#6f42c1'],
-      barThickness: 40  // <-- Ajusta aquí (valor más bajo = más delgado)
-    }]
-  },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: { beginAtZero: true }
-      }
-    }
-  });
-</script>
-
 </html>
