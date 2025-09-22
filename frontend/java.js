@@ -1,6 +1,6 @@
 const BASE_URL = 'http://127.0.0.1:5000/';
 
-// = FUNCIONES GENERALES =
+
 function visualizarTipoUsuario(data) {
     let tabla = "";
 
