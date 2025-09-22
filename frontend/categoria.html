@@ -7,6 +7,8 @@
   <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
   <style>
     body, html {
@@ -89,6 +91,11 @@
       overflow-y: auto;
       background-color: #f5f5f5;
     }
+    h1, h2 {
+      margin: 0;
+      margin-bottom: 30px;
+      text-align: center;
+    }
 
     /* Gestión Categorías */
     form, table {
@@ -148,18 +155,22 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
       <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>inicio</span></a>
-      <a href="#"><i class="bi bi-box-seam"></i> <span>Inventario</span></a>
-      <a href="#"><i class="bi bi-heart-fill"></i> <span>Donaciones</span></a>
-      <a href="#"><i class="bi bi-people-fill"></i> <span>Voluntarios</span></a>
-      <a href="#"><i class="bi bi-graph-up"></i> <span>Reportes</span></a>
-      <a href="configuracion.html" class="mt-auto"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+      <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i> <span>Inventario</span></a>
+      <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i> <span>Donaciones</span></a>
+      <a href="permisos_asistentes.html"><i class="bi bi-people-fill"></i> <span>Voluntarios</span></a>
+      <a href="menu_reportes.html"><i class="bi bi-graph-up"></i> <span>Reportes</span></a>
+      <a href="pag_confi.html" class="mt-auto"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
     </div>
 
     <!-- CONTENIDO -->
     <div class="content">
       
       <form id="formCategoria">
-        <h1>Registrar Nueva Categoría</h1>
+        <!-- 🔹 Botón de regresar en la esquina del formulario -->
+        <a href="menu_producto.html" class="btn btn-outline-success btn-sm position-absolute">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 style="margin-left: 40px;">Registrar Nueva Categoría</h1>
         <input type="text" id="nombreCategoria" placeholder="Nombre de la categoría" required>
         <input type="text" id="descripcionCategoria" placeholder="Descripción de la categoría" required>
         <button type="submit">Guardar Categoría</button>
