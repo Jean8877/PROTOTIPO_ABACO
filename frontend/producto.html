@@ -177,23 +177,73 @@
     <div class="content">
       <h1>Registrar Nuevo Producto</h1>
 
-      <form id="formProducto">
-        <select id="categoriaSelect" required>
-          <option value="">Selecciona una categoría</option>
-        </select>
-        <select id="subcategoriaSelect" required disabled>
-          <option value="">Selecciona una subcategoría</option>
-        </select>
-        <label for="productoSelect">Nombre del Producto</label>
-        <input type="text" id="productoSelect" placeholder="Producto" required />
-        <label for="cantidadProducto">Stock Minimo</label>
-        <input type="number" id="cantidadProducto" placeholder="Stock Minimo" min="1" step="1" required />
-        <label for="pesoUnitario">Peso Unitario</label>
-        <input type="text" id="pesoUnitario" placeholder="Peso Unitario" required />
-        <label for="descripcionProducto">Descripción</label>
-        <input type="text" id="descripcionProducto" placeholder="Descripción del producto" />
-        <button type="submit">Guardar Producto</button>
-      </form>
+<form id="formProducto" onsubmit="agregarProducto(event)">
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Nombre del producto" required>
+    </div>
+    <div class="col-md-6 mb-3">
+      <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Descripción del producto"
+        required>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <input type="number" id="cantidad" name="cantidad" class="form-control" placeholder="Cantidad" step="0.01" min="0"
+        required>
+    </div>
+    <div class="col-md-4 mb-3">
+      <input type="text" id="codigo_barras" name="codigo_barras" class="form-control" placeholder="Código de Barras"
+        required>
+    </div>
+    <div class="col-md-4 mb-3">
+      <input type="number" id="stock" name="stock" class="form-control" placeholder="Stock" min="0" required>
+    </div>
+
+    <div class="col-md-4 mb-3">
+      <input type="number" id="stock_maximo" name="stock_maximo" class="form-control" placeholder="Stock Máximo"
+        min="0">
+    </div>
+    <div class="col-md-4 mb-3">
+      <input type="number" id="stock_minimo" name="stock_minimo" class="form-control" placeholder="Stock Mínimo"
+        min="0">
+    </div>
+
+    <!-- CATEGORIA -->
+    <div class="col-md-4 mb-3">
+      <label for="categoria_producto" class="form-label">Categoría</label>
+      <select id="categoria_producto" name="categoria_producto" class="form-control" required>
+        <!-- Opciones cargadas dinámicamente -->
+      </select>
+    </div>
+
+    <!-- SUBCATEGORIA -->
+    <div class="col-md-4 mb-3">
+      <label for="subcategoria_producto" class="form-label">Subcategoría</label>
+      <select id="subcategoria_producto" name="subcategoria_producto" class="form-control" required>
+        <!-- Opciones cargadas dinámicamente -->
+      </select>
+    </div>
+
+    <!-- ESTADO -->
+    <div class="col-md-4 mb-3">
+      <label for="estado" class="form-label">Estado</label>
+      <select id="estado" name="estado" class="form-control" required>
+        <!-- Opciones cargadas dinámicamente -->
+      </select>
+    </div>
+
+    <!-- UNIDAD DE MEDIDA -->
+    <div class="col-md-4 mb-3">
+      <label for="unidad_de_medida" class="form-label">Unidad de Medida</label>
+      <select id="unidad_de_medida" name="unidad_de_medida" class="form-control" required>
+        <!-- Opciones cargadas dinámicamente -->
+      </select>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-success">Registrar Producto</button>
+</form>
+
 
       <h2>Lista de Productos</h2>
       <table id="tablaProductos">

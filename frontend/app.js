@@ -55,6 +55,10 @@ function mostrar_producto(producto) {
                 <td>${i.subcategoria_producto}</td>
                 <td>${i.estado}</td>
                 <td>${i.unidad_de_medida}</td>
+                <td></td>
+                    <button type="button" onclick="eliminar_producto(${i.id_producto})">Eliminar</button>
+                    <button type="button" onclick="mostrar_producto(${i.id_producto})">Editar</button>
+                </td>
                 </tr>
                 `;
             });
@@ -72,6 +76,19 @@ function mostrar_producto(producto) {
         }
     }
     
+// ==========================================================================
+// ====================  POST, PRODUCTO   ====================================
+// ==========================================================================
+async function agregar_producto() {
+    try {
+        const nombre_producto = document.getElementById("")
+
+        llamar_estado()
+    } catch (error) {
+        
+    }
+}
+
 // ==========================================================================
 // =================== GET, CATEGORIA PORDUCTO ==============================
 // ==========================================================================
@@ -131,7 +148,7 @@ async function agregar_categoria() {
 }
 
 // ==========================================================================
-// =================== DELETE, CATEGORIA PRODUCTO==============================
+// =================== DELETE, CATEGORIA PRODUCTO============================
 // ==========================================================================
 
 async function eliminar_categoria(codigo) {
@@ -278,7 +295,7 @@ async function bodega() {
         const response = await promesa.json();
         console.log(response)
         mostrarbodega(response)
-            llamar_estado();
+        llamar_estado();
     }catch(error){
         console.error(error)
     }
@@ -287,6 +304,7 @@ async function bodega() {
 // ==========================================================================
 // ====================== POST, AGREGAR BODEGA =================================
 // ==========================================================================
+
 async function agregar_bodega() {
     try {
         const nombre_bodega = document.getElementById("bodega").value;
@@ -294,28 +312,30 @@ async function agregar_bodega() {
         const capacidad_bodega = document.getElementById("capacidad").value;
         const estado_bodega = document.getElementById("estado").value;
 
-        const nueva_bodega =     {
-    "capacidad": capacidad_bodega,
-    "estado": estado_bodega,
-    "nombre_bodega": nombre_bodega,
-    "ubicacion": direccion_bodega
-    }
-
-    const promesa = await fetch(`${URL_BASE}/registro_bodega`, {
-        method: 'POST',
-        body : JSON.stringify(nueva_bodega),
-        headers: {
-            "Content-type" : "application/json"
+        const nueva_bodega = {
+            "capacidad": capacidad_bodega,
+            "estado": estado_bodega,
+            "nombre_bodega": nombre_bodega,
+            "ubicacion": direccion_bodega
         }
-    })
-    
-    const response = await promesa.json()
-    console.log(response)
-    // Limpiar los campo
-    document.getElementById("bodega").value = "";
-    document.getElementById("direccion").value = "";
-    document.getElementById("capacidad").value = "";
-    document.getElementById("estado").value = "";
+
+        const promesa = await fetch(`${URL_BASE}/registro_bodega`, {
+            method: 'POST',
+            body : JSON.stringify(nueva_bodega),
+            headers: {
+                "Content-type" : "application/json"
+            }
+        })
+        
+        const response = await promesa.json()
+        console.log(response)
+
+        document.getElementById("bodega").value = "";
+        document.getElementById("direccion").value = "";
+        document.getElementById("capacidad").value = "";
+        document.getElementById("estado").value = "";
+
+        bodega();
     } catch (error) {
         console.error(error)
     }
@@ -341,6 +361,20 @@ async function llamar_estado() {
         })
     } catch (error) {
         console.error("Error al cargar es estado", error)
+    }
+}
+// ==========================================================================
+// ====================== DELETE, BODEGA  =================================
+// ==========================================================================
+async function eliminar_bodega(codigo) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/eliminar_bodega/${codigo}`, {method: 'DELETE',});
+    const response = await promesa.json()
+    console.log("Bodega eliminada", response)
+    bodega();
+    return response;
+    } catch ( error) {
+        console.error("Error al eliminar bodega:", error);
     }
 }
 

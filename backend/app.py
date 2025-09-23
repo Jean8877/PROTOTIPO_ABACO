@@ -2852,8 +2852,9 @@ def bodega():
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
-        cur.execute("SELECT b.id_bodega,b.nombre_bodega,b.ubicacion,b.capacidad,e.nombre as estado FROM bodega b JOIN estado e ON b.id_bodega = e.id_estado")
+        cur.execute("SELECT b.id_bodega,b.nombre_bodega,b.ubicacion,b.capacidad,e.nombre as estado FROM bodega b JOIN estado e ON b.estado = e.id_estado")
         datos= cur.fetchall()
+        print(datos)
         cur.close()
         conn.close()
         if datos:
