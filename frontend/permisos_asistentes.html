@@ -143,12 +143,12 @@
 
     <!-- HEADER -->
     <header>
-        <img src="../imagenes/image.png" alt="logo de abaco">
+        <img src="../imagenes/imagen.png" alt="logo de abaco">
         <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
         <div>
             <i class="bi bi-person-circle"></i>
             <span class="me-3"> <strong>Karina</strong> </span>
-      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
+            <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
         </div>
     </header>
 
@@ -304,11 +304,11 @@
 
                 if (password !== confirmPassword) {
                     swal("Advertencia", "Las contraseñas no coinciden", "warning");
-                    
+
                     return;
                 }
 
-                
+
                 let usuarios = obtenerUsuarios();
                 usuarios.push({ nombre, username, correo, password, rol });
                 guardarUsuarios(usuarios);
@@ -316,23 +316,23 @@
                 form.reset();
                 swal("Mensaje", "Usuario guardado correctamente.", "success");
             });
-            
-            
+
+
             function editarUsuario(index) {
                 const usuarios = obtenerUsuarios();
                 const u = usuarios[index];
-                
+
                 document.getElementById('nombreUsuario').value = u.nombre;
                 document.getElementById('username').value = u.username;
                 document.getElementById('correo').value = u.correo;
                 document.getElementById('password').value = u.password;
                 document.getElementById('confirmPassword').value = u.password;
                 document.getElementById('rol').value = u.rol;
-                
+
                 usuarios.splice(index, 1);
                 guardarUsuarios(usuarios);
                 mostrarUsuarios();
-                
+
                 let collapseTwo = new bootstrap.Collapse(document.getElementById('collapseTwo'), { toggle: true });
             }
 

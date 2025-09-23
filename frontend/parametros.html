@@ -461,18 +461,7 @@
             <form id="parameterForm">
                 <div class="form-group">
                     <label for="paramType">Tipo de parámetro</label>
-                    <select id="paramType" required>
-                        <option value="">-- Seleccione --</option>
-                        <option value="document">Tipo de Documento</option>
-                        <option value="gender">Género</option>
-                        <option value="status">Estado Civil</option>
-                        <option value="religion">Religión</option>
-                        <option value="health">Estado de Salud</option>
-                        <option value="population">Tipo de Población</option>
-                        <option value="sacrament">Sacramento</option>
-                        <option value="task">Tipo de Tarea</option>
-                        <option value="appointment">Tipo de Cita</option>
-                    </select>
+                    <input type="text" id="paramType" placeholder="Ej: Tipo de Documento" required />
                 </div>
 
                 <div class="form-group">
@@ -528,44 +517,12 @@
                 { code: 'TI', name: 'Tarjeta de Identidad', description: 'Documento para menores', status: 'active' },
                 { code: 'RC', name: 'Registro Civil', description: 'Documento de nacimiento', status: 'active' }
             ],
-            gender: [
-                { code: 'M', name: 'Masculino', description: '', status: 'active' },
-                { code: 'F', name: 'Femenino', description: '', status: 'active' },
-                { code: 'O', name: 'Otro', description: '', status: 'active' }
-            ],
-            status: [
-                { code: 'SOL', name: 'Soltero/a', description: '', status: 'active' },
-                { code: 'CAS', name: 'Casado/a', description: '', status: 'active' },
-                { code: 'DIV', name: 'Divorciado/a', description: '', status: 'active' },
-                { code: 'VIU', name: 'Viudo/a', description: '', status: 'active' },
-                { code: 'UL', name: 'Unión Libre', description: '', status: 'active' }
-            ],
-            religion: [
-                { code: 'CAT', name: 'Católica', description: '', status: 'active' },
-                { code: 'PRO', name: 'Protestante', description: '', status: 'active' },
-                { code: 'CRI', name: 'Cristiana', description: '', status: 'active' },
-                { code: 'OTR', name: 'Otra', description: '', status: 'active' }
-            ],
             health: [
                 { code: 'BUE', name: 'Buena', description: '', status: 'active' },
                 { code: 'REG', name: 'Regular', description: '', status: 'active' },
                 { code: 'MAL', name: 'Mala', description: '', status: 'active' },
                 { code: 'DISC', name: 'Discapacidad', description: '', status: 'active' },
                 { code: 'ENF', name: 'Enfermedad', description: '', status: 'active' }
-            ],
-            population: [
-                { code: 'NIN', name: 'Niños', description: 'Población 0-12', status: 'active' },
-                { code: 'ADO', name: 'Adolescentes', description: '13-17', status: 'active' },
-                { code: 'JOV', name: 'Jóvenes', description: '18-35', status: 'active' },
-                { code: 'ADU', name: 'Adultos', description: '36-59', status: 'active' },
-                { code: 'MAY', name: 'Adultos Mayores', description: '60+', status: 'active' }
-            ],
-            sacrament: [
-                { code: 'BAU', name: 'Bautismo', description: '', status: 'active' },
-                { code: 'COM', name: 'Comunión', description: '', status: 'active' },
-                { code: 'CON', name: 'Confirmación', description: '', status: 'active' },
-                { code: 'MAT', name: 'Matrimonio', description: '', status: 'active' },
-                { code: 'UNC', name: 'Unción', description: '', status: 'active' }
             ],
             task: [], appointment: []
         };

@@ -1,5 +1,6 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,11 +8,12 @@
   <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
   <style>
-    body, html {
+    body,
+    html {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -32,7 +34,8 @@
     /* LAYOUT GENERAL */
     .main-layout {
       display: flex;
-      height: calc(100vh - 60px); /* Resta el alto del header */
+      height: calc(100vh - 60px);
+      /* Resta el alto del header */
     }
 
     /* SIDEBAR */
@@ -92,21 +95,25 @@
       position: relative;
     }
 
-    h1, h2 {
+    h1,
+    h2 {
       margin: 0;
       margin-bottom: 30px;
       text-align: center;
     }
+
     /* ESTILOS FORMULARIO Y TABLA */
-    form, table {
+    form,
+    table {
       background-color: #fff;
       padding: 15px;
       margin-bottom: 30px;
       border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    input, select {
+    input,
+    select {
       margin-bottom: 10px;
       padding: 8px;
       width: 100%;
@@ -118,11 +125,14 @@
       border-collapse: collapse;
     }
 
-    table, th, td {
+    table,
+    th,
+    td {
       border: 1px solid #ccc;
     }
 
-    th, td {
+    th,
+    td {
       padding: 10px;
       text-align: left;
     }
@@ -141,6 +151,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
@@ -168,7 +179,7 @@
 
     <!-- CONTENIDO -->
     <div class="content">
-      
+
       <form id="formSubcategoria">
         <!-- 🔹 Botón de regresar en la esquina del formulario -->
         <a href="menu_producto.html" class="btn btn-outline-success btn-sm position-absolute">
@@ -225,7 +236,7 @@
 
     cargarCategorias();
 
-    formSubcategoria.addEventListener('submit', function(e) {
+    formSubcategoria.addEventListener('submit', function (e) {
       e.preventDefault();
 
       const categoria = categoriaSelect.value;
@@ -273,4 +284,5 @@
     }
   </script>
 </body>
+
 </html>
