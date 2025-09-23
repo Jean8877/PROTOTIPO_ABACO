@@ -97,10 +97,12 @@
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    input, textarea {
-      margin-bottom: 10px;
-      padding: 8px;
+    input, select, textarea {
       width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
       box-sizing: border-box;
     }
     textarea {
@@ -155,20 +157,23 @@
       <a href="permisos.html"><i class="bi bi-people-fill"></i> <span>Voluntarios</span></a>
       <a href="RGT_producto.html"><i class="bi bi-graph-up"></i> <span>Reportes</span></a>
 
-      <a href="#" class="mt-auto"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+      <a href="pag_confi.html" class="mt-auto"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
     </div>
 
     <!-- CONTENIDO -->
     <div class="content">
       <h1>Gestión de Bodegas</h1>
 
-      <form id="formBodega">
-        <input type="text" id="nombreBodega" placeholder="Nombre de la bodega" required />
-        <textarea id="direccionBodega" placeholder="Dirección y ubicación" rows="3" required></textarea>
-        <input type="number" id="capacidadBodega" placeholder="Capacidad de almacenamiento" min="1" required />
+      <form id="formBodega" onsubmit="event.preventDefault(); agregar_bodega();">
+        <input type="text" id="bodega" placeholder="Nombre de la bodega" required />
+        <input type="text" id="direccion" placeholder="Dirección" required />
+        <input type="number" id="capacidad" placeholder="Capacidad" required />
+        <label for="estado">Estado:</label>
+        <select id="estado" required aria-label="Estado"></select>
         <button type="submit">Guardar Bodega</button>
       </form>
 
+</form>
       <h2>Lista de Bodegas</h2>
       <table id="tablaBodegas">
         <thead>
@@ -184,7 +189,8 @@
         <tbody id="tbodybodega"></tbody>
       </table>
 
-      <script>bodega();</script>
+      <script>bodega();
+      </script>
     </div>
   </div>
 </body>

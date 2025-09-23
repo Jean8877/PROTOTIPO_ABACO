@@ -2397,7 +2397,7 @@ def subcategoria_producto():
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
-        cur.execute("SELECT * FROM subcategoria_producto")
+        cur.execute("SELECT sc.codigo,sc.descripcion,c.descripcion as categoria_producto FROM subcategoria_producto sc JOIN categoria_producto c ON sc.categoria_producto = c.codigo")
         datos= cur.fetchall()
         cur.close()
         conn.close()
@@ -2852,9 +2852,8 @@ def bodega():
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
-        cur.execute("SELECT * FROM bodega")
+        cur.execute("SELECT b.id_bodega,b.nombre_bodega,b.ubicacion,b.capacidad,e.nombre as estado FROM bodega b JOIN estado e ON b.id_bodega = e.id_estado")
         datos= cur.fetchall()
-        print(datos)
         cur.close()
         conn.close()
         if datos:
@@ -2932,7 +2931,7 @@ def registro_bodega():
     try:
         data = request.get_json()
         nombre_bodega = data['nombre_bodega']
-        ubicacion =['ubicacion']
+        ubicacion = data['ubicacion']
         capacidad = data['capacidad']
         estado = data['estado']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')

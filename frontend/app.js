@@ -175,13 +175,14 @@ async function subcategoria_producto() {
         const response = await promesa.json();
         console.log(response)
         mostrar_subcategoria(response)
+        llamar_categoria()
     }catch(error){
         console.error("Error al obtener subcategorías:", error)
     }
 }
 
 // ==========================================================================
-// =================== POST, SUBCATEGORIA PRODUCTO==============================
+// =================== POST, SUBCATEGORIA PRODUCTO===========================
 // ==========================================================================
 
 async function agregar_subcategoria() {
@@ -189,9 +190,9 @@ async function agregar_subcategoria() {
         const nombre_subcategoria = document.getElementById("nombreSubcategoria").value;
     
         const subcategoria = {
-    "descripcion": nombre_subcategoria,
-    "categoria_producto": document.getElementById("categoria").value
-    }
+            "descripcion": nombre_subcategoria,
+            "categoria_producto": document.getElementById("categoria").value
+        }
 
     const promesa = await fetch(`${URL_BASE}/registro_subcategoria_producto`, {
         method: 'POST',
@@ -220,7 +221,6 @@ async function llamar_categoria() {
 
         const select = document.getElementById("categoria");
         select.innerHTML = "";
-
         response.categoria_producto.forEach(categoria => {
             const option = document.createElement("option");
             option.value = categoria.codigo;
@@ -263,6 +263,9 @@ function mostrarbodega(bodega){
             <td>${i.ubicacion}</td>
             <td>${i.capacidad}</td>
             <td>${i.estado}</td>
+            <td>
+                <button type="button" onclick="eliminar_bodega(${i.id_bodega})">Eliminar</button>
+            </td>
             </tr>
         `;
     });
@@ -275,11 +278,71 @@ async function bodega() {
         const response = await promesa.json();
         console.log(response)
         mostrarbodega(response)
+            llamar_estado();
     }catch(error){
         console.error(error)
     }
 }
 
+// ==========================================================================
+// ====================== POST, AGREGAR BODEGA =================================
+// ==========================================================================
+async function agregar_bodega() {
+    try {
+        const nombre_bodega = document.getElementById("bodega").value;
+        const direccion_bodega = document.getElementById("direccion").value;
+        const capacidad_bodega = document.getElementById("capacidad").value;
+        const estado_bodega = document.getElementById("estado").value;
+
+        const nueva_bodega =     {
+    "capacidad": capacidad_bodega,
+    "estado": estado_bodega,
+    "nombre_bodega": nombre_bodega,
+    "ubicacion": direccion_bodega
+    }
+
+    const promesa = await fetch(`${URL_BASE}/registro_bodega`, {
+        method: 'POST',
+        body : JSON.stringify(nueva_bodega),
+        headers: {
+            "Content-type" : "application/json"
+        }
+    })
+    
+    const response = await promesa.json()
+    console.log(response)
+    // Limpiar los campo
+    document.getElementById("bodega").value = "";
+    document.getElementById("direccion").value = "";
+    document.getElementById("capacidad").value = "";
+    document.getElementById("estado").value = "";
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
+// =======================================================================
+// ====================== LLAMAR ESTADO =================================
+// =======================================================================
+async function llamar_estado() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/estado`, {method: 'GET'});
+        const response = await promesa.json()
+
+        const select = document.getElementById("estado");
+        select.innerHTML = "";
+        response.estado.forEach(estado =>  {
+            const option = document.createElement("option")
+            option.value = estado.id_estado;
+            option.text = estado.nombre;
+            option.text = estado.descripcion;
+            select.appendChild(option)
+        })
+    } catch (error) {
+        console.error("Error al cargar es estado", error)
+    }
+}
 
 // ==========================================================================
 // ====================== GET, TIPO DONANTE =================================
@@ -442,8 +505,6 @@ function mostrartipo_organizacion(tipo_organizacion) {
         <tr>
             <td>${i.id_tipo_organizacion}</td>
             <td>${i.nombre}</td>
-            
-            
         </tr>
         `;
     });
@@ -697,32 +758,3 @@ async function fecha_vencimiento() {
     }
 }
 
-// ==========================================================================
-// ===============  GET, DETALLE DONACION PRODUCTO  =========================
-// ==========================================================================
-
-function mostrar_detalle_donacion_producto(detalle_donacion_producto) {
-    let info ="";
-    detalle_donacion_producto.detalle_donacion_producto.forEach(i => {
-        info +=`
-        <tr>
-            <td>${i.ID}</td>
-            <td>${i.id_producto}</td>
-            <td>${i.id_donacion}</td>
-            <td>${i.cantidad}</td>
-        </tr>
-        `;
-    });
-    document.getElementById("tbodydetalle_donacion_producto").innerHTML = info;
-}
-
-async function detalle_donacion_producto() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/detalle_donacion_producto`, {method : 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_detalle_donacion_producto(response)
-    }catch(error){
-        console.error(error)
-    }
-}
