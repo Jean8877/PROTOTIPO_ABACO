@@ -52,7 +52,7 @@
     }
 
     .sidebar:hover {
-      width: 250px;
+      width: 300px;
     }
 
     .sidebar a {
@@ -88,8 +88,15 @@
       padding: 20px;
       overflow-y: auto;
       background-color: #f5f5f5;
+      position: relative;
     }
 
+    h1,
+    h2 {
+      margin: 0;
+      margin-bottom: 30px;
+      text-align: center;
+    }
     
 
     form,
@@ -163,7 +170,7 @@
       <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
       <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
       <a href="permisos_asistentes.html"><i class="bi bi-people-fill"></i><span>Voluntarios</span></a>
-      <a href="reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+      <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
       <div class="mt-auto">
         <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
       </div>
@@ -177,7 +184,7 @@
         <a href="menu_de_parroquias.html" class="btn btn-outline-success btn-sm position-absolute">
           <i class="bi bi-arrow-left"></i>
         </a>
-        <h1 style="margin-left: 40px;">Registrar Nueva Parroquia</h1>
+        <h1 >Registrar Nueva Parroquia</h1>
         <input type="text" id="nombreParroquia" placeholder="Nombre de la parroquia" required>
         <select id="tipo_organizacion" required>
           <option value="">Tipo de organización</option>
