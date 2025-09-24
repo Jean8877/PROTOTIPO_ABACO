@@ -586,7 +586,7 @@ async function detalle_donacion_producto() {
 
 //==================   Tipo Donante    =====================//
 
-async function agregar_tipo_donante() {
+function agregar_tipo_donante() {
     try {
         const 
     }
