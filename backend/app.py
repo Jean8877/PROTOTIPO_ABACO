@@ -10,7 +10,7 @@ CORS(app)
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': '',  
+    'password': 'lupi19',  
     'db': 'base_backend',
     'charset': 'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor
