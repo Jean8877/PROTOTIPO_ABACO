@@ -587,10 +587,120 @@ async function detalle_donacion_producto() {
 //==================   Tipo Donante    =====================//
 
 function agregar_tipo_donante() {
-    try {
-        const 
-    }
+   
+    const nom = document.getElementById("nombreTipo").value;
+    const des = document.getElementById("descripcionTipo").value;
+
+    const data = {
+        nombre: nom,
+        descripcion: des
+    };
+
+    fetch(`${URL_BASE}/registro_tipo_donante`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
+        return response.json();
+    })
+    .then(response => {
+        if (!response.mensaje === "Error") {
+            swal ("Mensaje","Error en el registro", "error");
+        } else {
+            consulta_general();
+            swal ("Mensaje","Registro exitoso", "success");
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
+    
+//=================== Donante =========================//
+
+function agregar_donante() {
+    const nom = document.getElementById("nombreDonante").value;
+    const tip_doc = document.getElementById("tipoDocumento").value;
+    const num_doc = document.getElementById("numeroDocumento").value;
+    const tel = document.getElementById("telefonoDonante").value;
+    const cor = document.getElementById("correoDonante").value;
+    const dir = document.getElementById("direccionDonante").value;
+    const est = document.getElementById("estadoDonante").value;
+    const tip_don = document.getElementById("tipoDonante").value;
+}
+    const data = {
+        nombre: nom,
+        tipo_documento: tip_doc,
+        numero_documento: num_doc,
+        telefono: tel,
+        correo: cor,
+        direccion: dir,
+        estado: est,
+        tipo_donante: tip_don
+    }
+    fetch(`${URL_BASE}/registro_donante`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
+        return response.json();
+    })
+    .then(response => {
+        if (!response.mensaje === "Error") {
+            swal ("Mensaje","Error en el registro", "error");
+        } else {
+            consulta_general();
+            swal ("Mensaje","Registro exitoso", "success");
+        }
+    })
+    .catch(error => console.error('Error:', error));    
+
+//===============  ELIMINAR DONANTE  ======================//
+
+function eliminar_donante(id_donante) {
+    fetch(`${BASE_URL}/eliminar/${id_donante}`, { method: 'DELETE'}) // Solucitud DELETE
+        .then(response => {
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
+        return response.json();
+    })
+    .then(res => {
+        actualizar_lista_donantes(); // Función para actualizar la lista de donantes en la interfaz
+        swal("mensaje", `registro ${res.mensaje} exitosamente`, "success");
+    })
+    .catch(error => console.error('Error:', error));
+
+function actualizar_lista_donantes(id_donante) {
+    const row = document.querySelector(`tr[data-id='${id_donante}']`);
+    if (row) row.remove();        
+}
+
+
+//==========  ELIMINAR TIPO DONANTE   ============//
+
+
+
+
+//========  VISUALIZAR DONANTE ========//
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
 
 
 
