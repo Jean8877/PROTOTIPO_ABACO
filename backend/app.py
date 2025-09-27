@@ -4,7 +4,6 @@ import pymysql
 # import pymysql.cursors
 import bcrypt # incriptar contrasena
 from flasgger import Swagger
-
 app = Flask(__name__)
 CORS(app)
 # CORS(app, origins=["http://localhost:65233/", "http://10.4.215.103:5000"])
@@ -20,7 +19,46 @@ def conectar(vhost, vuser, vpass, vdb):
 @app.route("/", methods=['GET'])
 def index():
     return jsonify({"mensaje": "API del Banco de Alimentos"})
+  
+# ============================================================
+# ===================   RUTA LOGIN   =========================
+# ============================================================
+@app.route("/login", methods=["POST"])
+def login():
+    """
+    Login de usuario
+    ---
+    tags:
+      - login
+    responses:
+      200:
+        description: Login exitoso
+      401:
+        description: Credenciales inválidas
+    """
+    try:
+        data = request.get_json()
+        usuario = data.get("correo")
+        contrasena = data.get("contrasena")
 
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM usuario WHERE correo = %s", (usuario,))
+        datos = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if not datos:
+            return jsonify({"mensaje": "Usuario no encontrado"}), 401
+
+        # comparación directa porque tus contraseñas están en texto plano
+        if datos["contrasena"] == contrasena:
+            return jsonify({"mensaje": "Login exitoso", "usuario": datos}), 200
+        else:
+            return jsonify({"mensaje": "Correo o contraseña incorrectos"}), 401
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # ============================================================
 # ===============   RUTA PARA TIPO_USUARIO   ===============
 # ============================================================
@@ -3862,8 +3900,6 @@ def eliminar_movimiento_producto(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error'})
     
-
-
 # ============================================================
 # ================= RUTA PARA PRODUCTO  ======================
 # ============================================================
@@ -4042,8 +4078,6 @@ def actualizar_producto(id):
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
-    
-
 
 # ============================================================
 # =============  RUTA PARA ELIMINAR PRODUCTO  ================
