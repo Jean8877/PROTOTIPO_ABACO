@@ -121,35 +121,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const username = document.getElementById('username').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-
-      const error = document.getElementById('errorAlert');
-      const success = document.getElementById('successAlert');
-
-      if (password !== confirmPassword) {
-        error.classList.remove('d-none');
-        return;
-      }
-
-      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-      usuarios.push({ username, email, password });
-      localStorage.setItem('usuarios', JSON.stringify(usuarios));
-
-      error.classList.add('d-none');
-      success.classList.remove('d-none');
-
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 2000);
-    });
-  </script>
 </body>
 
 </html>

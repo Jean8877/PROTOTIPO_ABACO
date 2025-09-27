@@ -2,6 +2,63 @@ const URL_BASE = "http://127.0.0.1:5000";
 
 
 // ==========================================================================
+// =================== LOGIN USUARIO ========================================
+// ==========================================================================
+const formLogin = document.getElementById("loginForm");
+
+if (formLogin) { // solo si existe en el HTML
+    formLogin.addEventListener("submit", async (e) => {
+        e.preventDefault(); // evita recargar la página
+
+        const correo = document.getElementById("username").value;
+        const contrasena = document.getElementById("password").value;
+
+        try {
+            const response = await fetch(`${URL_BASE}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    correo: correo,
+                    contrasena: contrasena,
+                }),
+            });
+
+            const data = await response.json();
+            console.log("Login response:", data);
+
+            if (response.ok) {
+                // ✅ Login correcto → mostrar modal moderno
+                const modal = new bootstrap.Modal(document.getElementById("loginSuccessModal"));
+                document.getElementById("loginSuccessMessage").textContent = `Bienvenido, ${data.usuario.nombre_completo}`;
+                modal.show();
+
+                // guardar token en localStorage si existe
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                }
+
+                // 🔁 Redirigir automáticamente al menú central después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = "menu_central.html"; // cambia la ruta si tu archivo se llama distinto
+                }, 2000);
+
+            } else {
+                // ❌ Error de login → mostrar modal de error
+                const modal = new bootstrap.Modal(document.getElementById("loginErrorModal"));
+                document.getElementById("loginErrorMessage").textContent = data.mensaje || "Error al iniciar sesión";
+                modal.show();
+            }
+
+        } catch (error) {
+            console.error("Error en login:", error);
+            const modal = new bootstrap.Modal(document.getElementById("loginErrorModal"));
+            document.getElementById("loginErrorMessage").textContent = "Error de conexión con el servidor.";
+            modal.show();
+        }
+    });
+}
+
+// ==========================================================================
 // ================= GET, MOVIMIENTO DE PRODUCTO   =========================
 // ==========================================================================
 
@@ -34,6 +91,105 @@ async function movimiento_producto() {
         console.error(error)
     }
 }
+
+// ==========================================================================
+// =================== GET, UNIDAD DE MEDIDA  ===============================
+// ==========================================================================
+    
+    function mostrar_uni_medida(medida) {
+        let info = "";
+        medida.unidad_de_medida.forEach(i => {
+            info +=`
+            <tr>
+            <td>${i.codigo}</td>
+            <td>${i.nombre}</td>
+            <td>
+                <button type="button" onclick="eliminar_unidad_de_medida(${i.codigo})">Eliminar</button>
+            </td>
+            </tr>
+            `;
+        });
+        document.getElementById("tbodyunidad_de_medida").innerHTML = info;
+    }
+    
+    async function unidad_de_medida() {        
+        try{
+            const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, {method: 'GET'});
+            const response = await promesa.json();
+            console.log(response)
+            mostrar_uni_medida  (response)
+        }catch(error){
+            console.error(error)
+        }
+    }
+// ==========================================================================
+// =================== POST, UNIDAD DE MEDIDA  ==============================
+// ==========================================================================
+
+async function agregar_unidad_de_medida() {
+    try {
+        const nombre_unidad_de_medida = document.getElementById("unidad_de_medida").value;
+        const nueva_unidad = {
+    "nombre": nombre_unidad_de_medida
+    }
+
+    const promesa = await fetch(`${URL_BASE}/registro_unidad_de_medida`, {
+        method: 'POST',
+        body : JSON.stringify(nueva_unidad),
+        headers: {
+            "Content-type" : "application/json"
+        }
+    })
+    const response = await promesa.json()
+    console.log(response)
+        document.getElementById("unidad_de_medida").value = "";
+        unidad_de_medida();
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+// ==========================================================================
+// ===================== LLAMAR UNIDAD DE MEDIDA  ===========================
+// ==========================================================================
+async function llamar_unidad_medida() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, { method: 'GET' });
+        const response = await promesa.json();
+
+
+        const select = document.getElementById("unidad_medida");
+        select.innerHTML = "<option value=''>Seleccione una unidad de medida</option>";
+
+        response.unidad_de_medida.forEach(unidad => {
+            const option = document.createElement("option");
+            option.value = unidad.codigo;
+            option.text = unidad.nombre;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar categorías:", error);
+    }
+}
+
+// ==========================================================================
+// =================== DELETE, UNIDAD DE MEDIDA  ============================
+// ==========================================================================
+
+async function eliminar_unidad_de_medida(codigo) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/eliminar_unidad_de_medida/${codigo}`, {method: 'DELETE',});
+        const response = await promesa.json()
+        console.log("unidad de medida eliminada:", response)
+
+        unidad_de_medida();
+        return response
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 // ==========================================================================
 // ===================  GET, PRODUCTO   ==============================
 // ==========================================================================
@@ -55,9 +211,8 @@ function mostrar_producto(producto) {
                 <td>${i.subcategoria_producto}</td>
                 <td>${i.estado}</td>
                 <td>${i.unidad_de_medida}</td>
-                <td></td>
-                    <button type="button" onclick="eliminar_producto(${i.id_producto})">Eliminar</button>
-                    <button type="button" onclick="mostrar_producto(${i.id_producto})">Editar</button>
+                <td>
+                    <button type="button" onclick="eliminar_producto(${i.id_producto})">Eliminar</button> 
                 </td>
                 </tr>
                 `;
@@ -71,23 +226,93 @@ function mostrar_producto(producto) {
             const response = await promesa.json();
             console.log(response)
             mostrar_producto(response)
+            llamar_categoria()
+            llamar_estado()
+            llamar_subcategoria()
+            llamar_unidad_medida()
+
         }catch (error) {
             console.error(error)
         }
     }
-    
+
+
 // ==========================================================================
 // ====================  POST, PRODUCTO   ====================================
 // ==========================================================================
 async function agregar_producto() {
-    try {
-        const nombre_producto = document.getElementById("")
+    try{
+        const nombre_producto = document.getElementById("producto").value;
+        const descripcion_producto = document.getElementById("descripcion").value;
+        const cantidad_producto = parseInt(document.getElementById("cantidad").value);
+        const codi_barra_producto = document.getElementById("codigo_barras").value;
 
-        llamar_estado()
-    } catch (error) {
+        const stock_maxi_producto = document.getElementById("stock_maximo").value;
+        const stock_minim_producto = document.getElementById("stock_minimo").value;
+        const categoria_producto = document.getElementById("categoria").value;
+        const subcategoria_producto = document.getElementById("subcategoria").value;
+        const estado = document.getElementById("estado").value;
+        const unidad_de_medida_producto = document.getElementById("unidad_medida").value;
+
+        const nuevo_producto = {
+            "nombre": nombre_producto,
+            "descripcion": descripcion_producto,
+            "cantidad": cantidad_producto,
+            "codigo_barras": codi_barra_producto,
+            "stock": cantidad_producto,
+            "stock_minimo": stock_minim_producto,
+            "stock_maximo": stock_maxi_producto,
+            "categoria_producto": categoria_producto,
+            "subcategoria_producto": subcategoria_producto,
+            "estado": estado,
+            "unidad_de_medida": unidad_de_medida_producto
+        }
+
+        const promesa = await fetch(`${URL_BASE}/registro_producto`, {
+            method: 'POST',
+            body : JSON.stringify(nuevo_producto),
+            headers: {
+                "Content-Type" : "application/json"
+            }
+        })
+
+        const response = await promesa.json()
+        console.log(response)
         
+        document.getElementById("producto").value = "";
+        document.getElementById("descripcion").value = "";
+        document.getElementById("cantidad").value = "";
+        document.getElementById("codigo_barras").value = "";
+        document.getElementById("stock_maximo").value = "";
+        document.getElementById("stock_minimo").value = "";
+        document.getElementById("categoria").value = "";
+        document.getElementById("subcategoria").value = "";
+        document.getElementById("estado").value = "";
+        document.getElementById("unidad_medida").value = "";
+
+        producto();
+    } catch (error) {
+        console.error(error)
     }
 }
+// ==========================================================================
+// ======================== DELETE,  PRODUCTO  ==============================
+// ==========================================================================
+
+async function eliminar_producto(codigo) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/eliminar_producto/${codigo}`, {method: 'DELETE',});
+        const response = await promesa.json()
+        console.log("Producto eliminada:", response)
+
+        producto();
+        return response
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 
 // ==========================================================================
 // =================== GET, CATEGORIA PORDUCTO ==============================
@@ -102,7 +327,7 @@ async function agregar_producto() {
             <td>${i.descripcion}</td>
             <td>
                 <button type="button" onclick="eliminar_categoria(${i.codigo})">Eliminar</button>
-                <button type="button" onclick="mostrar_categoria(${i.codigo})">Editar</button>
+                <button type="button" onclick="mostrar_categoria(${i.codigo})">Actualizar</button>
             </td>
             </tr>
             `;
@@ -232,21 +457,44 @@ async function agregar_subcategoria() {
 // =================== LLAMAR CATEGORIA A SUBCATEGORIA =========================
 // ==========================================================================
 async function llamar_categoria() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/categoria_producto`, {method: 'GET'});
+    try {
+        const promesa = await fetch(`${URL_BASE}/categoria_producto`, { method: 'GET' });
         const response = await promesa.json();
 
         const select = document.getElementById("categoria");
-        select.innerHTML = "";
+        select.innerHTML = "<option value=''>Seleccione una categoría</option>";
+
         response.categoria_producto.forEach(categoria => {
             const option = document.createElement("option");
             option.value = categoria.codigo;
             option.text = categoria.descripcion;
             select.appendChild(option);
         });
-    }catch(error){
-        console.error("Error al cargar categorías:", error)
-    }   
+    } catch (error) {
+        console.error("Error al cargar categorías:", error);
+    }
+}
+
+// ==========================================================================
+// =================== LLAMAR CATEGORIA A PRODUCTO =========================
+// ==========================================================================
+async function llamar_subcategoria() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, { method: 'GET' });
+        const response = await promesa.json();
+
+ const select = document.getElementById("subcategoria");
+        select.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
+
+        response.subcategoria_producto.forEach(sub => {
+            const option = document.createElement("option");
+            option.value = sub.codigo;       // el ID de la subcategoría
+            option.text = sub.descripcion;   // el nombre que se muestra
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar subcategorías:", error);
+    }
 }
 
 // ==========================================================================
@@ -355,8 +603,7 @@ async function llamar_estado() {
         response.estado.forEach(estado =>  {
             const option = document.createElement("option")
             option.value = estado.id_estado;
-            option.text = estado.nombre;
-            option.text = estado.descripcion;
+    option.text = `${estado.nombre} - ${estado.descripcion}`;
             select.appendChild(option)
         })
     } catch (error) {
