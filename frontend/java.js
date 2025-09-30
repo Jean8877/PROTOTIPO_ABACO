@@ -627,7 +627,17 @@ function agregar_tipo_donante() {
     })
     .catch(error => console.error('Error:', error));
 }
-    
+  
+
+//==========  ELIMINAR TIPO DONANTE   ============//
+
+
+
+
+
+
+
+
 //=================== Donante =========================//
 
 function agregar_donante() {
@@ -691,7 +701,7 @@ function actualizar_lista_donantes(id_donante) {
 }
 
 
-//==========  ELIMINAR TIPO DONANTE   ============//
+
 
 
 
