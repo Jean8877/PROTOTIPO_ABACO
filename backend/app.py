@@ -1,12 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS # para permitir el acceso a la API desde el frontend
 import pymysql
-# import pymysql.cursors
+
+import pymysql.cursors
+
 import bcrypt # incriptar contrasena
 from flasgger import Swagger
 app = Flask(__name__)
 CORS(app)
-# CORS(app, origins=["http://localhost:65233/", "http://10.4.215.103:5000"])
+# CORS(app, origins=["http://localhost:50857/", "http://10.4.215.103:5000"])
 
 swagger = Swagger(app)
 
@@ -59,6 +61,7 @@ def login():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+      
 # ============================================================
 # ===============   RUTA PARA TIPO_USUARIO   ===============
 # ============================================================
@@ -78,6 +81,36 @@ def tipo_usuario():
         conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_usuario") 
+        datos = cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+          return jsonify({'tipo_usuario':datos, 'mensaje': 'Lista De Tipo Usuario'})
+        else:
+          return jsonify ({'mensaje': 'Tipo de usuario no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify ({'mensaje': 'Error'})
+      
+# ============================================================
+# ===============   RUTA INDIVIDUAL TIPO_USUARIO   ===============
+# ============================================================
+
+@app.route("/tipo_usuario/<int:codigo>", methods=['GET'])
+def tipo_usuario_individual(codigo):
+    """
+    consulta de tipo_usuario
+    ---
+    tags:
+      - tipo_usuario
+    responses:
+      200:
+        description: lista de tipos de usuario
+    """
+    try:
+        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        cur = conn.cursor() # cursor para ejecutar consultas
+        cur.execute("SELECT * FROM tipo_usuario WHERE id_tipo_usuario = %s", (codigo,))
         datos = cur.fetchall()
         cur.close()
         conn.close()
@@ -240,6 +273,37 @@ def tipo_documento():
         return jsonify ({'mensaje': 'Error'})
 
 # ============================================================
+# ============= RUTA INDIVIDUAL TIPO_DOCUMENTO   =============
+# ============================================================
+
+@app.route("/tipo_documento/<int:codigo>", methods=['GET'])
+def tipo_documento_individual(codigo):
+    """
+    consulta de tipo_documento
+    ---
+    tags:
+      - tipo_documento
+    responses:
+      200:
+        description: lista de tipo de documento
+    """
+    try:
+        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        cur = conn.cursor() # cursor para ejecutar consultas
+        cur.execute("SELECT * FROM tipo_documento WHERE id_tipo_documento = %s", (codigo,))
+        datos = cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'tipo_documento': datos, 'mensaje': 'Lista De Tipo Documento'})
+        else:
+            return jsonify({'mensaje': 'Tipo de documento no encontrado'})
+        
+    except Exception as ex:
+        print(ex) # imprime el error
+        return jsonify ({'mensaje': 'Error'})
+
+# ============================================================
 # ===========   RUTA PARA REGISTRO TIPO_DOCUMENTO   ==========
 # ============================================================
 
@@ -362,13 +426,9 @@ def eliminar_tipo_documento(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
-
-
 # ============================================================
 # ===============   RUTA PARA TIPO_GASTO   ===============
 # ============================================================
-
-
 @app.route("/tipo_gasto", methods=['GET'])
 def tipo_gasto():
     """
@@ -396,7 +456,7 @@ def tipo_gasto():
         return jsonify ({'mensaje': 'Error'})
 
 # ============================================================
-# ===============   RUTA PARA CONSULTAR TIPO_GASTO POR ID   ===============
+# ======== RUTA PARA CONSULTAR TIPO_GASTO POR ID ============
 # ============================================================
 
 @app.route("/tipo_gasto/<int:codigo>", methods=['GET'])
@@ -431,7 +491,7 @@ def tipo_gasto_por_id(codigo):
         return jsonify({'mensaje': 'Error'})
 
 # ============================================================
-# ===============   RUTA PARA REGISTRAR TIPO_GASTO   ===============
+# =============== RUTA PARA REGISTRAR TIPO_GASTO =============
 # ============================================================
 
 @app.route("/registro_tipo_gasto", methods=['POST'])
@@ -553,7 +613,7 @@ def eliminar_tipo_gasto(codigo):
         return jsonify({'mensaje': 'Error'})
 
 # ============================================================
-# ===============   ESTADO   ===============
+# =============== RUTA PARA ESTADO   ===============
 # ============================================================
 
 @app.route("/estado", methods=['GET'])
@@ -582,6 +642,36 @@ def estado():
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
       
+
+# ============================================================
+# ========= RUTA PARA CONSULTAR INDIVIDUAL ESTADO =============
+# ============================================================
+
+@app.route("/estado/<int:codigo>", methods=['GET'])
+def estado_individual(codigo):
+    """
+    Consulta de lista de estados
+    ---
+    tags:
+      - estado
+    responses:
+      200:
+        description: lista de estados
+    """
+    try:
+        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        cur = conn.cursor() # cursor para ejecutar consultas
+        cur.execute("SELECT * FROM estado WHERE id_estado = %s", (codigo,))
+        datos = cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'estado': datos, 'mensaje': 'Lista De Estado'})
+        else:
+            return jsonify({'mensaje': 'Estado no encontrado'})
+    except Exception as ex:
+        print(ex) # imprime el error
+        return jsonify ({'mensaje': 'Error'})
 
 # ============================================================
 # ===============   REGISTRAR ESTADO   ===============
@@ -731,7 +821,7 @@ def gasto():
 
 
 # ============================================================
-# ===============   RUTA PARA CONSULTAR GASTO POR ID   ===============
+# ============ RUTA PARA CONSULTAR GASTO POR ID =============
 # ============================================================
 
 @app.route("/gasto/<int:codigo>", methods=['GET'])
@@ -912,7 +1002,6 @@ def eliminar_gasto(codigo):
 # ============================================================
 # ===========   RUTA PARA CONSULTAR USUARIOS   ==============
 # ============================================================
-
 @app.route("/usuarios", methods=['GET'])
 def usuarios():
     """
@@ -1163,6 +1252,36 @@ def tipo_donante():
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
       
+  # ============================================================
+  # ====== RUTA PARA CONSULTAR TIPOS DE DONANTE POR ID  ========
+  # ============================================================
+
+@app.route("/tipo_donante/<int:codigo>", methods=['GET'])
+def tipo_donante_individual(codigo):
+    """
+    Consulta de un tipo de donante por su ID
+    ---
+    tags:
+      - tipo_donante
+    responses:
+      200:
+        description: lista de tipos de donante
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT * FROM tipo_donante WHERE id_tipo_donante = %s", (codigo,))
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify ({'tipo_donante': datos, 'mensaje': 'Lista De tipo_Donante'})
+        else:
+            return jsonify ({'mensaje': 'Tipo de donante no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify ({'Mensaje': 'Error'})
+
 # ============================================================
 # ========   RUTA PARA REGISTRAR TIPOS DE DONANTE   ==========
 # ============================================================
@@ -1678,7 +1797,7 @@ def donacion():
         cur.close()
         conn.close()
         if datos:
-            return jsonify({'donacion': datos, 'mensaje': 'donacion'})
+            return jsonify(datos)
         else:
             return jsonify ({'mensaje': 'Donacion no encontrada'})
     except Exception as ex:
@@ -1895,7 +2014,34 @@ def donacion_monetaria():
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
 
-
+# ============================================================
+# ============= DONACION_MONETARIA POR ID ====================
+# ============================================================
+@app.route("/donacion_monetaria/<int:codigo>", methods=['GET'])
+def donacion_monetaria_individual(codigo):
+    """
+    Consulta de lista de donacion_monetaria
+    ---
+    tags:
+      - donacion_monetaria
+    responses:
+      200:
+        description: lista de donacion_monetaria
+    """
+    try:
+        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        cur = conn.cursor() # cursor para ejecutar consultas
+        cur.execute("SELECT * FROM donacion_monetaria WHERE id_donacion_monetaria = %s", (codigo,))
+        datos = cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'donacion_monetaria': datos, 'mensaje': 'Lista De donacion_monetaria'})
+        else:
+            return jsonify({'mensaje': 'donacion_monetaria no encontrado'})
+    except Exception as ex:
+        print(ex) # imprime el error
+        return jsonify ({'mensaje': 'Error'})
 # ============================================================
 # ============= REGISTRO DONACION MONETARIA =================
 # ============================================================
@@ -2300,6 +2446,34 @@ def categoria_producto():
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
 
+# ============================================================
+# =============  RUTA CATEGORIA PRODUCTO POR ID ===========
+# ============================================================
+@app.route("/categoria_producto/<int:codigo>", methods=['GET'])
+def categoria_producto_individual(codigo):
+    """
+    Consulta de lista de categorias de producto
+    ---
+    tags:
+      - categoria_producto
+    responses:
+      200:
+        description: lista de categorias de producto
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT * FROM categoria_producto WHERE id_categoria_producto = %s", (codigo,))
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'categoria_producto': datos, 'mensaje': 'Lista De categoria_producto'})
+        else:
+            return jsonify({'mensaje': 'categoria_producto no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify ({'Mensaje': 'Error'})
 
 # ============================================================
 # ============= RUTA REGISTRO CATEGORIA PRODUCTO ===========
@@ -2415,8 +2589,6 @@ def eliminar_categoria_producto(codigo):
         print(ex)
         return jsonify({'mensaje': 'Error al eliminar categoria_producto'})
 
-
-
 # ============================================================
 # ============= RUTA SUBCATEGORIA  ===========
 # ============================================================
@@ -2447,7 +2619,35 @@ def subcategoria_producto():
         print(ex)
         return jsonify ({'Mensaje': 'Error '})
       
-      
+# ============================================================
+# ============= RUTA SUBCATEGORIA PRODUCTO POR ID ===========
+# ============================================================
+
+@app.route("/subcategoria_producto/<int:codigo>", methods=['GET'])
+def subcategoria_producto_por_id(codigo):
+    """
+    Consulta de subcategoria de producto por ID
+    ---
+    tags:
+      - subcategoria_producto
+    responses:
+      200:
+        description: lista de subcategorias de producto
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT sc.codigo,sc.descripcion,c.descripcion as categoria_producto FROM subcategoria_producto sc JOIN categoria_producto c ON sc.categoria_producto = c.codigo WHERE sc.codigo = %s", (codigo,))
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'subcategoria_producto': datos, 'mensaje': 'Lista De subcategoria_producto'})
+        else:
+            return jsonify({'mensaje': 'subcategoria_producto no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify ({'Mensaje': 'Error '})
 # ============================================================
 # ============= RUTA REGISTRO SUBCATEGORIA  ===========
 # ============================================================
@@ -2665,12 +2865,14 @@ def registro_fecha_vencimiento():
         data = request.get_json()
         id_donacion = data['id_donacion']
         id_producto = data['id_producto']
+        fecha = data['fecha']
         cantidad = data['cantidad']
+        id_acta = data['id_acta']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
-                    INSERT INTO fecha_vencimiento (id_donacion, id_producto, cantidad)
-                    VALUES (%s, %s, %s)""", (id_donacion, id_producto, cantidad))
+                    INSERT INTO fecha_vencimiento (id_donacion, id_producto, cantidad, fecha, id_acta)
+                    VALUES (%s, %s, %s, %s, %s)""", (id_donacion, id_producto, cantidad, fecha, id_acta))
         conn.commit()  # Para confirmar la inserción de la información
         cur.close()
         conn.close()
@@ -2745,15 +2947,17 @@ def actualizar_fecha_vencimiento(codigo):
     """
     try:
         data = request.get_json()
-        id_donacion= ['id_donacion']
-        id_producto= ['id_producto']
-        cantidad= ['cantidad']
-        
+        id_donacion= data['id_donacion']
+        id_producto= data['id_producto']
+        cantidad= data['cantidad']
+        fecha= data['fecha']
+        id_acta= data['id_acta']
+
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
-                    UPDATE fecha_vencimiento SET id_donacion= %s, id_producto= %s, cantidad= %s WHERE id_vencimiento= %s""",
-                    (id_donacion,id_producto,cantidad,codigo))
+                    UPDATE fecha_vencimiento SET id_donacion= %s, id_producto= %s, cantidad= %s, fecha= %s, id_acta= %s WHERE id_vencimiento= %s""",
+                    (id_donacion,id_producto,cantidad,fecha,id_acta,codigo))
 
         conn.commit()
         cur.close()
@@ -2767,7 +2971,6 @@ def actualizar_fecha_vencimiento(codigo):
 # ============================================================
 # =============  RUTA DE ACTA DE VENCIMIENTO ===========
 # ============================================================
-
 @app.route("/acta_vencimiento", methods=['GET'])
 def acta_vencimiento():
     """
@@ -2794,15 +2997,86 @@ def acta_vencimiento():
         print(ex)
         return jsonify ({'Mensaje': 'Error'})
       
-
 # ============================================================
-# ============= RUTA ATUALIZAR ACTA VENCIMIENTO  =============
+# =============  RUTA DE ACTA DE VENCIMIENTO  POR ID ===========
 # ============================================================
-
-@app.route("/registro_acta_vencimiento", methods=['POST'])
-def registro_acta_vencimiento():
+@app.route("/acta_vencimiento/<int:codigo>", methods=['GET'])
+def acta_vencimiento_por_id(codigo):
     """
-    Registrar un nuevo acta_vencimiento
+    Consulta de lista de actas de vencimiento
+    ---
+    tags: 
+      - acta_vencimiento
+    responses:
+      200:
+        description: lista de actas de vencimiento
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT * FROM acta_vencimiento WHERE id_acta = %s", (codigo,))
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'acta_vencimiento': datos, 'mensaje': 'Lista De acta_vencimiento'})
+        else:
+            return jsonify({'mensaje': 'acta_vencimiento no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify ({'Mensaje': 'Error'})
+      
+
+# ============================================================
+# ============= RUTA AGREGAR ACTA VENCIMIENTO  =============
+# ============================================================
+@app.route("/agregar_acta_vencimiento", methods=['POST'])
+def agregar_acta_vencimiento():
+    """
+    Agregar un nuevo acta_vencimiento
+    ---
+    tags:
+      - acta_vencimiento
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fecha:
+                type: string
+              descripcion:
+                type: string
+    responses:
+      200:
+        description: acta_vencimiento agregado
+    """
+    try:
+        data = request.get_json()
+        fecha = data['fecha']
+        descripcion = data['descripcion']
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+        cur.execute("""
+                    INSERT INTO acta_vencimiento (fecha, descripcion)
+                    VALUES (%s, %s)""", (fecha, descripcion))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'mensaje': 'Registro agregado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': 'Error'})
+
+# ============================================================
+# ============= RUTA ACTUALIZAR ACTA VENCIMIENTO  =============
+# ============================================================
+
+@app.route("/actualizar_acta_vencimiento/<int:codigo>", methods=['PUT'])
+def actualizar_acta_vencimiento(codigo):
+    """
+    Actualizar un acta_vencimiento existente por su ID
     ---
     tags:
       - acta_vencimiento
@@ -2905,39 +3179,34 @@ def bodega():
 
 
 # ============================================================
-# ============= RUTA DE BODEGA POR ID   =====================
+# ================= RUTA DE PARA BODEGA POR ID  ====================
 # ============================================================
-
 @app.route("/bodega/<int:codigo>", methods=['GET'])
 def bodega_por_id(codigo):
     """
-    Obtener una bodega por su ID
+    Consulta de bodega por ID
     ---
     tags:
       - bodega
-    parameters:
-      - name: codigo
-        in: path
-        required: true
-        type: integer
     responses:
       200:
-        description: Bodega encontrada
+        description: lista de bodegas
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM bodega WHERE id_bodega = %s", (codigo,))
-        datos = cur.fetchone()
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT b.id_bodega,b.nombre_bodega,b.ubicacion,b.capacidad,e.nombre as estado FROM bodega b JOIN estado e ON b.estado = e.id_estado WHERE b.id_bodega = %s", (codigo,))
+        datos= cur.fetchall()
+        print(datos)
         cur.close()
         conn.close()
         if datos:
-            return jsonify({'bodega': datos, 'mensaje': 'Bodega encontrada'})
+            return jsonify({'bodega': datos, 'mensaje': 'Lista De bodega'})
         else:
-            return jsonify({'mensaje': 'Bodega no encontrada'})
+            return jsonify({'mensaje': 'bodega no encontrado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify ({'Mensaje': 'Error'})
 
 # ============================================================
 # =============  RUTA PARA AGREGAR BODEGA  ==================
@@ -3094,6 +3363,35 @@ def unidad_de_medida():
         return jsonify({'Mensaje': 'Error'})
         
 # ============================================================
+# ============= RUTA PARA UNIDAD DE MEDIDA POR ID ==================
+# ============================================================
+
+@app.route("/unidad_de_medida/<int:codigo>", methods=['GET'])
+def unidad_de_medida_por_id(codigo):
+    """
+    Obtener unidad de medida por ID
+    ---
+    tags: 
+      - unidad_de_medida
+    responses:
+      200:
+        description: Lista de unidades de medida
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT * FROM unidad_de_medida WHERE id_unidad_de_medida = %s", (codigo,))
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'unidad_de_medida': datos, 'mensaje': 'Unidad de medida encontrada'})
+        else:
+            return jsonify({'mensaje': 'unidad_de_medida no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
+# ============================================================
 # ========== RUTA PARA AGREGAR UNIDAD DE MEDIDA  =============
 # ============================================================
 
@@ -3204,7 +3502,6 @@ def eliminar_unidad_de_medida(codigo):
         return jsonify({'mensaje': 'Error'})
 
 
-
 # ============================================================
 # =============  RUTA PARA TIPO ORGANIZACION  ================
 # ============================================================
@@ -3236,9 +3533,38 @@ def tipo_organizacion():
         return jsonify({'Mensaje': 'Error'})
 
 # ============================================================
-# =========  RUTA PARA AGREGAR TIPO ORGANIZACION =============
+# =============  RUTA PARA TIPO ORGANIZACION POR ID ================
 # ============================================================
 
+@app.route("/tipo_organizacion/<int:codigo>", methods=['GET'])
+def tipo_organizacion_por_id(codigo):
+    """
+    Consulta de tipo de organización por ID
+    ---
+    tags:
+      - tipo_organizacion
+    responses:
+      200:
+        description: lista de tipo_organizacion
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT * FROM tipo_organizacion WHERE id_tipo_organizacion = %s", (codigo,))
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'tipo_organizacion': datos, 'mensaje': 'Tipo de organización encontrada'})
+        else:
+            return jsonify({'mensaje': 'tipo_organizacion no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
+
+# ============================================================
+# =========  RUTA PARA AGREGAR TIPO ORGANIZACION =============
+# ============================================================
 @app.route("/registro_tipo_organizacion", methods=['POST'])
 def registro_tipo_organizacion():
     """
@@ -3512,6 +3838,37 @@ def organizacion():
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM organizacion")
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'organizacion': datos, 'mensaje': 'Lista De organizacion'})
+        else:
+            return jsonify({'mensaje': 'organizacion no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
+      
+      
+# ============================================================
+# =========  RUTA PARA INDIVIDUAL ORGANIZACION ===============
+# ============================================================
+
+@app.route("/organizacion/<int:codigo>", methods=['GET'])
+def organizacion_individual(codigo):
+    """
+    Consulta de organización individual
+    ---
+    tags:
+      - organizacion
+    responses:
+      200:
+        description: lista de organizacion
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT * FROM organizacion WHERE codigo = %s", (codigo,))
         datos= cur.fetchall()
         cur.close()
         conn.close()
@@ -3930,6 +4287,37 @@ def producto():
     except Exception as ex:
         print(ex)
         return jsonify({'Mensaje': 'Error'})
+      
+# ============================================================
+# ================= RUTA INDIVIDUAL PRODUCTO  ======================
+# ============================================================
+
+@app.route("/producto/<int:codigo>", methods=['GET'])
+def producto_individual(codigo):
+
+    """
+    Obtener la lista de productos
+    ---
+    tags:
+      - producto
+    responses:
+      200:
+        description: Lista de productos
+    """
+    try:
+        conn= conectar('localhost','root','Es1084734914','proyecto')
+        cur= conn.cursor()
+        cur.execute("SELECT * FROM producto WHERE id = %s", (codigo,))
+        datos= cur.fetchall()
+        cur.close()
+        conn.close()
+        if datos:
+            return jsonify({'producto': datos})
+        else:
+            return jsonify({'mensaje': 'producto no encontrado'})
+    except Exception as ex:
+        print(ex)
+        return jsonify({'Mensaje': 'Error'})
 
 # ============================================================
 # ============== RUTA AGREGAR PRODUCTOS   ====================
@@ -4274,4 +4662,5 @@ def eliminar_detalle_donacion_producto(codigo):
 
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=5000, debug=True)
-      app.run(debug=True)
+    
+    app.run(debug=True)
