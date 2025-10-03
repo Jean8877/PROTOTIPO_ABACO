@@ -7,7 +7,7 @@ from flasgger import Swagger
 
 app = Flask(__name__)
 CORS(app)
-# CORS(app, origins=["http://localhost:65233/", "http://10.4.215.103:5000"])
+CORS(app, origins=["http://localhost:64135", "http://10.4.215.103:5000"])
 
 swagger = Swagger(app)
 
@@ -37,7 +37,7 @@ def tipo_usuario():
         description: lista de tipos de usuario
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','123456','proyecto_abaco') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_usuario") 
         datos = cur.fetchall()
