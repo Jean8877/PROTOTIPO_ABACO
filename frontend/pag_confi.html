@@ -5,92 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Configuración ABACO</title>
+    <link rel="stylesheet" href="../estilos/general.css">
     <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <style>
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-
-        /* HEADER */
-        header {
-            height: 60px;
-            background-color: #198754;
-            border-bottom: 1px solid #dee2e6;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        header img {
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        /* LAYOUT GENERAL */
-        .main-layout {
-            display: flex;
-            height: calc(100vh - 60px);
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 60px;
-            background-color: #198754;
-            color: white;
-            transition: width 0.3s;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar:hover {
-            width: 250px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-        }
-
-        .sidebar a:hover {
-            background-color: #495057;
-        }
-
-        .sidebar i {
-            margin-right: 10px;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        .sidebar span {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar:hover span {
-            opacity: 1;
-        }
-
-        /* CONTENIDO */
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background-color: #f5f6fa;
-        }
-
         /* TARJETAS */
         .card-config {
             border-radius: 15px;
@@ -99,26 +20,14 @@
             text-align: center;
             cursor: pointer;
         }
-
-        .card-config:hover {
-            transform: translateY(-5px);
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
         .card-config i {
             font-size: 40px;
             color: #198754;
             margin-bottom: 15px;
         }
-
         .card-config h5 {
             font-weight: bold;
             color: #333;
-        }
-
-        .card-config p {
-            color: #666;
-            font-size: 0.9rem;
         }
     </style>
 </head>

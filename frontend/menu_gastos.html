@@ -5,116 +5,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gestionar Productos</title>
+  <link rel="stylesheet" href="../estilos/general.css" />
   <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-
-  <style>
-    body,
-    html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background-color: #f4f4f4;
-    }
-
-    /* HEADER */
-    header {
-      height: 60px;
-      background-color: #198754;
-      /* bg-success */
-      color: rgb(26, 24, 24);
-      border-bottom: 1px solid #dee2e6;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    header img {
-      height: 40px;
-      margin-right: 10px;
-    }
-
-    /* LAYOUT GENERAL */
-    .main-layout {
-      display: flex;
-      height: calc(100vh - 60px);
-      /* Resta el alto del header */
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-      width: 60px;
-      background-color: #198754;
-      color: white;
-      transition: width 0.3s;
-      overflow-x: hidden;
-      display: flex;
-      /* <--- Agregado */
-      flex-direction: column;
-      /* <--- Agregado */
-    }
-
-    .sidebar:hover {
-      width: 250px;
-    }
-
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      padding: 15px 20px;
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-    }
-
-    .sidebar a:hover {
-      background-color: #495057;
-    }
-
-    .sidebar i {
-      margin-right: 10px;
-      min-width: 20px;
-      text-align: center;
-    }
-
-    .sidebar span {
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .sidebar:hover span {
-      opacity: 1;
-    }
-
-    /* CONTENIDO */
-    .content {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    h1 {
-      color: #2c3e50;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .card:hover {
-      transform: scale(1.05);
-      transition: transform 0.3s;
-      cursor: pointer;
-    }
-
-    .card img {
-      width: 60px;
-      height: 60px;
-      margin-bottom: 10px;
-    }
-  </style>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -146,7 +42,7 @@
       <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
       <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
       <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
-      <a href="index.html" class="mt-auto"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+      <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
@@ -191,6 +87,34 @@
       </div>
     </div>
   </div>
+
+  <script>
+ 
+    function cerrar() {
+      swal({
+        title: "¿Estás seguro?",
+        text: "Tu sesión se cerrará y deberás iniciar nuevamente.",
+        icon: "warning",
+        buttons: ["Cancelar", "Sí, cerrar sesión"],
+        dangerMode: true,
+      }).then((cerrarSesion) => {
+        if (cerrarSesion) {
+          // Si el usuario confirma
+          swal({
+            title: "Sesión cerrada",
+            text: "Has cerrado sesión correctamente.",
+            icon: "success",
+            timer: 2000,
+            buttons: false
+          });
+          // Redirige después de un breve tiempo
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 2000);
+        }
+      });
+    }
+  </script>
 
 </body>
 
