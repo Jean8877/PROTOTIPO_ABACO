@@ -87,34 +87,10 @@
       </div>
     </div>
   </div>
-
-  <script>
- 
-    function cerrar() {
-      swal({
-        title: "¿Estás seguro?",
-        text: "Tu sesión se cerrará y deberás iniciar nuevamente.",
-        icon: "warning",
-        buttons: ["Cancelar", "Sí, cerrar sesión"],
-        dangerMode: true,
-      }).then((cerrarSesion) => {
-        if (cerrarSesion) {
-          // Si el usuario confirma
-          swal({
-            title: "Sesión cerrada",
-            text: "Has cerrado sesión correctamente.",
-            icon: "success",
-            timer: 2000,
-            buttons: false
-          });
-          // Redirige después de un breve tiempo
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 2000);
-        }
-      });
-    }
+  <script src="resaltar.js">
+    cerrar()
   </script>
+
 
 </body>
 

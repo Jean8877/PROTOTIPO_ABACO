@@ -59,6 +59,7 @@ header {
 
 .sidebar a:hover {
     background-color: #495057;
+    transition: all 0.3s ease;
 }
 
 .sidebar i {
@@ -75,6 +76,43 @@ header {
 .sidebar:hover span {
     opacity: 1;
 }
+
+/*estilo de resaltar cuando se selecciona un elemento*/
+/*estilo de resaltar cuando se selecciona un elemento*/
+   /* ESTILOS PARA MENÚ ACTIVO */
+.sidebar a.active {
+    background-color: #92ba3d !important;
+    color: white !important;
+    border-radius: 6px;
+    margin: 2px 8px;
+    position: relative;
+}
+
+.sidebar a.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 70%;
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar a.active i {
+    color: white !important;
+}
+
+.sidebar a.active:hover {
+    background-color: #495057 !important;
+}
+
+/*estilo de resaltar cuando se selecciona un elemento*/
+/*estilo de resaltar cuando se selecciona un elemento*/
+
+
+
+
 
 header img {
     height: 40px;

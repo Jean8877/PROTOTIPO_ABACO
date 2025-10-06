@@ -39,8 +39,9 @@
       <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
       <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
       <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
-      <a href="index.html" class="mt-auto"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
-    </div>
+<a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i
+                    class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+                      </div>
 
     <div class="content">
       <form id="formTipoDonante">
@@ -71,6 +72,9 @@
   </div>
 
   <script> tipo_donante();</script>
+  <script src="resaltar.js">
+    cerrar()
+  </script>
 </body>
 
 </html>

@@ -30,7 +30,7 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-            <a href="menu_de_parroquias.html" ><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+            <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
             <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
             <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
             <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
@@ -186,6 +186,7 @@
             </div>
         </div>
 
+
         <script>
             // Toggle de formularios
             const btnProducto = document.getElementById('btnProducto');
@@ -240,32 +241,14 @@
 
 
 
-            function cerrar() {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Tu sesión se cerrará y deberás iniciar nuevamente.",
-                    icon: "warning",
-                    buttons: ["Cancelar", "Sí, cerrar sesión"],
-                    dangerMode: true,
-                }).then((cerrarSesion) => {
-                    if (cerrarSesion) {
-                        // Si el usuario confirma
-                        swal({
-                            title: "Sesión cerrada",
-                            text: "Has cerrado sesión correctamente.",
-                            icon: "success",
-                            timer: 2000,
-                            buttons: false
-                        });
-                        // Redirige después de un breve tiempo
-                        setTimeout(() => {
-                            window.location.href = "index.html";
-                        }, 2000);
-                    }
-                });
-            }
+
 
         </script>
+        <script src="resaltar.js">
+
+            cerrar()
+        </script>
+        
 </body>
 
 </html>
