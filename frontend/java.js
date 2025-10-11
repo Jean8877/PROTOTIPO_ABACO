@@ -708,19 +708,3 @@ function actualizar_lista_donantes(id_donante) {
 
 //========  VISUALIZAR DONANTE ========//
 
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
