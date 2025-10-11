@@ -1182,7 +1182,7 @@ try {
 // --- Inicialización -------
 // -----------------------------
 async function inicializarTodo() {
-  try {
+try {
     // Listados principales
     listarUnidadMedida();
     listarCategoriaProducto();
