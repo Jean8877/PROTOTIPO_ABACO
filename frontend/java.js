@@ -514,6 +514,45 @@ try {
 }
 }
 
+// -----------------------------
+// --- TIPO DE GASTO -----
+// -----------------------------
+async function listartipo_gasto() {
+try {
+    const resp = await apiget("/tipo_gasto");
+    let html = "";
+    (resp.donante ||[]).forEach((g) => {
+        html += `
+        <tr>
+        <td>${g.id_tipo_gasto}</td>
+        <td>${g.nombre ??""}</td>
+        <td>${g.gasto ??""}</td>
+        <td>
+            <button class="btn btn-sm btn-primary" onclick="abriEditartipo_gasto(${g.id})">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminartipo_gasto(${m.id}")>Eliminar</button>
+        </td>
+        </tr>`;
+    });
+    const el = document.getElementById("tbody_tipo_gasto");
+    if (el) el.innerHTML = html;
+} catch (e) {
+    console.error(e);
+}    
+}
+
+async function agregar_tipo_gastoFromForm() {
+try {
+    const nombre = document.getElementById("tipo_gasto").value;
+    const descripcion = document.getElementById("tipo_gasto").value;
+}
+    await apiPost("/registro_tipo_gasto", {
+        nombre, descripcion
+    });
+    showToast("Tipo de gasto registrado")
+    listartipo_gasto();
+} catch (e) {
+    showToast("Error registrando tipo de gasto",true);
+}    
 
 // -----------------------------
 // --- MOVIMIENTO PRODUCTO -----
