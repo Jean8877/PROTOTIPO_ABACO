@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestionar Productos</title>
+    <link rel="stylesheet" href="../estilos/general.css" />
+    <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <img src="../imagenes/imagen.png" alt="logo de abaco">
+        <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
+        <div>
+            <i class="bi bi-person-circle"></i>
+            <span class="me-3"> <strong>Karina</strong> </span>
+            <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
+
+        </div>
+    </header>
+
+    <!-- LAYOUT -->
+    <div class="main-layout">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+            <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+            <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+            <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+            <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+            <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+            <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+            <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+            <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+            <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+            <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="content">
+            <div class="container bg-white p-4 rounded shadow">
+                <h1>Registrar Productos</h1>
+                <div class="row g-4 justify-content-center">
+
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                        <div class="card text-center p-3" onclick="window.location.href='categoria.html'">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70"
+                                viewBox="0 0 32 32">
+                                <path fill="none" d="M17 10h-2v5h-5v2h5v5h2v-5h5v-2h-5z" stroke="currentColor"
+                                    stroke-width="0.5" />
+                                <path fill="none"
+                                    d="M30 8V2h-6v2H8V2H2v6h2v16H2v6h6v-2h16v2h6v-6h-2V8Zm-4-4h2v2h-2ZM4 4h2v2H4Zm2 24H4v-2h2Zm22 0h-2v-2h2Zm-2-4h-2v2H8v-2H6V8h2V6h16v2h2Z"
+                                    stroke="currentColor" stroke-width="0.5" />
+                            </svg>
+
+
+                            <div class="card-body p-0">
+                                <p class="card-text">Categorias</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                        <div class="card text-center p-3" onclick="window.location.href='subcategoria.html'">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70"
+                                viewBox="0 0 16 16">
+                                <path fill="none"
+                                    d="M11.2 1h-.4c-.857 0-1.44 0-1.89.038c-.438.035-.663.1-.819.18a2 2 0 0 0-.874.874c-.08.156-.145.38-.18.819a16 16 0 0 0-.036 1.11a23 23 0 0 0-1-.025c.008-1.17.055-1.83.325-2.36a3.02 3.02 0 0 1 1.31-1.31C8.278 0 9.116 0 10.796 0h.4c1.68 0 2.52 0 3.16.327a3.02 3.02 0 0 1 1.31 1.31c.327.642.327 1.48.327 3.16v.4c0 1.68 0 2.52-.327 3.16a3 3 0 0 1-1.31 1.31c-.531.271-1.2.317-2.36.325a23 23 0 0 0-.024-1a15 15 0 0 0 1.11-.036c.438-.035.663-.1.819-.18c.376-.192.682-.498.874-.874c.08-.156.145-.38.18-.819c.037-.45.037-1.03.037-1.89v-.4c0-.857 0-1.44-.037-1.89c-.036-.438-.101-.663-.18-.819a2 2 0 0 0-.874-.874c-.156-.08-.381-.145-.82-.18c-.45-.036-1.03-.037-1.89-.037z"
+                                    stroke="currentColor" stroke-width="0.2" />
+                                <path fill="none" fill-rule="evenodd"
+                                    d="M0 10.8c0-1.68 0-2.52.327-3.16a3.02 3.02 0 0 1 1.31-1.31c.642-.327 1.48-.327 3.16-.327h.4c1.68 0 2.52 0 3.16.327a3.02 3.02 0 0 1 1.31 1.31c.327.642.327 1.48.327 3.16v.4c0 1.68 0 2.52-.327 3.16a3.02 3.02 0 0 1-1.31 1.31c-.642.327-1.48.327-3.16.327h-.4c-1.68 0-2.52 0-3.16-.327a3 3 0 0 1-1.31-1.31C0 13.718 0 12.88 0 11.2zM4.8 7h.4c.857 0 1.44 0 1.89.038c.438.035.663.1.819.18c.376.192.682.498.874.874c.08.156.145.38.18.819c.037.45.038 1.03.038 1.89v.4c0 .857-.001 1.44-.038 1.89c-.036.438-.101.663-.18.819a2 2 0 0 1-.874.874c-.156.08-.381.145-.819.18C6.64 15 6.06 15 5.2 15h-.4c-.857 0-1.44 0-1.89-.037c-.438-.036-.663-.101-.819-.18a2 2 0 0 1-.874-.874c-.08-.156-.145-.381-.18-.82C1 12.64.999 12.06.999 11.2v-.4c0-.856.001-1.44.038-1.89c.036-.437.101-.662.18-.818c.192-.376.498-.682.874-.874c.156-.08.381-.145.819-.18C3.36 7 3.94 7 4.8 7"
+                                    clip-rule="evenodd" stroke="currentColor" stroke-width="0.3" />
+                            </svg>
+
+                            <div class="card-body p-0">
+                                <p class="card-text">subcategorias</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                        <div class="card text-center p-3" onclick="window.location.href='Producto.html'">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70"
+                                viewBox="0 0 24 24">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="0.6">
+                                    <path
+                                        d="M6.053 20.25h3m-3-15.75v9M.803 9h10.5M3.803.75l2.25 3.75M8.303.75L6.053 4.5M15.8 23.25a3 3 0 0 0-3-3H9.053a3 3 0 0 0-3-3H.8v6zM1.303 4.5h9.5s.5 0 .5.5v8s0 .5-.5.5h-9.5s-.5 0-.5-.5V5s0-.5.5-.5M13.86 8.575l.357-2.675a.75.75 0 0 1 .743-.651h6.187a.75.75 0 0 1 .743.651l1.3 9.75a.764.764 0 0 1-.743.849H12.8" />
+                                    <path d="M15.8 5.25v-1.5a2.25 2.25 0 0 1 4.5 0v1.5" />
+                                </g>
+                            </svg>
+                            <div class="card-body p-0">
+                                <p class="card-text">Productos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-3">
+                        <div class="card text-center p-3" onclick="window.location.href='Bodegas.html'">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70"
+                                viewBox="0 0 256 256">
+                                <path fill="currentColor"
+                                    d="M240 188h-12V54.66l12.84-2.75a4 4 0 1 0-1.68-7.82l-224 48A4 4 0 0 0 16 100a4 4 0 0 0 .84-.09L28 97.52V188H16a4 4 0 0 0 0 8h224a4 4 0 0 0 0-8M36 95.81l184-39.43V188h-32v-60a4 4 0 0 0-4-4H72a4 4 0 0 0-4 4v60H36ZM180 156H76v-24h104Zm-104 8h104v24H76Z" />
+                            </svg>
+                            <div class="card-body p-0">
+                                <p class="card-text">Bodegas</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="../javascript">
+    resaltar()
+    cerrar()
+  </script>
+
+</body>
+
+</html>

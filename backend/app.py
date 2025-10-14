@@ -1,25 +1,43 @@
-from flask import Flask, jsonify, request
+import os
+from flask import Flask, jsonify, request, render_template, url_for
 from flask_cors import CORS # para permitir el acceso a la API desde el frontend
 import pymysql
-# import pymysql.cursors
-import bcrypt # incriptar contrasena
 from flasgger import Swagger
+import bcrypt # incriptar contrasena
+#from backend.routes.donaciones import *
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
+# import pymysql.cursors
+
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static"))
 CORS(app)
 CORS(app, origins=["http://localhost:64135", "http://10.4.215.103:5000"])
 
 swagger = Swagger(app)
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return app.send_static_file(filename)#para llamar archivos estaticos
+
+#para llamar las donaciones
+#app.register_blueprint(donacion_bp)
+
+
 
 #conexion a la base de datos
 def conectar(vhost, vuser, vpass, vdb):
     conn = pymysql.connect(host=vhost, user=vuser, passwd=vpass, db=vdb, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor )
     return conn
 
+
+
+
+
 # ruta inicial
 @app.route("/", methods=['GET'])
 def index():
-    return jsonify({"mensaje": "API del Banco de Alimentos"})
+    return render_template("frontend/index.html")
 
 # ============================================================
 # ===============   RUTA PARA TIPO_USUARIO   ===============
@@ -238,7 +256,7 @@ def eliminar_tipo_documento(codigo):
 # ============================================================
 
 
-@app.route("/tipo_gasto", methods=['GET'])
+@app.route("/tipo_gastos", methods=['GET'])
 def tipo_gasto():
     """
     Consulta de lista de tipos de gasto
