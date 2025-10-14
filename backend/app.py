@@ -1,10 +1,10 @@
 import os
-from flask import Flask, jsonify, request, render_template, url_for
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS # para permitir el acceso a la API desde el frontend
 import pymysql
 from flasgger import Swagger
 import bcrypt # incriptar contrasena
-#from backend.routes.donaciones import *
+
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
 # import pymysql.cursors
@@ -20,17 +20,11 @@ swagger = Swagger(app)
 def static_files(filename):
     return app.send_static_file(filename)#para llamar archivos estaticos
 
-#para llamar las donaciones
-#app.register_blueprint(donacion_bp)
-
-
 
 #conexion a la base de datos
 def conectar(vhost, vuser, vpass, vdb):
     conn = pymysql.connect(host=vhost, user=vuser, passwd=vpass, db=vdb, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor )
     return conn
-
-
 
 
 
