@@ -1177,7 +1177,7 @@ def registro_donante():
         estado = data['estado']
         tipo_documento = data['tipo_documento']
         tipo_donante = data['tipo_donante']
-        conn = conectar('localhost', 'root', 'lupi19', 'proyecto')
+        conn = conectar('localhost', 'root', 'lupi19', 'proyecto ')
         cur = conn.cursor()
         cur.execute("""
                     INSERT INTO donante (nombre, numero_documento, telefono, correo, direccion, estado, tipo_documento, tipo_donante)

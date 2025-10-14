@@ -132,7 +132,7 @@
     </div>
 
     <div class="content">
-      <form id="formTipoDonante">
+      <form onclick="event.preventDefault(); agregar_tipo_donanteFromForm();">
         <h1>Registrar Tipo de Donante</h1>
         <input type="text" id="nombreTipo" placeholder="Nombre del tipo de Donante" required />
         <textarea id="descripcionTipo" placeholder="Descripción del tipo de Donante" required></textarea>

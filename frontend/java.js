@@ -432,6 +432,88 @@ try {
     showToast("Error actualizando bodega", true);
 }
 }
+// -----------------------------
+// --- TIPO DE DONANTE -----
+// -----------------------------
+async function tipo_donante() {
+try { 
+    const resp = await apiGet("/tipo_donante");
+    let html = "";
+    (resp.tipo_donante || []).forEach((t) => {
+        html += `
+        <tr>
+        <td>${t.id_tipo_donante}</td>
+        <td>${t.descripcion ??""}</td>
+
+         <td>
+            <button class="btn btn-sm btn-primary" onclick="abrirEditartipo_donante(${t.id})">Editar</button>
+            <button class="btn btn-sm btn-danger" onclick="eliminartipo_donante(${t.id})">Eliminar</button>
+        </td>
+        </tr>`;
+    });
+    const el = document.getElementById("tbody_tipo_donante");
+    if (el) el.innerHTML = html;
+} catch (e) {
+    console.error(e);
+}
+}
+async function agregar_tipo_donanteFromForm() {
+try {
+    const descripcion = document.getElementById("tipo_donante").value;
+    
+
+    await apiPost("/registro_tipo_donante", {
+        descripcion
+    });
+    showToast("Tipo de donante registrado");
+    listartipo_donante();
+} catch (e) {
+    showToast("Error registrando tipo de donante", true);
+}
+} 
+
+async function eliminartipo_donante(codigo) {
+try {
+    if (!confirm("¿Eliminar tipo de donante?")) return;
+    await apidelete(/eliminar_tipo_donante/${codigo});
+    showToast("tipo de donante eliminado");
+    listartipo_donante();
+} catch (e) {
+    showToast("Error eliminando tipo de donante",true);
+}
+}
+
+async function abrirEditartipo_donante(codigo) {
+try {
+    const resp = await apiGet("/tipo_donante");
+    const t = findInList("tipo_donante","id",resp,codigo);
+    if (!t) return showToast("tipo de donante no encontrado",true);
+    document.getElementById("edit_tipo_donante_id").value = t.id_tipo_donante;
+    document.getElementById("edit_tipo_donante_descripcion").value = t.descripcion || "";
+    
+    const modalEl = document.getElementById("modalEditartipo_donante");
+    if (modalEl) new bootstrap.Modal(modalEl).show();
+} catch (e) {
+    console.error(e);
+}
+}
+
+async function actualizartipo_donante() {
+try {
+    const id = document.getElementById("edit_movimiento_id").value;
+    const descripcion = document.getElementById("edit_tipo_donante_descripcion").value;
+    if (!id) return showToast("ID faltante", true );
+
+    await apiput(/actualizar_tipo_donante/${id},{descripcion});
+    showToast("tipo de donante actualizado");
+    listartipo_donante();
+    const modaEl = document.getElementById("modalEditartipo_donante");
+    if (modalEL) bootstrap.modal.getInstance(modaEl)?.hide();
+} catch (e) {
+    showToast("Error actualizando tipo de donante", true);
+}
+}
+
 
 // -----------------------------
 // --- MOVIMIENTO PRODUCTO -----
@@ -1036,7 +1118,6 @@ try {
     console.error(e);
 }
 }
-
 async function agregarCertificadoFromForm() {
 try {
     const fecha = document.getElementById("cert_fecha").value;
