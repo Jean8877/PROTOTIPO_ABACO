@@ -1,146 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Configuración - Sistema de Inventario</title>
-  <link rel="shortcut icon" href="../img/imagen.png" type="image/x-icon">
+  <link rel="stylesheet" href="../estilos/general.css">
+  <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background-color: #f0f2f5;
-      font-family: Arial, sans-serif;
-    }
 
-    /* HEADER */
-    header {
-      height: 60px;
-      background-color: #f8f9fa;
-      border-bottom: 1px solid #dee2e6;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
 
-    /* LAYOUT GENERAL */
-    .main-layout {
-      display: flex;
-      height: calc(100vh - 60px); /* Restar header */
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-      width: 60px;
-      background-color: #198754;
-      color: white;
-      transition: width 0.3s;
-      overflow-x: hidden;
-    }
-
-    .sidebar:hover {
-      width: 250px;
-    }
-
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      padding: 15px 20px;
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-    }
-
-    .sidebar a:hover {
-      background-color: #495057;
-    }
-
-    .sidebar i {
-      margin-right: 10px;
-      min-width: 20px;
-      text-align: center;
-    }
-
-    .sidebar span {
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .sidebar:hover span {
-      opacity: 1;
-    }
-    header img {
-      height: 40px;
-      margin-right: 10px;
-    }
-
-    /* CONTENIDO */
-    .content {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    /* FORMULARIO DE CONFIGURACIÓN */
-    form {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: auto;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      box-sizing: border-box;
-      margin-top: 20px;
-    }
-
-    button {
-      padding: 10px 15px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #5daf78;
-    }
 
     /* Botones juntos */
-    .btn-group {
+    button {
       display: flex;
       gap: 10px;
       margin-top: 20px;
     }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
   <header>
-    <img src="../img/imagen.png" alt="logo de abaco">
+    <img src="../imagenes/imagen.png" alt="logo de abaco">
     <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
     <div>
       <i class="bi bi-person-circle"></i>
       <span class="me-3"> <strong>Karina</strong> </span>
-      <i class="bi bi-bell-fill me-3"></i>
+      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
     </div>
   </header>
 
@@ -149,17 +43,28 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-      <a href="#"><i class="bi bi-box-seam"></i> <span>Inventario</span></a>
-      <a href="#"><i class="bi bi-heart-fill"></i> <span>Donaciones</span></a>
-      <a href="#"><i class="bi bi-people-fill"></i> <span>Voluntarios</span></a>
-      <a href="#"><i class="bi bi-graph-up"></i> <span>Reportes</span></a>
-    </div>
+            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+            <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+            <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+            <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+            <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+            <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+            <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+            <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+            <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+            <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+            <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+        </div>
 
     <!-- CONTENIDO -->
     <div class="content">
-        
-        <form id="formConfiguracion">
+
+      <form id="formConfiguracion">
+        <!-- 🔹 Botón de regresar en la esquina del formulario -->
+        <a href="pag_confi.html" class="btn btn-outline-success btn-sm position-absolute">
+          <i class="bi bi-arrow-left"></i>
+        </a>
         <h1>Configuración del Sistema</h1>
         <label for="nombreBanco">Nombre del Banco de Alimentos</label>
         <input type="text" id="nombreBanco" placeholder="Ej: Banco de Alimentos San José" required>
@@ -176,57 +81,49 @@
         <label for="diasAlerta">Días de alerta antes del vencimiento</label>
         <input type="number" id="diasAlerta" min="1" value="7">
 
-        <label for="formatoFecha">Formato de fecha</label>
-        <select id="formatoFecha">
-          <option value="dd/mm/yyyy">dd/mm/yyyy</option>
-          <option value="mm/dd/yyyy">mm/dd/yyyy</option>
-        </select>
-
-        <div class="btn-group">
-          <button type="submit">Guardar Configuración</button>
-          <button type="button" onclick="irAPermisos()">Gestionar Permisos</button>
-        </div>
+          <button class="mx-auto" type="submit">Guardar Configuración</button>
       </form>
     </div>
   </div>
 
-<script>
-  function irAPermisos() {
-    window.location.href = "permisos_asistentes.html";
-  }
+  <script>
 
-  const form = document.getElementById('formConfiguracion');
+    const form = document.getElementById('formConfiguracion');
 
-  // Guardar configuración
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
+    // Guardar configuración
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-    const config = {
-      nombreBanco: document.getElementById('nombreBanco').value,
-      correo: document.getElementById('correoContacto').value,
-      telefono: document.getElementById('telefono').value,
-      direccion: document.getElementById('direccion').value,
-      diasAlerta: document.getElementById('diasAlerta').value,
-      formatoFecha: document.getElementById('formatoFecha').value
-    };
+      const config = {
+        nombreBanco: document.getElementById('nombreBanco').value,
+        correo: document.getElementById('correoContacto').value,
+        telefono: document.getElementById('telefono').value,
+        direccion: document.getElementById('direccion').value,
+        diasAlerta: document.getElementById('diasAlerta').value,
+        formatoFecha: document.getElementById('formatoFecha').value
+      };
 
-    localStorage.setItem('configSistema', JSON.stringify(config));
-    alert("✅ Configuración guardada correctamente.");
-  });
+      localStorage.setItem('configSistema', JSON.stringify(config));
+      alert("✅ Configuración guardada correctamente.");
+    });
 
-  // Cargar configuración si ya existe
-  window.addEventListener('load', () => {
-    const config = JSON.parse(localStorage.getItem('configSistema'));
-    if (config) {
-      document.getElementById('nombreBanco').value = config.nombreBanco || '';
-      document.getElementById('correoContacto').value = config.correo || '';
-      document.getElementById('telefono').value = config.telefono || '';
-      document.getElementById('direccion').value = config.direccion || '';
-      document.getElementById('diasAlerta').value = config.diasAlerta || 7;
-      document.getElementById('formatoFecha').value = config.formatoFecha || 'dd/mm/yyyy';
-    }
-  });
-</script>
+    // Cargar configuración si ya existe
+    window.addEventListener('load', () => {
+      const config = JSON.parse(localStorage.getItem('configSistema'));
+      if (config) {
+        document.getElementById('nombreBanco').value = config.nombreBanco || '';
+        document.getElementById('correoContacto').value = config.correo || '';
+        document.getElementById('telefono').value = config.telefono || '';
+        document.getElementById('direccion').value = config.direccion || '';
+        document.getElementById('diasAlerta').value = config.diasAlerta || 7;
+        document.getElementById('formatoFecha').value = config.formatoFecha || 'dd/mm/yyyy';
+      }
+    });
+  </script>
+  <script src="resaltar.js">
+    cerrar()
+  </script>
 
 </body>
+
 </html>

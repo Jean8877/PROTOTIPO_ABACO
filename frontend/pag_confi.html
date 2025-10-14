@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Configuración ABACO</title>
+    <link rel="stylesheet" href="../estilos/general.css">
+    <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <style>
+        /* TARJETAS */
+        .card-config {
+            border-radius: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+            cursor: pointer;
+        }
+        .card-config i {
+            font-size: 40px;
+            color: #198754;
+            margin-bottom: 15px;
+        }
+        .card-config h5 {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <img src="../imagenes/imagen.png" alt="logo de abaco">
+        <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
+        <div>
+            <i class="bi bi-person-circle"></i>
+            <span class="me-3"> <strong>Karina</strong> </span>
+            <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
+        </div>
+    </header>
+
+    <!-- LAYOUT: SIDEBAR + CONTENT -->
+    <div class="main-layout">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+            <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+            <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+            <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+            <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+            <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+            <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+            <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+            <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+            <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+            <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="content">
+            <div class="container bg-white p-4 rounded shadow">
+                <h2 class="text-center mb-4">Configuración del Sistema</h2>
+                <div class="row g-4">
+
+                    <!-- Card 1 -->
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card card-config p-4" onclick="window.location.href='permisos_asistentes.html'">
+                            <i class="bi bi-people-fill"></i>
+                            <h5>Gestión de Usuarios</h5>
+                            <p>Administra roles, permisos y accesos de usuarios.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card card-config p-4">
+                            <i class="bi bi-person"></i>
+                            <h5>Perfil</h5>
+                            <p>Construcción.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="col-12 col-sm-6 col-lg-4 ">
+                        <div class="card card-config p-4" onclick="window.location.href='parametros.html'">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <h5>Parametrización</h5>
+                            <p>Configura los parámetros del sistema.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="col-12 col-sm-6 col-lg-4 mx-auto">
+                        <div class="card card-config p-4" onclick="window.location.href='configuracion.html'">
+                            <i class="bi bi-gear"></i>
+                            <h5>Ajuste generales del sistema</h5>
+                            <p>Ajusta configuraciones generales del sistema.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+  <script src="resaltar.js">
+    cerrar()
+  </script>
+
+</body>
+
+</html>
