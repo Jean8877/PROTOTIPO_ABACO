@@ -83,6 +83,44 @@
       </table>
     </div>
   </div>
+    <!-- 🔹 Modal para actualizar subcategoría -->
+<div class="modal fade" id="modalActualizarSubcategoria" tabindex="-1" aria-labelledby="modalActualizarSubcategoriaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalActualizarSubcategoriaLabel">Actualizar Subcategoría</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formActualizarSubcategoria">
+          <div class="mb-3">
+            <label for="idSubcategoriaModal" class="form-label">ID</label>
+            <input type="text" id="idSubcategoriaModal" class="form-control" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label for="categoriaSubcategoriaModal" class="form-label">Categoría</label>
+            <select id="categoriaSubcategoriaModal" class="form-select" required>
+              <option value="">Selecciona una categoría</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="nombreSubcategoriaModal" class="form-label">Nombre</label>
+            <input type="text" id="nombreSubcategoriaModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="descripcionSubcategoriaModal" class="form-label">Descripción</label>
+            <input type="text" id="descripcionSubcategoriaModal" class="form-control" required>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success" onclick="editandoSubcategoria()">Actualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- SCRIPT -->
   <script>
@@ -156,10 +194,50 @@
 
       editandoSubcategoria = row;
     }
+
+    function editarSubcategoria(btn) {
+      const row = btn.closest('tr');
+      const id = row.querySelector('.col-id').textContent;
+      const nombre = row.querySelector('.col-nombre').textContent;
+      const descripcion = row.querySelector('.col-descripcion').textContent;
+
+    // Llenar modal
+    document.getElementById('idSubcategoriaModal').value = id;
+    document.getElementById('nombreSubcategoriaModal').value = nombre;
+    document.getElementById('descripcionSubcategoriaModal').value = descripcion;
+
+    // Guardar la fila actual para actualizarla luego
+    editandoSubcategoria = row;
+
+    // Abrir modal
+    const modal = new bootstrap.Modal(document.getElementById('modalActualizarSubcategoria'));
+    modal.show();
+}
+
+// Manejo del formulario de actualización
+document.getElementById('formActualizarSubcategoria').addEventListener('submit', function(e){
+    e.preventDefault();
+    const nombre = document.getElementById('nombreSubcategoriaModal').value.trim();
+    const descripcion = document.getElementById('descripcionSubcategoriaModal').value.trim();
+
+    if(!nombre || !descripcion) return;
+
+    // Actualizar fila
+    editandoSubcategoria.querySelector('.col-nombre').textContent = nombre;
+    editandoSubcategoria.querySelector('.col-descripcion').textContent = descripcion;
+
+    editandoSubcategoria = null;
+
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalActualizarSubcategoria'));
+    modal.hide();
+});
   </script>
   <script >
     resaltar()
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <script src="/static/js/notificacion.js"></script>
   <script src="/static/js/resaltar.js"></script>
 </body>

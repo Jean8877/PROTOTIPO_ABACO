@@ -96,6 +96,53 @@
       </table>
     </div>
   </div>
+  <div class="modal fade" id="modalActualizarProducto" tabindex="-1" aria-labelledby="modalActualizarProductoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalActualizarProductoLabel">Actualizar Producto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formActualizarProducto">
+          <div class="mb-3">
+            <label for="idProductoModal" class="form-label">ID</label>
+            <input type="text" id="idProductoModal" class="form-control" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label for="categoriaProductoModal" class="form-label">Categoría</label>
+            <select id="categoriaProductoModal" class="form-select" required>
+              <option value="">Selecciona una categoría</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="subcategoriaProductoModal" class="form-label">Subcategoría</label>
+            <select id="subcategoriaProductoModal" class="form-select" required>
+              <option value="">Selecciona una Subcategoría</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="nombreStockModal" class="form-label">Stock Minimo</label>
+            <input type="text" id="nombreStockModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="nombreProductoModal" class="form-label">Nombre</label>
+            <input type="text" id="nombreProductoModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="descripcionProductoModal" class="form-label">Descripción</label>
+            <input type="text" id="descripcionProducto  Modal" class="form-control" required>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success" onclick="editandoProducto()">Actualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
   <script>
     // Datos de ejemplo
@@ -208,10 +255,32 @@
         }
       });
     };
+    const modal = new bootstrap.Modal(document.getElementById('modalActualizarProducto'));
+    modal.show();
+
+    // Manejo del formulario de actualización
+document.getElementById('formActualizarProducto').addEventListener('submit', function(e){
+    e.preventDefault();
+    const nombre = document.getElementById('nombreProductoModal').value.trim();
+    const descripcion = document.getElementById('descripcionProductoModal').value.trim();
+
+    if(!nombre || !descripcion) return;
+
+    // Actualizar fila
+    editandoProducto.querySelector('.col-nombre').textContent = nombre;
+    editandoProducto.querySelector('.col-descripcion').textContent = descripcion;
+
+    editandoProducto = null;
+
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalActualizarProducto'));
+    modal.hide();
+});
   </script>
   <script>
     resaltar()
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/static/js/notificacion.js"></script>
   <script src="/static/js/resaltar.js"></script>
 </body>
