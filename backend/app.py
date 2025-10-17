@@ -1102,26 +1102,23 @@ def registro_usuarios():
     try:
         data = request.get_json()
         nombre_completo = data['nombre_completo']
+        tipo_documento = data['tipo_documento']
         numero_documento = data['numero_documento']
         correo = data['correo']
         contrasena = data['contrasena']
         tipo_usuario = data['tipo_usuario']
-        tipo_documento = data['tipo_documento']
         estado = data['estado']
         
         # Validación extra
         if not all([nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado]):
             return jsonify({'mensaje': 'Faltan campos obligatorios'}), 400
 
-        # ENCRIPTAR CONTRASEÑA
-        hashed_password = bcrypt.hashpw(contrasena.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO usuario (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado) 
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (nombre_completo, numero_documento, correo, hashed_password, tipo_usuario, tipo_documento, estado))
+        """, (nombre_completo, numero_documento, correo, contrasena, tipo_usuario, tipo_documento, estado))
         conn.commit()
         cur.close()
         conn.close()
@@ -1391,7 +1388,7 @@ def eliminar_tipo_donante(codigo):
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
-                  DELETE FROM tipo_donante WHERE id_tipo_donante = %s
+                  DELETE FROM tipo_donante WHERE ID = %s
                   """, (codigo,))
         conn.commit()
         cur.close()
@@ -2998,7 +2995,7 @@ def acta_vencimiento():
         return jsonify ({'Mensaje': 'Error'})
       
 # ============================================================
-# =============  RUTA DE ACTA DE VENCIMIENTO  POR ID ===========
+# ============  RUTA DE ACTA DE VENCIMIENTO  POR ID ==========
 # ============================================================
 @app.route("/acta_vencimiento/<int:codigo>", methods=['GET'])
 def acta_vencimiento_por_id(codigo):
@@ -3935,7 +3932,6 @@ def registro_organizacion():
         conn.close()
         return jsonify({'mensaje': 'Registro agregado'})
     except Exception as ex:
-        print(ex)
         return jsonify({'mensaje': 'Error'})
 
 # ============================================================

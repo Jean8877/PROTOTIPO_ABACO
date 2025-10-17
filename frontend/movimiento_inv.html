@@ -138,8 +138,7 @@
     <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
     <div>
       <i class="bi bi-person-circle"></i>
-      <span class="me-3"> <strong>Karina</strong> </span>
-            <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
+      <span class="me-3"> <strong></strong> </span>
     </div>
   </header>
   
@@ -157,15 +156,41 @@
     <div class="content">
       <h1>Movimiento de Inventario</h1>
 
-      <form id="formMovimiento">
-        <input type="text" id="producto" placeholder="Nombre del producto" required />
-        <input type="number" id="cantidad" placeholder="Cantidad" min="1" required />
+      <form id="formMovimiento"onsubmit="event.preventDefault(); registrar_movimiento_producto();">
+
+        <label for="id_producto">Producto</label>
+        <select id="id_producto" required>
+          <option value="">Selecciona un producto</option>
+        </select>
+
+        <label for="tipoMovimiento">Tipo de movimiento</label>
         <select id="tipoMovimiento" required>
           <option value="">Tipo de movimiento</option>
-          <option value="entrada">Entrada</option>
-          <option value="salida">Salida</option>
+          <option value="entrada">INGRESO</option>
+          <option value="salida">EGRESO</option>
         </select>
+
+        <label for="Cantidad">Cantidad</label>
+        <input type="number" id="Cantidad" min="1" required />
+        
+        <label for="fechaMovimiento">Fecha de movimiento</label>
         <input type="date" id="fechaMovimiento" required />
+        
+        <label for="observacion">Observacion</label>
+        <input type="text" id="observacion" placeholder="Observacion" required />
+
+        <label for="tipo_donacion">Tipo de donación</label>
+        <select id="tipo_donacion" required>
+          <option value="">Selecciona un tipo de donación</option>
+        </select>
+
+        <label for="organizacion">Organización</label>
+        <select id="organizacion" required>
+          <option value="">Selecciona una organización</option>
+        </select>
+
+
+        <label for="bodega">Bodega</label>
         <select id="bodega" required>
           <option value="">Selecciona la bodega</option>
         </select>

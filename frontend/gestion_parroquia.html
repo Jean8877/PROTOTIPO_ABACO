@@ -175,38 +175,19 @@
     <div class="content">
       <h1>Registrar Nueva Organización</h1>
 
-      <form id="formParroquia">
-        <input type="text" id="nombreParroquia" placeholder="Nombre de la organización" required>
-        <select id="tipo_organizacion" required>
-          <option value="">Tipo de organización</option>
-          <option value="permanente">Permanente</option>
-          <option value="esporadica">Esporádica</option>
-        </select>
-        <input type="text" id="nombrePadre" placeholder="Nombre del padre" required>
-        <select id="tipoDocumento" required>
-          <option value="">Tipo de documento</option>
-          <option value="CC">Cédula</option>
-          <option value="TI">Tarjeta de Identidad</option>
-        </select>
-        <input type="text" id="numeroDocumento" placeholder="Número de documento" required>
-        <input type="tel" id="telefono" placeholder="Número de teléfono" required>
+      <form id="formParroquia" onsubmit="event.preventDefault(); agregar_organizacion();">
+        <input type="text" id="descripcion" placeholder="Descripción" required>
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="text" id="responsable" placeholder="Responsable" required>
+        <input type="text" id="telefono" placeholder="Teléfono" required>
         <input type="text" id="direccion" placeholder="Dirección" required>
-        <input type="email" id="correo" placeholder="Correo electrónico" required>
+        <label for="tipo_entrega">Tipo entrega</label>
+        <select id="tipo_entrega" required aria-label="tipo_entrega"></select>
+        <br>
 
-        <!-- consumo API departamentos y municipios -->
-        <div class="mb-3">
-          <label for="departamentos" class="form-label">Selecciona un departamento:</label>
-          <select class="form-select" id="departamentos" onchange="traer()">
-            <option selected disabled>Departamentos</option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label for="municipios" class="form-label">Selecciona un municipio:</label>
-          <select class="form-select" id="municipios" disabled>
-            <option selected disabled>Municipios</option>
-          </select>
-        </div>
+        <label for="tipo_organizacion">Tipo organización</label>
+        <select id="tipo_organizacion" required aria-label="tipo_organizacion"></select>
+        <br>
 
         <button type="submit">Guardar Parroquia</button>
       </form>

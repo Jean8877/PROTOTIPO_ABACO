@@ -130,12 +130,11 @@
       <a href="#"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
       <a href="configuracion.html" class="mt-auto"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
     </div>
-
     <div class="content">
-      <form id="formTipoDonante">
+      <form id="formTipoDonante" onsubmit="agregar_tipo_donante(event)">
         <h1>Registrar Tipo de Donante</h1>
-        <input type="text" id="nombreTipo" placeholder="Nombre del tipo de Donante" required />
-        <textarea id="descripcionTipo" placeholder="Descripción del tipo de Donante" required></textarea>
+        <label for="nombreTipo">Nombre del Tipo de Donante</label>
+        <input type="text" id="descripcion" placeholder="Nombre del tipo de Donante" required />
         <button type="submit">Guardar Tipo de Donante</button>
       </form>
 

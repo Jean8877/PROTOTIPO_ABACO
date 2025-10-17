@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <script src="app.js"></script>
   <meta charset="UTF-8" />
@@ -9,7 +10,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    body, html {
+    body,
+    html {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -38,8 +40,10 @@
       color: white;
       transition: width 0.3s;
       overflow-x: hidden;
-      display: flex;           /* <--- Agregado */
-      flex-direction: column;  /* <--- Agregado */
+      display: flex;
+      /* <--- Agregado */
+      flex-direction: column;
+      /* <--- Agregado */
     }
 
     .sidebar:hover {
@@ -74,6 +78,7 @@
     .sidebar:hover span {
       opacity: 1;
     }
+
     header img {
       height: 40px;
       margin-right: 10px;
@@ -85,15 +90,17 @@
       overflow-y: auto;
     }
 
-    form, table {
+    form,
+    table {
       background-color: #fff;
       padding: 15px;
       margin-bottom: 30px;
       border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    input, select {
+    input,
+    select {
       margin-bottom: 10px;
       padding: 8px;
       width: 100%;
@@ -105,14 +112,18 @@
       border-collapse: collapse;
     }
 
-    table, th, td {
+    table,
+    th,
+    td {
       border: 1px solid #ccc;
     }
 
-    th, td {
+    th,
+    td {
       padding: 10px;
       text-align: left;
     }
+
     button {
       padding: 10px 15px;
       background-color: #28a745;
@@ -125,11 +136,9 @@
     button:hover {
       background-color: #5daf78;
     }
-
-   
-    
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
@@ -139,11 +148,11 @@
     <div>
       <i class="bi bi-person-circle"></i>
       <span class="me-3"> <strong>Karina</strong> </span>
-            <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
+      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
 
     </div>
   </header>
-  
+
   <!-- LAYOUT -->
   <div class="main-layout">
     <!-- SIDEBAR -->
@@ -158,29 +167,28 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="content">
-      
-      <form id="formDonante">
+
+      <form id="formDonante" onsubmit="event.preventDefault(); agregar_donante();">
         <h1>Registrar Nuevo Donante</h1>
-        <input type="text" id="nombreDonante" placeholder="Nombre completo" required />
-        <select id="tipoDocumento" required>
-          <option value="">Tipo de documento</option>
-          <option value="CC">Cédula</option>
-          <option value="TI">Tarjeta de Identidad</option>
-          <option value="CE">Cédula de Extranjería</option>
-          <option value="PA">Pasaporte</option>
-        </select>
-        <input type="text" id="numeroDocumento" placeholder="Número de documento" required />
-        <select id="tipoDonante" required>
-          <option value="">Tipo de Donante</option>
-          <option value="PN">Persona Natural</option>
-          <option value="EP">Empresa Privada</option>
-          <option value="EG">Entidad Gubernamental</option>
-          <option value="ONG F">ONG / Fundación</option>
-          <option value="I,CR">Iglesia o Comunidad Religiosa</option>
-        </select>
-        <input type="tel" id="telefono" placeholder="Número de teléfono" required />
+        <input type="text" id="nombre" placeholder="Nombre completo" required />
+
+        <label for="tipo_documento">Tipo de documento:</label>
+        <select id="tipo_documento" required aria-label="tipo_documento"></select>
+
+        <input type="text" id="numero_documento" placeholder="Número de documento" required />
+
+        <input type="text" id="telefono" placeholder="Teléfono" required />
+
         <input type="email" id="correo" placeholder="Correo electrónico" required />
+
         <input type="text" id="direccion" placeholder="Dirección" required />
+
+        <label for="estado">Estado:</label>
+        <select id="estado" required aria-label="Estado"></select>
+
+        <label for="tipo_donante">Tipo de Donante:</label>
+        <select id="tipo_donante" required aria-label="Tipo de Donante"></select>
+
         <button type="submit">Guardar Donante</button>
       </form>
 
@@ -208,4 +216,5 @@
   <script>donante();</script>
 
 </body>
+
 </html>

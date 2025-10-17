@@ -87,7 +87,55 @@ async function movimiento_producto() {
         const response = await promesa.json();
         console.log(response)
         mostrar_movimiento(response)
+        llamar_tipo_donacion()
+        llamar_organizacion()
+        llamar_bodega()
+        llamar_producto()
+
     }catch(error){
+        console.error(error)
+    }
+}
+
+// ==========================================================================
+// ================= POST, MOVIMIENTO DE PRODUCTO   =========================
+// ==========================================================================
+
+async function agregar_movimiento() {
+    try {
+        const  id_producto = document.getElementById("id_producto").value;
+        const  tipoMovimiento = document.getElementById("tipoMovimiento").value;
+        const  cantidad = document.getElementById("Cantidad").value;
+        const  fechaMovimiento = document.getElementById("fechaMovimiento").value;
+        const  observacion = document.getElementById("observacion").value;
+        const  tipo_donacion = document.getElementById("tipo_donacion").value;
+        const  organizacion = document.getElementById("organizacion").value;
+        const  bodega = document.getElementById("bodega").value;
+        const  responsable = document.getElementById("responsable").value;
+        const nuevo_movimiento = {
+            id_producto,
+            tipoMovimiento,
+            cantidad,
+            fechaMovimiento,
+            observacion,
+            tipo_donacion,
+            organizacion,
+            bodega,
+            responsable
+        }
+
+    const promesa = await fetch(`${URL_BASE}/registro_movimiento`, {
+        method: 'POST',
+        body : JSON.stringify(nuevo_movimiento),
+        headers: {
+            "Content-type" : "application/json"
+        }
+    })
+    const response = await promesa.json()
+    console.log(response)
+        document.getElementById("unidad_de_medida").value = "";
+        unidad_de_medida()
+    } catch (error) {
         console.error(error)
     }
 }
@@ -130,7 +178,7 @@ async function agregar_unidad_de_medida() {
     try {
         const nombre_unidad_de_medida = document.getElementById("unidad_de_medida").value;
         const nueva_unidad = {
-    "nombre": nombre_unidad_de_medida
+        "nombre": nombre_unidad_de_medida
     }
 
     const promesa = await fetch(`${URL_BASE}/registro_unidad_de_medida`, {
@@ -201,6 +249,7 @@ function mostrar_producto(producto) {
         <tr>
                 <td>${i.id_producto}</td>
                 <td>${i.nombre}</td>
+                <td>${i.fecha_vencimiento}</td>
                 <td>${i.descripcion}</td>
                 <td>${i.cantidad}</td>
                 <td>${i.codigo_barras}</td>
@@ -209,8 +258,9 @@ function mostrar_producto(producto) {
                 <td>${i.stock_minimo}</td>
                 <td>${i.categoria_producto}</td>
                 <td>${i.subcategoria_producto}</td>
-                <td>${i.estado}</td>
                 <td>${i.unidad_de_medida}</td>
+                <td>${i.estado}</td>
+                <td>$${i.fecha_registro}</td>
                 <td>
                     <button type="button" onclick="eliminar_producto(${i.id_producto})">Eliminar</button> 
                 </td>
@@ -589,6 +639,20 @@ async function agregar_bodega() {
     }
 }
 
+// ==========================================================================
+// ====================== DELETE, BODEGA  =================================
+// ==========================================================================
+async function eliminar_bodega(codigo) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/eliminar_bodega/${codigo}`, {method: 'DELETE',});
+    const response = await promesa.json()
+    console.log("Bodega eliminada", response)
+    bodega();
+    return response;
+    } catch ( error) {
+        console.error("Error al eliminar bodega:", error);
+    }
+}
 
 // =======================================================================
 // ====================== LLAMAR ESTADO =================================
@@ -610,20 +674,6 @@ async function llamar_estado() {
         console.error("Error al cargar es estado", error)
     }
 }
-// ==========================================================================
-// ====================== DELETE, BODEGA  =================================
-// ==========================================================================
-async function eliminar_bodega(codigo) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/eliminar_bodega/${codigo}`, {method: 'DELETE',});
-    const response = await promesa.json()
-    console.log("Bodega eliminada", response)
-    bodega();
-    return response;
-    } catch ( error) {
-        console.error("Error al eliminar bodega:", error);
-    }
-}
 
 // ==========================================================================
 // ====================== GET, TIPO DONANTE =================================
@@ -636,8 +686,11 @@ function mostrartipo_donante(tipo_donante) {
         <tr>
             <td>${i.ID}</td>
             <td>${i.descripcion}</td>
-            <td > <button type="button">Eliminar</button> </td>
+            <td>
+            <button type="button" onclick="eliminar_tipo_donante(${i.ID})">Eliminar</button>
+            </td>
         </tr>
+
         `;
     });
     document.getElementById("tbodytipo_donante").innerHTML = info;
@@ -654,7 +707,127 @@ async function tipo_donante() {
     }
 }
 
+// ==========================================================================
+// ====================== GET, TIPO DOCUMENTO ================================
+// ==========================================================================
 
+function mostrartipo_documento(tipo_documento) {
+    let info ="";
+    tipo_documento.tipo_documento.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_tipo_documento}</td>
+            <td>${i.descripcion}</td>
+            <td>${i.abreviatura}</td>
+            <td>
+            <button type="button" onclick="eliminar_tipo_documento(${i.id_tipo_documento})">Eliminar</button>
+            </td>
+        </tr>
+
+        `;
+    });
+    document.getElementById("tbodytipo_documento").innerHTML = info;
+}
+
+async function tipo_documento() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrar_tipo_documento(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+// =======================================================================
+// ===================== LLAMAR TIPO_DOCUMENTO ===========================
+// =======================================================================
+async function llamar_tipo_documento() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
+        const response = await promesa.json()
+
+        const select = document.getElementById("tipo_documento");
+        select.innerHTML = "";
+        response.tipo_documento.forEach(tipo =>  {
+            const option = document.createElement("option")
+            option.value = tipo.id_tipo_documento;
+            option.text = `${tipo.id_tipo_documento} - ${tipo.descripcion}`;
+            option.text = `${tipo.abreviatura} - ${tipo.descripcion}`;
+            select.appendChild(option)
+        })
+    } catch (error) {
+        console.error("Error al cargar el tipo de documento", error)
+    }
+}
+
+
+// =======================================================================
+// ===================== LLAMAR TIPO_DONANTE =============================
+// =======================================================================
+async function llamar_tipo_donante() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/tipo_donante`, {method: 'GET'});
+        const response = await promesa.json()
+
+        const select = document.getElementById("tipo_donante");
+        select.innerHTML = "";
+        response.tipo_donante.forEach(tipo =>  {
+            const option = document.createElement("option")
+            option.value = tipo.ID;
+            option.text = tipo.descripcion;
+            select.appendChild(option)
+        })
+    } catch (error) {
+        console.error("Error al cargar el tipo de donante", error)
+    }
+}
+
+// ==========================================================================
+// ====================== POST, TIPO DONANTE =================================
+// ==========================================================================
+
+async function agregar_tipo_donante() {
+    try {
+        const descripcion = document.getElementById("descripcion").value;
+
+        const nuevo_tipo_donante = {
+            "descripcion": descripcion
+        };
+
+        const promesa = await fetch(`${URL_BASE}/registro_tipo_donante`, {
+            method: 'POST',
+            body: JSON.stringify(nuevo_tipo_donante),
+            headers: {
+                "Content-type": "application/json"
+            },
+        })
+        const response = await promesa.json();
+        console.log(response);
+        document.getElementById("descripcion").value = "";
+        tipo_donante();
+    } catch (error) {
+        
+    }
+}
+
+// ==========================================================================
+// ====================== DELETE, TIPO DONANTE =================================
+// ==========================================================================
+
+async function eliminar_tipo_donante(codigo) {
+    try {
+        fetch(`${URL_BASE}/eliminar_tipo_donante/${codigo}`, {method: 'DELETE'})
+        .then(response => response.json())
+        .then(data => {
+            console.log("tipo de donante eliminado:", data);
+            tipo_donante();
+            return data;
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 // ==========================================================================
 // ======================== GET, DONANTE ====================================
@@ -674,6 +847,9 @@ function mostrar_donante(donante) {
             <td>${i.direccion}</td>
             <td>${i.estado}</td>
             <td>${i.tipo_donante}</td>
+            <td>
+            <button type="button" onclick="eliminar_donante(${i.id_donante})">Eliminar</button>
+            </td>
             </tr>
         `
     });
@@ -685,8 +861,78 @@ async function donante() {
         const response = await promesa.json();
         console.log(response)
         mostrar_donante(response)
+        llamar_estado()
+        llamar_tipo_donante()
+        llamar_tipo_documento()
     }catch(error){
         console.error(error)
+    }
+}
+// ==========================================================================
+// ======================== POST, DONANTE ====================================
+// ==========================================================================
+
+async function agregar_donante() {
+    try {
+        const nombre = document.getElementById("nombre").value;
+        const tipo_documento = document.getElementById("tipo_documento").value;
+        const numero_documento = document.getElementById("numero_documento").value;
+        const telefono = document.getElementById("telefono").value;
+        const correo = document.getElementById("correo").value;
+        const direccion = document.getElementById("direccion").value;
+        const estado = document.getElementById("estado").value;
+        const tipo_donante = document.getElementById("tipo_donante").value;
+
+        const nuevo_donante = {
+            "nombre": nombre,
+            "tipo_documento": tipo_documento,
+            "numero_documento": numero_documento,
+            "telefono": telefono,
+            "correo": correo,
+            "direccion": direccion,
+            "estado": estado,
+            "tipo_donante": tipo_donante
+        }
+        const promesa = await fetch(`${URL_BASE}/registro_donante`, {
+            method: 'POST',
+            body: JSON.stringify(nuevo_donante),
+            headers: {
+                "Content-type": "application/json"
+            },
+        })
+        const response = await promesa.json()
+        console.log(response)
+        document.getElementById("nombre").value = "";
+        document.getElementById("tipo_documento").value = "";
+        document.getElementById("numero_documento").value = "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("correo").value = "";
+        document.getElementById("direccion").value = "";
+        document.getElementById("estado").value = "";
+        document.getElementById("tipo_donante").value = "";
+
+        donante();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+// ==========================================================================
+// ====================== DELETE,DONANTE ====================================
+// ==========================================================================
+
+async function eliminar_donante(codigo) {
+    try {
+        fetch(`${URL_BASE}/eliminar_donante/${codigo}`, {method: 'DELETE'})
+        .then(response => response.json())
+        .then(data => {
+            console.log("donante eliminado:", data);
+            donante();
+            return data;
+        });
+    } catch (error) {
+        console.error(error);
     }
 }
 
@@ -786,6 +1032,8 @@ function mostrartipo_organizacion(tipo_organizacion) {
         <tr>
             <td>${i.id_tipo_organizacion}</td>
             <td>${i.nombre}</td>
+            <td>${i.descripcion}</td>
+            <td> <button onclick="editar_tipo_organizacion(${i.id_tipo_organizacion})">Editar</button> <button onclick="eliminar_tipo_organizacion(${i.id_tipo_organizacion})">Eliminar</button></td>
         </tr>
         `;
     });
@@ -798,11 +1046,83 @@ async function tipo_organizacion() {
         const response = await promesa.json();
         console.log(response)
         mostrartipo_organizacion(response)
+        
     }catch(error){
         console.error(error)
     }
 }
+// ==========================================================================
+// =================== POST, TIPO ORGANIZACION  ==============================
+// ==========================================================================
 
+async function agregar_tipo_organizacion() {
+    try {
+        const nombre_tipo_organizacion = document.getElementById("nombre").value;
+        const descripcion_tipo_organizacion = document.getElementById("descripcion").value;
+
+        const nuevo_tipo_organizacion = {
+        "nombre": nombre_tipo_organizacion,
+        "descripcion": descripcion_tipo_organizacion
+        };
+
+        const promesa = await fetch(`${URL_BASE}/registro_tipo_organizacion`, {
+        method: 'POST',
+        body: JSON.stringify(nuevo_tipo_organizacion),
+        headers: {
+            "Content-type": "application/json"
+        }
+        });
+
+        const response = await promesa.json();
+        console.log(response);
+
+        document.getElementById("nombre").value = "";
+        document.getElementById("descripcion").value = "";
+        tipo_organizacion();
+
+    } catch (error) {
+        console.error(error);
+    }
+    }
+
+// ==========================================================================
+// =================== DELETE, TIPO ORGANIZACION ============================
+// ==========================================================================
+
+async function eliminar_tipo_organizacion(codigo) {
+    try {
+        fetch(`${URL_BASE}/eliminar_tipo_organizacion/${codigo}`, {method: 'DELETE'})
+        .then(response => response.json())
+        .then(data => {
+            console.log("tipo de organizacion eliminado:", data);
+            tipo_organizacion();
+            return data;
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
+// =======================================================================
+// ===================== LLAMAR TIPO_ORGANIZACION ========================
+// =======================================================================
+async function llamar_tipo_organizacion() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/tipo_organizacion`, {method: 'GET'});
+        const response = await promesa.json()
+
+        const select = document.getElementById("tipo_organizacion");
+        select.innerHTML = "";
+        response.tipo_organizacion.forEach(tipo =>  {
+            const option = document.createElement("option")
+            option.value = tipo.id_tipo_organizacion;
+            option.text = `${tipo.id_tipo_organizacion} - ${tipo.nombre}`;
+
+            select.appendChild(option)
+        })
+    } catch (error) {
+        console.error("Error al cargar el tipo de organizacion", error)
+    }
+}
 
 // ==========================================================================
 // ===================  GET, ORGANIZACION  =================================
@@ -821,8 +1141,9 @@ function mostrarorganizacion(organizacion) {
             <td>${i.direccion}</td>
             <td>${i.tipo_entrega}</td>
             <td>${i.tipo_organizacion}</td>
-            
-            
+            <td>
+                <button onclick="eliminar_organizacion(${i.codigo})">Eliminar</button>
+            </td>
         </tr>
         `;
     });
@@ -835,11 +1156,78 @@ async function organizacion() {
         const response = await promesa.json();
         console.log(response)
         mostrarorganizacion(response)
+        llamar_tipo_organizacion()
+        llamar_tipo_entrega()
     }catch(error){
         console.error(error)
     }
 }
 
+// ==========================================================================
+// ====================   POST, AGREGAR ORGANIZACION   ====================
+// ==========================================================================
+async function agregar_organizacion() {
+    try {
+        const descripcion = document.getElementById("descripcion").value;
+        const nombre = document.getElementById("nombre").value;
+        const responsable = document.getElementById("responsable").value;
+        const telefono = document.getElementById("telefono").value;
+        const direccion = document.getElementById("direccion").value;
+        const tipo_entrega = document.getElementById("tipo_entrega").value;
+        const tipo_organizacion = document.getElementById("tipo_organizacion").value;
+
+        const nueva_organizacion = {
+            "descripcion": descripcion,
+            "nombre": nombre,
+            "responsable": responsable,
+            "telefono": telefono,
+            "direccion": direccion,
+            "tipo_entrega": tipo_entrega,
+            "tipo_organizacion": tipo_organizacion
+        }
+
+        const promesa = await fetch(`${URL_BASE}/registro_organizacion`, {
+            method: 'POST',
+            body : JSON.stringify(nueva_organizacion),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const response = await promesa.json()
+        console.log(response)
+        document.getElementById("descripcion").value = "";
+        document.getElementById("nombre").value = "";
+        document.getElementById("responsable").value = "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("direccion").value = "";
+        document.getElementById("tipo_entrega").value = "";
+        document.getElementById("tipo_organizacion").value = "";
+        
+        organizacion();
+        
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+// ==========================================================================
+// =================== DELETE, ORGANIZACION ============================
+// ==========================================================================
+
+async function eliminar_organizacion(codigo) {
+    try {
+        fetch(`${URL_BASE}/eliminar_organizacion/${codigo}`, {method: 'DELETE'})
+        .then(response => response.json())
+        .then(data => {
+            console.log("organizacion eliminada:", data);
+            organizacion();
+            return data;
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
 // ==========================================================================
 // ===================  GET, ACTA VENCIMIENTO  ==============================
 // ==========================================================================
@@ -868,6 +1256,58 @@ async function acta_vencimiento() {
         mostraracta_vencimiento(response)
     }catch(error){
         console.error(error)
+    }
+}
+
+
+// ==========================================================================
+// ===================  GET, TIPO_ENTREGA  =================================
+// ==========================================================================
+
+function mostrar_tipo_entrega(tipo_entrega) {
+    let info ="";
+    tipo_entrega.tipo_entrega.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_tipo_entrega}</td>
+            <td>${i.nombre}</td>
+            <td>${i.descripcion}</td>
+            
+            
+        </tr>
+        `;
+    });
+    document.getElementById("tbodytipo_entrega").innerHTML = info;
+}
+
+async function obtener_tipo_entrega() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrar_tipo_entrega(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+
+// ==========================================================================
+// ====================== LLAMAR TIPO_ENTREGA ==============================
+// ==========================================================================
+async function llamar_tipo_entrega() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
+        const response = await promesa.json();
+        const select = document.getElementById("tipo_entrega");
+        select.innerHTML = "";
+        response.tipo_entrega.forEach(tipo =>  {
+            const option = document.createElement("option")
+            option.value = tipo.id_tipo_entrega;
+            option.text = `${tipo.nombre}`;
+            select.appendChild(option)
+        })
+    } catch (error) {
+        console.error("Error al cargar el tipo de entrega", error)
     }
 }
 
@@ -905,8 +1345,53 @@ async function certificado_donante() {
         console.error(error)
     }
 }
+// ==========================================================================
+// ======================   GET, TIPO_DOCUMENTO   ===========================
+// ==========================================================================
+function mostrartipo_documento(tipo_documento) {
+    let info ="";
+    tipo_documento.tipo_documento.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_tipo_documento}</td>
+            <td>${i.nombre}</td>
+        </tr>
+        `;
+    });
+    document.getElementById("tbodytipo_documento").innerHTML = info;
+}
 
+async function tipo_documento() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrartipo_documento(response)
+    }catch(error){
+        console.error(error)
+    }
+}
 
+// =======================================================================
+// ====================== LLAMAR TIPO_DOCUMENTO ==========================
+// =======================================================================
+async function llamar_tipo_documento() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
+        const response = await promesa.json()
+
+        const select = document.getElementById("tipo_documento");
+        select.innerHTML = "";
+        response.tipo_documento.forEach(tipo =>  {
+            const option = document.createElement("option")
+            option.value = tipo.id_tipo_documento;
+            option.text = `${tipo.nombre}`;
+            select.appendChild(option)
+        })
+    } catch (error) {
+        console.error("Error al cargar el tipo de documento", error)
+    }
+}
 // ==========================================================================
 // ======================   GET, USUARIO   =================================
 // ==========================================================================
@@ -925,6 +1410,7 @@ function mostrar_usuario(usuario) {
             <td>${i.tipo_usuario}</td>
             <td>${i.tipo_documento}</td>
             <td>${i.estado}</td>
+            <td><button class="btn btn-danger" onclick="eliminar_usuario(${i.id_usuario})">Eliminar</button></td>
         </tr>
         `
     });
@@ -932,16 +1418,82 @@ function mostrar_usuario(usuario) {
 }
 async function usuario() {
     try{
-        const promesa = await fetch(`${URL_BASE}/usuario`, {method : 'GET'});
+        const promesa = await fetch(`${URL_BASE}/usuarios`, {method : 'GET'});
         const response = await promesa.json();
         console.log(response)
         mostrar_usuario(response)
+        llamar_estado()
+        llamar_tipo_documento()
+        llamar_tipo_usuario()
+
     }catch(error){
         console.error(error)
     }
 }
 
+// ==========================================================================
+// ====================   POST, AGREGAR USUARIO   ===========================
+// ==========================================================================
+async function agregar_usuario() {
+    try {
+        const nombre_completo = document.getElementById("nombre_completo").value;
+        const tipo_documento = document.getElementById("tipo_documento").value;
+        const numero_documento = document.getElementById("numero_documento").value;
+        const correo = document.getElementById("correo").value;
+        const contrasena = document.getElementById("contrasena").value;
+        const tipo_usuario = document.getElementById("tipo_usuario").value;
+        const estado = document.getElementById("estado").value;
 
+        const nuevo_usuario = {
+            "nombre_completo": nombre_completo,
+            "tipo_documento": tipo_documento,
+            "numero_documento": numero_documento,
+            "correo": correo,
+            "contrasena": contrasena,
+            "tipo_usuario": tipo_usuario,
+            "estado": estado
+        }
+
+        const promesa = await fetch(`${URL_BASE}/registro_usuarios`, {
+            method: 'POST',
+            body : JSON.stringify(nuevo_usuario),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const response = await promesa.json()
+        console.log(response)
+        document.getElementById("nombre_completo").value = "";
+        document.getElementById("tipo_documento").value = "";
+        document.getElementById("numero_documento").value = "";
+        document.getElementById("correo").value = "";
+        document.getElementById("contrasena").value = "";
+        document.getElementById("tipo_usuario").value = "";
+        document.getElementById("estado").value = "";
+        usuario();
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+// ==========================================================================
+// ====================== DELETE, USUARIO ==================================
+// ==========================================================================
+
+async function eliminar_usuario(codigo) {
+    try {
+        fetch(`${URL_BASE}/eliminar_usuarios/${codigo}`, {method: 'DELETE'})
+        .then(response => response.json())
+        .then(data => {
+            console.log("usuario eliminado:", data);
+            usuario();
+            return data;
+        });
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 // ==========================================================================
 // ====================    GET, DONACION       ==============================
@@ -1039,3 +1591,192 @@ async function fecha_vencimiento() {
     }
 }
 
+
+
+// ==========================================================================
+// =================== MOSTRAR CONTRASEÑA ===================================
+// ==========================================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("contrasena");
+    const toggle = document.getElementById("togglePassword");
+    const icon = document.getElementById("iconoOjo");
+
+    if (input && toggle && icon) {
+        toggle.addEventListener("click", () => {
+            const mostrar = input.type === "password";
+            input.type = mostrar ? "text" : "password";
+            icon.classList.toggle("bi-eye");
+            icon.classList.toggle("bi-eye-slash");
+        });
+    }
+});
+
+
+// ==========================================================================
+// =================== GET, TIPO_USUARIO ===================================
+// ==========================================================================
+
+function mostrar_tipo_usuario(tipo_usuario) {
+    let info ="";
+    tipo_usuario.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.id_tipo_usuario}</td>
+            <td>${i.descripcion}</td>
+        </tr>
+        `;
+    });
+    document.getElementById("tbodytipo_usuario").innerHTML = info;
+}
+
+async function tipo_usuario() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/tipo_usuario`, {method : 'GET'});
+        const response = await promesa.json();
+        mostrar_tipo_usuario(response);
+    }catch(error){
+        console.error(error);
+    }
+}
+
+// =======================================================================
+// ====================== LLAMAR TIPO USUARIO ============================
+// =======================================================================
+async function llamar_tipo_usuario() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/tipo_usuario`, {method: 'GET'});
+        const response = await promesa.json()
+
+        const select = document.getElementById("tipo_usuario");
+        select.innerHTML = "";
+        response.tipo_usuario.forEach(tipo =>  {
+            const option = document.createElement("option")
+            option.value = tipo.id_tipo_usuario;
+            option.text = `${tipo.descripcion}`;
+            select.appendChild(option)
+        })
+    } catch (error) {
+        console.error("Error al cargar el tipo de usuario", error)
+    }
+}
+
+
+// ==========================================================================
+// ===================  GET, TIPO_DONACION  =================================
+// ==========================================================================
+
+function mostrar_tipo_donacion(tipo_donacion) {
+    let info ="";
+    tipo_donacion.tipo_donacion.forEach(i => {
+        info +=`
+        <tr>
+            <td>${i.codigo}</td>
+            <td>${i.descripcion}</td>
+            <td></td>
+            
+        </tr>
+        `;
+    });
+    document.getElementById("tbodytipo_entrega").innerHTML = info;
+}
+
+async function obtener_tipo_entrega() {
+    try{
+        const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
+        const response = await promesa.json();
+        console.log(response)
+        mostrar_tipo_entrega(response)
+    }catch(error){
+        console.error(error)
+    }
+}
+
+// ==========================================================================
+// ===================== LLAMAR TIPO_DONACION  ===========================
+// ==========================================================================
+async function llamar_tipo_donacion() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/tipo_donacion`, { method: 'GET' });
+        const response = await promesa.json();
+
+
+        const select = document.getElementById("tipo_donacion");
+        select.innerHTML = "<option value=''>Seleccione un tipo de donación</option>";
+
+        response.tipo_donacion.forEach(tipo => {
+            const option = document.createElement("option");
+            option.value = tipo.codigo;
+            option.text = `${tipo.descripcion}`;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar tipos de donación:", error);
+    }
+}
+// ==========================================================================
+// ===================== LLAMAR ORGANIZACION  ===========================
+// ==========================================================================
+async function llamar_organizacion() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/organizacion`, { method: 'GET' });
+        const response = await promesa.json();
+
+
+        const select = document.getElementById("organizacion");
+        select.innerHTML = "<option value=''>Seleccione una organización</option>";
+
+        response.organizacion.forEach(tipo => {
+            const option = document.createElement("option");
+            option.value = tipo.codigo;
+            option.text = `${tipo.nombre}`;
+
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar organizaciones:", error);
+    }
+}
+
+// ==========================================================================
+// ========================= LLAMAR BODEGA  =================================
+// ==========================================================================
+async function llamar_bodega() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/bodega`, { method: 'GET' });
+        const response = await promesa.json();
+
+        const select = document.getElementById("bodega");
+        select.innerHTML = "<option value=''>Seleccione una bodega</option>";
+        response.bodega.forEach(tipo => {
+            const option = document.createElement("option");
+            option.value = tipo.id_bodega;
+            option.text = `${tipo.nombre_bodega}`;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar las bodegas:", error);
+    }
+}
+
+
+// ==========================================================================
+// ========================= LLAMAR PRODUCTO  =================================
+// ==========================================================================
+async function llamar_producto() {
+    try {
+        const promesa = await fetch(`${URL_BASE}/producto`, { method: 'GET' });
+        const response = await promesa.json();
+
+        const select = document.getElementById("id_producto");
+        select.innerHTML = "<option value=''>Seleccione un producto</option>";
+        response.producto.forEach(tipo => {
+            const option = document.createElement("option");
+            option.value = tipo.id_producto;
+            option.text = `${tipo.nombre}`;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar los productos:", error);
+    }
+}
