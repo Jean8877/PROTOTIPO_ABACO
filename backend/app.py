@@ -33,7 +33,7 @@ def tipo_usuario():
         description: lista de tipos de usuario
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_usuario") 
         datos = cur.fetchall()
@@ -70,7 +70,7 @@ def eliminar_tipo_usuario(codigo):
         description: Tipo de usuario eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM tipo_usuario WHERE id_tipo_usuario = %s", (codigo,))
         conn.commit()
@@ -106,7 +106,7 @@ def registro_tipo_usuario():
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_usuario (descripcion) VALUES (%s)", (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
@@ -131,7 +131,7 @@ def tipo_documento():
         description: lista de tipo de documento
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_documento") 
         datos = cur.fetchall()
@@ -177,7 +177,7 @@ def registro_tipo_documento():
         data = request.get_json()
         nombre = data['nombre']
         abreviatura = data['abreviatura']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_documento (nombre, abreviatura) VALUES (%s, %s)", (nombre, abreviatura))
         conn.commit()  # Para confirmar la inserción de la información
@@ -207,7 +207,7 @@ def eliminar_tipo_documento(codigo):
     """
 
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM tipo_documento WHERE id_tipo_documento = %s", (codigo,))
         conn.commit()
@@ -231,7 +231,7 @@ def tipo_gasto():
         description: lista de tipos de gasto
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_gasto") 
         datos = cur.fetchall()
@@ -277,7 +277,7 @@ def registro_tipo_gasto():
         data = request.get_json()
         nombre = data['nombre']
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_gasto (nombre, descripcion) VALUES (%s, %s)", (nombre, descripcion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -307,7 +307,7 @@ def eliminar_tipo_gasto(codigo):
         description: tipo de gasto eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM tipo_gasto WHERE id_tipo_gasto = %s", (codigo,))
         conn.commit()
@@ -332,7 +332,7 @@ def estado():
         description: lista de estados
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM estado") 
         datos = cur.fetchall()
@@ -378,7 +378,7 @@ def registro_estado():
         data = request.get_json()
         nombre = data['nombre']
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO estado (nombre, descripcion) VALUES (%s, %s)", (nombre, descripcion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -407,7 +407,7 @@ def eliminar_estado(codigo):
         description: Estado eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM estado WHERE id_estado = %s", (codigo,))
         conn.commit()
@@ -432,7 +432,7 @@ def gasto():
         description: lista de gastos
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM gasto") 
         datos = cur.fetchall()
@@ -486,7 +486,7 @@ def registro_gasto():
         monto = data['monto']
         descripcion = data['descripcion']
         tipo_gasto = data['tipo_gasto']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO gasto (fecha, monto, descripcion, tipo_gasto) VALUES (%s, %s, %s, %s)", (fecha, monto, descripcion, tipo_gasto))
         conn.commit()  # Para confirmar la inserción de la información
@@ -534,7 +534,7 @@ def actualizar_gasto(codigo):
         monto = data['monto']
         descripcion = data['descripcion']
         tipo_gasto = data['tipo_gasto']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE gasto SET fecha=%s, monto=%s, descripcion= %s, tipo_gasto= %s WHERE id_gasto= %s" , 
                     (fecha,monto,descripcion,tipo_gasto,codigo))
@@ -564,7 +564,7 @@ def eliminar_gasto(codigo):
         description: Gasto eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM gasto WHERE id_gasto = %s", (codigo,))
         conn.commit()
@@ -588,7 +588,7 @@ def usuarios():
         description: lista de usuarios
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM usuario") 
         datos = cur.fetchall()
@@ -654,7 +654,7 @@ def registro_usuarios():
         tipo_usuario = data['tipo_usuario']
         tipo_documento = data['tipo_documento']
         estado = data['estado']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO usuario (nombre_completo, numero_documento, gmail, contrasena, tipo_usuario, tipo_documento, estado) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre_completo, numero_documento, gmail, contrasena, tipo_usuario, tipo_documento, estado))
         conn.commit()  # Para confirmar la inserción de la información
@@ -710,7 +710,7 @@ def actualizar_usuarios(codigo):
         tipo_usuario = data['tipo_usuario']
         tipo_documento = data['tipo_documento']
         estado = data['estado']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE usuario SET nombre_completo= %s, numero_documento= %s, gmail= %s, contrasena= %s, tipo_usuario= %s, tipo_documento= %s, estado= %s WHERE id_usuario= %s", 
                     (nombre_completo, numero_documento, gmail, contrasena, tipo_usuario, tipo_documento, estado, codigo))
@@ -739,7 +739,7 @@ def eliminar_usuarios(codigo):
         description: Usuario eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM usuario WHERE id_usuario = %s", (codigo,))
         conn.commit()
@@ -763,7 +763,7 @@ def tipo_donante():
         description: lista de tipos de donante
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM tipo_donante")
         datos= cur.fetchall()
@@ -805,7 +805,7 @@ def registro_tipo_donante():
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_donante (descripcion) VALUES (%s)", (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
@@ -843,7 +843,7 @@ def actualizar_tipo_donante(codigo):
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
                     (descripcion,codigo))
@@ -873,7 +873,7 @@ def eliminar_tipo_donante(codigo):
         description: Tipo de donante eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM tipo_donante WHERE id_tipo_donante = %s", (codigo,))
         conn.commit()
@@ -898,7 +898,7 @@ def donante():
         description: lista de donantes
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM donante")
         datos= cur.fetchall()
@@ -965,7 +965,7 @@ def registro_donante():
         estado = data['estado']
         tipo_documento = data['tipo_documento']
         tipo_donante = data['tipo_donante']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO donante (nombre, telefono, gmail, direccion, estado, tipo_documento, tipo_donante) VALUES (%s, %s, %s, %s, %s, %s, %s)", (nombre, telefono, gmail, direccion, estado, tipo_documento, tipo_donante))
         conn.commit()  # Para confirmar la inserción de la información
@@ -1022,7 +1022,7 @@ def actualizar_donante(codigo):
         estado = data['estado']
         tipo_documento = data['tipo_documento']
         tipo_donante = data['tipo_donante']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE donante SET nombre= %s, telefono= %s, gmail= %s, direccion= %s, estado= %s, tipo_documento= %s, tipo_donante= %s WHERE id_donante= %s", 
                     (nombre, telefono, gmail, direccion, estado, tipo_documento, tipo_donante, codigo))
@@ -1052,7 +1052,7 @@ def eliminar_donante(codigo):
         description: Donante eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM donante WHERE id_donante = %s", (codigo,))
         conn.commit()
@@ -1077,7 +1077,7 @@ def tipo_donacion():
         description: lista de tipos de donación
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM tipo_donacion") 
         datos = cur.fetchall()
@@ -1119,7 +1119,7 @@ def registro_tipo_donacion():
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_donante (descripcion) VALUES (%s)", (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
@@ -1157,7 +1157,7 @@ def actualizar_tipo_donacion(codigo):
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
                     (descripcion,codigo))
@@ -1187,7 +1187,7 @@ def eliminar_tipo_donacion(codigo):
         description: Tipo de donación eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM tipo_donacion WHERE codigo = %s", (codigo,))
         conn.commit()
@@ -1211,7 +1211,7 @@ def donacion():
         description: lista de donaciones
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM donacion")
         datos= cur.fetchall()
@@ -1264,7 +1264,7 @@ def registro_donacion():
         fecha_donacion = data['fecha_donacion']
         forma_donacion = data['forma_donacion']
         observaciones = data['observaciones']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO donacion (cantidad_donada, fecha_donacion, forma_donacion, observaciones) VALUES (%s, %s, %s, %s)", (cantidad_donada, fecha_donacion, forma_donacion, observaciones))
         conn.commit()  # Para confirmar la inserción de la información
@@ -1312,7 +1312,7 @@ def actualizar_donacion(codigo):
         fecha_donacion = data['fecha_donacion']
         forma_donacion = data['forma_donacion']
         observaciones = data['observaciones']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE donacion SET cantidad_donada= %s, fecha_donacion= %s, forma_donacion= %s, observaciones= %s WHERE id_donacion= %s", 
                     (cantidad_donada, fecha_donacion, forma_donacion, observaciones, codigo))
@@ -1342,7 +1342,7 @@ def eliminar_donacion(codigo):
         description: Donación eliminada
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM donacion WHERE id_donante = %s", (codigo,))
         conn.commit()
@@ -1367,7 +1367,7 @@ def donacion_has_tipo_donacion():
         description: lista de donacion_has_tipo_donacion
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM donacion_has_tipo_donacion") 
         datos = cur.fetchall()
@@ -1412,7 +1412,7 @@ def registro_donacion_has_tipo_donacion():
         data = request.get_json()
         donacion = data['donacion']
         tipo_donacion = data['tipo_donacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO donacion_has_tipo_donacion (donacion, tipo_donacion) VALUES (%s, %s)", (donacion, tipo_donacion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -1454,7 +1454,7 @@ def actualizar_donacion_has_tipo_donacion(codigo):
         data = request.get_json()
         donacion = data['donacion']
         tipo_donacion = data['tipo_donacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE donacion_has_tipo_donacion SET donacion= %s, tipo_donacion= %s WHERE id_donacion= %s", 
                     (donacion, tipo_donacion, codigo))
@@ -1484,7 +1484,7 @@ def eliminar_donacion_has_tipo_donacion(codigo):
         description: donacion_has_tipo_donacion eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM donacion_has_tipo_donacion WHERE ID = %s", (codigo,))
         conn.commit()
@@ -1508,7 +1508,7 @@ def certificado_donante():
         description: Lista de certificados de donante
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        conn = conectar('localhost','root','300307','proyecto') # se conecta a la base de datos
         cur = conn.cursor() # cursor para ejecutar consultas
         cur.execute("SELECT * FROM certificado_donante") 
         datos = cur.fetchall()
@@ -1574,7 +1574,7 @@ def registro_certificado_donante():
         tipo_documento = data['tipo_documento']
         tipo_donante = data['tipo_donante']
         tipo_donacion = data['tipo_donacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO certificado_donante (fecha, firma_representante, donante, estado, tipo_documento, tipo_donante, tipo_donacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (fecha, firma_representante, donante, estado, tipo_documento, tipo_donante, tipo_donacion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -1631,7 +1631,7 @@ def actualizar_certificado_donante(codigo):
         tipo_documento = data['tipo_documento']
         tipo_donante = data['tipo_donante']
         tipo_donacion = data['tipo_donacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE certificado_donante SET fecha= %s, firma_representante= %s, donante= %s, estado= %s, tipo_documento= %s, tipo_donante= %s, tipo_donacion= %s WHERE id_certificado= %s", 
                     (fecha, firma_representante, donante, estado, tipo_documento, tipo_donante, tipo_donacion, codigo))
@@ -1661,7 +1661,7 @@ def eliminar_certificado_donante(codigo):
         description: certificado_donante eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM certificado_donante WHERE id_certificado = %s", (codigo,))
         conn.commit()
@@ -1686,7 +1686,7 @@ def categoria_producto():
         description: lista de categorias de producto
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM categoria_producto")
         datos= cur.fetchall()
@@ -1727,7 +1727,7 @@ def registro_categoria_producto():
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO categoria_producto (descripcion) VALUES (%s)", (descripcion,))
         conn.commit()  # Para confirmar la inserción de la información
@@ -1766,7 +1766,7 @@ def actualizar_categoria_producto(codigo):
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE tipo_usuario SET descripcion= %s WHERE id_tipo_usuario= %s", 
                     (descripcion,codigo))
@@ -1796,7 +1796,7 @@ def eliminar_categoria_producto(codigo):
         description: categoria_producto eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM categoria_producto WHERE codigo = %s", (codigo,))
         conn.commit()
@@ -1821,7 +1821,7 @@ def subcategoria_producto():
         description: lista de subcategorias de producto
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM subcategoria_producto")
         datos= cur.fetchall()
@@ -1866,7 +1866,7 @@ def registro_subcategoria_producto():
         data = request.get_json()
         descripcion = data['descripcion']
         categoria_producto = data['categoria_producto']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO subcategoria_producto (descripcion, categoria_producto) VALUES (%s, %s)", (descripcion, categoria_producto))
         conn.commit()  # Para confirmar la inserción de la información
@@ -1908,7 +1908,7 @@ def actualizar_subcategoria_producto(codigo):
         data = request.get_json()
         descripcion = data['descripcion']
         categoria_producto = data['categoria_producto']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE subcategoria_producto SET descripcion= %s, categoria_producto= %s WHERE id_subcategoria= %s", 
                     (descripcion,categoria_producto,codigo))
@@ -1938,7 +1938,7 @@ def eliminar_subcategoria_producto(codigo):
         description: subcategoria_producto eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM subcategoria_producto WHERE codigo = %s", (codigo,))
         conn.commit()
@@ -1963,7 +1963,7 @@ def fecha_vencimiento():
         description: lista de fechas de vencimiento
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM fecha_vencimiento")
         datos= cur.fetchall()
@@ -2004,7 +2004,7 @@ def registro_fecha_vencimiento():
     try:
         data = request.get_json()
         fecha = data['fecha']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO fecha_vencimiento (fecha) VALUES (%s)", (fecha,))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2034,7 +2034,7 @@ def eliminar_fecha_vencimiento(codigo):
         description: fecha_vencimiento eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM fecha_vencimiento WHERE id_fecha_vencimiento = %s", (codigo,))
         conn.commit()
@@ -2059,7 +2059,7 @@ def acta_vencimiento():
         description: lista de actas de vencimiento
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM acta_vencimiento")
         datos= cur.fetchall()
@@ -2105,7 +2105,7 @@ def registro_acta_vencimiento():
         data = request.get_json()
         fecha = data['fecha']
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO acta_vencimiento (fecha, descripcion) VALUES (%s, %s)", (fecha, descripcion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2134,7 +2134,7 @@ def eliminar_acta_vencimiento(codigo):
         description: acta_vencimiento eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM acta_vencimiento WHERE id_acta = %s", (codigo,))
         conn.commit()
@@ -2159,7 +2159,7 @@ def bodega():
         description: lista de bodegas
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM bodega")
         datos= cur.fetchall()
@@ -2208,7 +2208,7 @@ def registro_bodega():
         nombre_bodega = data['nombre_bodega']
         capacidad = data['capacidad']
         estado = data['estado']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO bodega (nombre_bodega, capacidad, estado) VALUES (%s, %s, %s)", (nombre_bodega, capacidad, estado))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2249,7 +2249,7 @@ def actualizar_bodega(codigo):
         nombre_bodega = data['nombre_bodega']
         capacidad = data['capacidad']
         estado = data['estado']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE bodega SET nombre_bodega= %s, capacidad= %s, estado= %s WHERE id_bodega= %s", 
                     (nombre_bodega, capacidad, estado, codigo))
@@ -2279,7 +2279,7 @@ def eliminar_bodega(codigo):
         description: bodega eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM bodega WHERE id_bodega = %s", (codigo,))
         conn.commit()
@@ -2305,7 +2305,7 @@ def unidad_de_medida():
         description: Lista de unidades de medida
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM unidad_de_medida")
         datos= cur.fetchall()
@@ -2351,7 +2351,7 @@ def registro_unidad_de_medida():
         data = request.get_json()
         nombre = data['nombre']
         cantidad = data['cantidad']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO unidad_de_medida (nombre, cantidad) VALUES (%s, %s)", (nombre, cantidad))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2389,7 +2389,7 @@ def actualizar_unidad_de_medida(codigo):
         data = request.get_json()
         nombre = data['nombre']
         cantidad = data['cantidad']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE unidad_de_medida SET nombre= %s, cantidad= %s WHERE id_unidad_de_medida= %s", 
                     (nombre, cantidad, codigo))
@@ -2419,7 +2419,7 @@ def eliminar_unidad_de_medida(codigo):
         description: unidad_de_medida eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM unidad_de_medida WHERE codigo = %s", (codigo,))
         conn.commit()
@@ -2445,7 +2445,7 @@ def tipo_organizacion():
         description: lista de tipo_organizacion
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM tipo_organizacion")
         datos= cur.fetchall()
@@ -2487,7 +2487,7 @@ def registro_tipo_organizacion():
     try:
         data = request.get_json()
         nombre = data['nombre']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_organizacion (nombre) VALUES (%s)", (nombre,))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2522,7 +2522,7 @@ def actualizar_tipo_organizacion(codigo):
     try:
         data = request.get_json()
         nombre = data['nombre']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE tipo_organizacion SET nombre= %s WHERE id_tipo_organizacion= %s", 
                     (nombre,codigo))
@@ -2552,7 +2552,7 @@ def eliminar_tipo_organizacion(codigo):
         description: tipo_organizacion eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM tipo_organizacion WHERE id_tipo_organizacion = %s", (codigo,))
         conn.commit()
@@ -2577,7 +2577,7 @@ def tipo_entrega():
         description: lista de tipo_entrega
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM tipo_entrega")
         datos= cur.fetchall()
@@ -2621,7 +2621,7 @@ def registro_tipo_entrega():
         data = request.get_json()
         nombre = data['nombre']
         descripcion = data['descripcion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO tipo_entrega (nombre, descripcion) VALUES (%s, %s)", (nombre, descripcion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2650,7 +2650,7 @@ def eliminar_tipo_entrega(codigo):
         description: tipo_entrega eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM tipo_entrega WHERE id_tipo_entrega = %s", (codigo,))
         conn.commit()
@@ -2676,7 +2676,7 @@ def organizacion():
         description: lista de organizacion
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM organizacion")
         datos= cur.fetchall()
@@ -2741,7 +2741,7 @@ def registro_organizacion():
         direccion = data['direccion']
         tipo_entrega = data['tipo_entrega']
         tipo_organizacion = data['tipo_organizacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO organizacion (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion) VALUES (%s, %s, %s, %s, %s, %s, %s)", (descripcion, nombre, responsable, telefono, direccion, tipo_entrega, tipo_organizacion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2800,7 +2800,7 @@ def actualizar_organizacion(codigo):
         direccion = data['direccion']
         tipo_entrega = data['tipo_entrega']
         tipo_organizacion = data['tipo_organizacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE organizacion SET nombre= %s, descripcion= %s, responsable= %s, telefono= %s, direccion= %s, tipo_entrega= %s, tipo_organizacion= %s WHERE codigo= %s", 
                     (nombre, descripcion, responsable, telefono, direccion, tipo_entrega, tipo_organizacion, codigo))
@@ -2830,7 +2830,7 @@ def eliminar_organizacion(codigo):
         description: organizacion eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM organizacion WHERE codigo = %s", (codigo,))
         conn.commit()
@@ -2855,7 +2855,7 @@ def movimiento_producto():
         description: lista de movimiento_producto
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM movimiento_producto")
         datos= cur.fetchall()
@@ -2920,7 +2920,7 @@ def registro_movimiento_producto():
         organizacion = data['organizacion']
         tipo_organizacion = data['tipo_organizacion']
         tipo_entrega = data['tipo_entrega']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO movimiento_producto (movimiento, cantidad, observacion, tipo_donacion, organizacion, tipo_organizacion, tipo_entrega) VALUES (%s, %s, %s, %s, %s, %s, %s)", (movimiento, cantidad, observacion, tipo_donacion, organizacion, tipo_organizacion, tipo_entrega))
         conn.commit()  # Para confirmar la inserción de la información
@@ -2978,7 +2978,7 @@ def actualizar_movimiento_producto(id):
         organizacion = data['organizacion']
         tipo_organizacion = data['tipo_organizacion']
         tipo_entrega = data['tipo_entrega']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE movimiento_producto SET movimiento= %s, cantidad= %s, observacion= %s, tipo_donacion= %s, organizacion= %s, tipo_organizacion= %s, tipo_entrega= %s WHERE id= %s", 
                     (movimiento, cantidad, observacion, tipo_donacion, organizacion, tipo_organizacion, tipo_entrega, id))
@@ -3008,7 +3008,7 @@ def eliminar_movimiento_producto(codigo):
         description: movimiento_producto eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM movimiento_producto WHERE id = %s", (codigo,))
         conn.commit()
@@ -3033,7 +3033,7 @@ def producto():
         description: Lista de productos
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM producto")
         datos= cur.fetchall()
@@ -3123,7 +3123,7 @@ def registro_producto():
         unidad_de_medida = data['unidad_de_medida']
         acta_vencimiento = data['acta_vencimiento']
         tipo_donacion = data['tipo_donacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO producto (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida, acta_vencimiento, tipo_donacion) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida, acta_vencimiento, tipo_donacion))
         conn.commit()  # Para confirmar la inserción de la información
@@ -3199,7 +3199,7 @@ def actualizar_producto(id):
         unidad_de_medida = data['unidad_de_medida']
         acta_vencimiento = data['acta_vencimiento']
         tipo_donacion = data['tipo_donacion']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE producto SET nombre= %s, descripcion= %s, cantidad= %s, codigo_barras= %s, stock= %s, stock_maximo= %s, stock_minimo= %s, categoria_producto= %s, subcategoria_producto= %s, estado= %s, unidad_de_medida= %s, acta_vencimiento= %s, tipo_donacion= %s WHERE id_producto= %s", 
                     (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida, acta_vencimiento, tipo_donacion, id))
@@ -3229,7 +3229,7 @@ def eliminar_producto(codigo):
         description: producto eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM producto WHERE id_producto = %s", (codigo,))
         conn.commit()
@@ -3254,7 +3254,7 @@ def producto_has_donante():
         description: lista de producto_has_donante
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
+        conn= conectar('localhost','root','300307','proyecto')
         cur= conn.cursor()
         cur.execute("SELECT * FROM producto_has_donante")
         datos= cur.fetchall()
@@ -3316,7 +3316,7 @@ def registro_producto_has_donante():
         producto = data['producto']
         categoria_producto = data['categoria_producto']
         subcategoria_producto = data['subcategoria_producto']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("INSERT INTO donacion_has_tipo_donacion (donante, tipo_donante, producto, categoria_producto, subcategoria_producto) VALUES (%s, %s, %s, %s, %s)", (donante, tipo_donante, producto, categoria_producto, subcategoria_producto))
         conn.commit()  # Para confirmar la inserción de la información
@@ -3371,7 +3371,7 @@ def actualizar_producto_has_donante(id):
         producto = data['producto']
         categoria_producto = data['categoria_producto']
         subcategoria_producto = data['subcategoria_producto']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("UPDATE producto_has_donante SET donante= %s, tipo_documento= %s, tipo_donante= %s, producto= %s, categoria_producto= %s, subcategoria_producto= %s WHERE id= %s", 
                     (donante, tipo_documento, tipo_donante, producto, categoria_producto, subcategoria_producto, id))
@@ -3402,7 +3402,7 @@ def eliminar_producto_has_donante(codigo):
         description: producto_has_donante eliminado
     """
     try:
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        conn = conectar('localhost', 'root', '300307', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM producto_has_donante WHERE ID = %s", (codigo,))
         conn.commit()

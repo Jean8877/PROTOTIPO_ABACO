@@ -158,7 +158,7 @@
     <!-- CONTENIDO PRINCIPAL -->
     <div class="content">
       
-      <form id="formDonante">
+      <form id="">
         <h1>Registrar Nuevo Donante</h1>
         <input type="text" id="nombreDonante" placeholder="Nombre completo" required />
         <select id="tipoDocumento" required>
@@ -180,7 +180,8 @@
         <input type="tel" id="telefono" placeholder="Número de teléfono" required />
         <input type="email" id="correo" placeholder="Correo electrónico" required />
         <input type="text" id="direccion" placeholder="Dirección" required />
-        <button type="submit">Guardar Donante</button>
+        <button type="submit" onclick="agregarDonante1FromForm()">Guardar Donante</button>
+
       </form>
 
       <h2>Lista de Donantes</h2>
@@ -198,83 +199,11 @@
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="donante"></tbody>
       </table>
     </div>
   </div>
-
-  <script>
-    const formDonante = document.getElementById('formDonante');
-    const tablaDonantes = document.getElementById('tablaDonantes').querySelector('tbody');
-    let idDonante = 1;
-    let editandoDonante = null;
-
-    formDonante.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombreDonante').value.trim();
-      const tipoDoc = document.getElementById('tipoDocumento').value;
-      const numDoc = document.getElementById('numeroDocumento').value.trim();
-      const tipoDo = document.getElementById('tipoDonante').value;
-      const telefono = document.getElementById('telefono').value.trim();
-      const correo = document.getElementById('correo').value.trim();
-      const direccion = document.getElementById('direccion').value.trim();
-
-      if (!nombre || !tipoDoc || !numDoc || !telefono || !correo || !direccion) return;
-
-      if (editandoDonante) {
-        editandoDonante.querySelector('.col-nombre').textContent = nombre;
-        editandoDonante.querySelector('.col-tipodoc').textContent = tipoDoc;
-        editandoDonante.querySelector('.col-numdoc').textContent = numDoc;
-        editandoDonante.querySelector('.col-tipodo').textContent = tipoDo;
-        editandoDonante.querySelector('.col-telefono').textContent = telefono;
-        editandoDonante.querySelector('.col-correo').textContent = correo;
-        editandoDonante.querySelector('.col-direccion').textContent = direccion;
-
-        editandoDonante = null;
-      } else {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="col-id">${String(idDonante).padStart(3, '0')}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-tipodoc">${tipoDoc}</td>
-          <td class="col-numdoc">${numDoc}</td>
-          <td class="col-tipodo">${tipoDo}</td>
-          <td class="col-telefono">${telefono}</td>
-          <td class="col-correo">${correo}</td>
-          <td class="col-direccion">${direccion}</td>
-          <td>
-            <button onclick="editarDonante(this)">Editar</button>
-            <button onclick="eliminarDonante(this)">Eliminar</button>
-          </td>
-        `;
-        tablaDonantes.appendChild(row);
-        idDonante++;
-      }
-
-      formDonante.reset();
-    });
-
-    function eliminarDonante(btn) {
-      const row = btn.closest('tr');
-      row.remove();
-      if (editandoDonante === row) editandoDonante = null;
-    }
-
-    function editarDonante(btn) {
-      const row = btn.closest('tr');
-
-      document.getElementById('nombreDonante').value = row.querySelector('.col-nombre').textContent;
-      document.getElementById('tipoDocumento').value = row.querySelector('.col-tipodoc').textContent;
-      document.getElementById('numeroDocumento').value = row.querySelector('.col-numdoc').textContent;
-      document.getElementById('tipoDonante').value = row.querySelector('.col-tipodo').textContent;
-      document.getElementById('telefono').value = row.querySelector('.col-telefono').textContent;
-      document.getElementById('correo').value = row.querySelector('.col-correo').textContent;
-      document.getElementById('direccion').value = row.querySelector('.col-direccion').textContent;
-
-      editandoDonante = row;
-    }
-  </script>
+  <script src="java.js"></script>
 
 </body>
 </html>
