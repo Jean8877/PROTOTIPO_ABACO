@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registrar Productos</title>
+  <link rel="stylesheet" href="/static/css/general.css">
+  <link rel="stylesheet" href="/static/css/select.css" />
+  <link rel="shortcut icon" href="/static/images/imagen.png" type="image/x-icon">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <style>
+    .sidebar{
+    width: 93px;
+    background-color: #198754;
+  }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <img src="/static/images/imagen.png" alt="logo de abaco">
+    <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
+    <div>
+      <i class="bi bi-person-circle"></i>
+      <span class="me-3"> <strong>Karina</strong> </span>
+      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <div class="sidebar">
+      <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+      <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+      <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+      <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+      <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+      <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+      <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+      <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+      <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+      <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+      <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+      <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i
+          class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+    </div>
+
+    <div class="content">
+
+      <form id="formProducto">
+        <!-- 🔹 Botón de regresar en la esquina del formulario -->
+        <a href="menu_producto.html" class="btn btn-outline-success btn-sm position-absolute">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1>Registrar Nuevo Producto</h1>
+        <label for="categoriaSelect">Categoría</label>
+        <select id="categoriaSelect" required>
+          <option value="">Selecciona una categoría</option>
+        </select>
+        <label for="subcategoriaSelect">Subcategoría</label>
+        <select id="subcategoriaSelect" required disabled>
+          <option value="">Selecciona una subcategoría</option>
+        </select>
+        <label for="productoSelect">Nombre del Producto</label>
+        <input type="text" id="productoSelect" placeholder="Producto" required />
+        <label for="cantidadProducto">Stock Minimo</label>
+          <input type="number" id="cantidadProducto" placeholder="Stock Minimo" min="1" step="1" required />
+        <label for="pesoUnitario">Peso Unitario</label>
+        <input type="text" id="pesoUnitario" placeholder="Peso Unitario" required />
+        <label for="descripcionProducto">Descripción</label>
+        <input type="text" id="descripcionProducto" placeholder="Descripción del producto" />
+        <button type="submit">Guardar Producto</button>
+        let inputElement = document.getElementById("myInput").value; 
+      </form>
+
+      <h2>Lista de Productos</h2>
+      <table id="tablaProductos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+
+            <th>Stock</th>
+
+            <th>Peso Unitario</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="producto"> >
+          <!-- Filas de productos se agregarán aquí dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal fade" id="modalActualizarProducto" tabindex="-1" aria-labelledby="modalActualizarProductoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalActualizarProductoLabel">Actualizar Producto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formActualizarProducto">
+          <div class="mb-3">
+            <label for="idProductoModal" class="form-label">ID</label>
+            <input type="text" id="idProductoModal" class="form-control" readonly>
+          </div>
+
+          <div class="mb-3">
+            <label for="categoriaProductoModal" class="form-label">Categoría</label>
+            <select id="categoriaProductoModal" class="form-select" required>
+              <option value="">Selecciona una categoría</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="subcategoriaProductoModal" class="form-label">Subcategoría</label>
+            <select id="subcategoriaProductoModal" class="form-select" required>
+              <option value="">Selecciona una Subcategoría</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="nombreStockModal" class="form-label">Stock Minimo</label>
+            <input type="text" id="nombreStockModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="nombreProductoModal" class="form-label">Nombre</label>
+            <input type="text" id="nombreProductoModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="descripcionProductoModal" class="form-label">Descripción</label>
+            <input type="text" id="descripcionProducto  Modal" class="form-control" required>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success" onclick="editandoProducto()">Actualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <script src="java.js"></script>
+      
+  <script>
+    // Datos de ejemplo
+    const categorias = [
+      { id: 1, nombre: "Alimentos" },
+      { id: 2, nombre: "Limpieza" },
+      { id: 3, nombre: "Tecnología" }
+    ];
+    const subcategorias = [
+      { id: 1, categoriaId: 1, nombre: "Frutas" },
+      { id: 2, categoriaId: 1, nombre: "Verduras" },
+      { id: 3, categoriaId: 2, nombre: "Detergentes" },
+      { id: 4, categoriaId: 3, nombre: "Computadoras" },
+      { id: 5, categoriaId: 3, nombre: "Celulares" }
+    ];
+
+    // Elementos
+    const form = document.getElementById('formProducto');
+    const categoriaSelect = document.getElementById('categoriaSelect');
+    const subcategoriaSelect = document.getElementById('subcategoriaSelect');
+    const tablaBody = document.querySelector('#tablaProductos tbody');
+    let idProducto = 1;
+    let editandoFila = null;
+
+    // Cargar categorías
+    categorias.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.nombre;
+      categoriaSelect.appendChild(opt);
+    });
+
+    // Subcategorías dinámicas
+    categoriaSelect.addEventListener('change', () => {
+      subcategoriaSelect.innerHTML = '<option value="">Selecciona una subcategoría</option>';
+      const filtradas = subcategorias.filter(s => s.categoriaId == categoriaSelect.value);
+      filtradas.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.nombre;
+        subcategoriaSelect.appendChild(opt);
+      });
+      subcategoriaSelect.disabled = filtradas.length === 0;
+    });
+
+    // Guardar producto
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const nombre = document.getElementById('productoSelect').value.trim();
+      const stock = document.getElementById('cantidadProducto').value;
+      const peso = document.getElementById('pesoUnitario').value.trim();
+      const descripcion = document.getElementById('descripcionProducto').value.trim();
+
+      if (!nombre || !stock || !peso) {
+        swal("Error", "Completa todos los campos requeridos", "error");
+        return;
+      }
+
+      if (editandoFila) {
+        // Editar fila existente
+        editandoFila.querySelector('.col-nombre').textContent = nombre;
+        editandoFila.querySelector('.col-stock').textContent = stock;
+        editandoFila.querySelector('.col-peso').textContent = peso;
+        editandoFila.querySelector('.col-desc').textContent = descripcion;
+        swal("Actualizado", "Producto editado correctamente", "success");
+        editandoFila = null;
+      } else {
+        // Agregar nueva fila
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${idProducto++}</td>
+          <td class="col-nombre">${nombre}</td>
+          <td class="col-stock">${stock}</td>
+          <td class="col-peso">${peso}</td>
+          <td class="col-desc">${descripcion}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" onclick="editarProducto(this)">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(this)">Eliminar</button>
+          </td>
+        `;
+        tablaBody.appendChild(fila);
+        swal("Guardado", "Producto agregado exitosamente", "success");
+      }
+
+      form.reset();
+      subcategoriaSelect.disabled = true;
+    });
+
+    // Funciones globales para botones
+    window.editarProducto = (btn) => {
+      const fila = btn.closest('tr');
+      editandoFila = fila;
+      document.getElementById('productoSelect').value = fila.querySelector('.col-nombre').textContent;
+      document.getElementById('cantidadProducto').value = fila.querySelector('.col-stock').textContent;
+      document.getElementById('pesoUnitario').value = fila.querySelector('.col-peso').textContent;
+      document.getElementById('descripcionProducto').value = fila.querySelector('.col-desc').textContent;
+    };
+
+    window.eliminarProducto = (btn) => {
+      swal({
+        title: "¿Eliminar?",
+        text: "Este producto se borrará de la lista.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((ok) => {
+        if (ok) {
+          btn.closest('tr').remove();
+          swal("Eliminado", "Producto borrado correctamente", "success");
+        }
+      });
+    };
+    const modal = new bootstrap.Modal(document.getElementById('modalActualizarProducto'));
+    modal.show();
+
+    // Manejo del formulario de actualización
+document.getElementById('formActualizarProducto').addEventListener('submit', function(e){
+    e.preventDefault();
+    const nombre = document.getElementById('nombreProductoModal').value.trim();
+    const descripcion = document.getElementById('descripcionProductoModal').value.trim();
+
+    if(!nombre || !descripcion) return;
+
+    // Actualizar fila
+    editandoProducto.querySelector('.col-nombre').textContent = nombre;
+    editandoProducto.querySelector('.col-descripcion').textContent = descripcion;
+
+    editandoProducto = null;
+
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalActualizarProducto'));
+    modal.hide();
+});
+  </script>
+  <script>
+    resaltar()
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/notificacion.js"></script>
+  <script src="/static/js/resaltar.js"></script>
+</body>
+
+</html>

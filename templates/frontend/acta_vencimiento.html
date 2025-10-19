@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="/static/images/imagen.png" type="image/x-icon">
+  <title>Acta de Vencimiento - Sistema de Inventario</title>
+  <link rel="stylesheet" href="/static/css/general.css">
+  <link rel="stylesheet" href="/static/css/select.css">
+  <!-- Bootstrap CSS y Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+  <style>
+    .sidebar{
+    width: 78px;
+    background-color: #198754;
+  }
+  </style>
+
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <img src="/static/images/imagen.png" alt="logo de abaco">
+    <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
+    <div>
+      <i class="bi bi-person-circle"></i>
+      <span class="me-3"> <strong>Karina</strong> </span>
+      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
+
+
+    </div>
+  </header>
+
+  <!-- LAYOUT: SIDEBAR + CONTENT -->
+  <div class="main-layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+            <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+            <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+            <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+            <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+            <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+            <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+            <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+            <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+            <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+            <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+        </div>
+
+    <!-- CONTENIDO -->
+    <div class="content">
+      <form id="formActa">
+        <!-- 🔹 Botón de regresar en la esquina del formulario -->
+        <a href="menu_reportes.html" class="btn btn-outline-success btn-sm position-absolute">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1>Crear Acta de Vencimiento</h1>
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" required />
+        
+        <label for="datosProducto">Nombre del Producto</label>
+        <input type="text" id="datosProducto" required />
+        <label for="accionesTomadas">Acciones Tomadas</label>
+        <select name="accionesTomadas" id="accionesTomadas">
+          <option value="" disabled selected>Seleccione una acción</option>
+          <option value="Destrucción">Destrucción</option>
+          <option value="Devolución al proveedor">Devolución al proveedor</option>
+          <option value="Donación">Donación</option>
+          <option value="Otra">Otra</option>
+        </select>
+        <label for="observaciones">Observaciones</label>
+        <textarea id="observaciones" placeholder="Observaciones" rows="3"></textarea>
+        <label for="firmaConformidad">Firma de Conformidad</label>
+        <input type="text" id="firmaConformidad" placeholder="Firma de Conformidad" required />
+        <button type="submit">Guardar Acta</button>
+      </form>
+
+      <h2>Lista de Actas de Vencimiento</h2>
+      <table id="tablaActas">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Nombre del Producto</th>
+            <th>Acciones Tomadas</th>
+            <th>Observaciones</th>
+            <th>Firma Conformidad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  
+
+  <script>
+    const formActa = document.getElementById('formActa');
+    const tablaActas = document.getElementById('tablaActas').querySelector('tbody');
+    let idActa = 1;
+    let editandoActa = null;
+    
+    formActa.addEventListener('submit', function (e) {
+      e.preventDefault();
+      
+      const fecha = document.getElementById('fecha').value;
+      const hora = document.getElementById('hora').value;
+      const datosProducto = document.getElementById('datosProducto').value.trim();
+      const observaciones = document.getElementById('observaciones').value.trim();
+      const accionesTomadas = document.getElementById('accionesTomadas').value.trim();
+      const firmaConformidad = document.getElementById('firmaConformidad').value.trim();
+      const firmaCoordinador = document.getElementById('firmaCoordinador').value.trim();
+      
+      if (!fecha || !hora || !datosProducto || !firmaConformidad || !firmaCoordinador) {
+        alert('Por favor completa los campos obligatorios.');
+        return;
+      }
+      
+      if (editandoActa) {
+        // Editar
+        editandoActa.querySelector('.col-fecha').textContent = fecha;
+        editandoActa.querySelector('.col-hora').textContent = hora;
+        editandoActa.querySelector('.col-datosProducto').textContent = datosProducto;
+        editandoActa.querySelector('.col-observaciones').textContent = observaciones;
+        editandoActa.querySelector('.col-accionesTomadas').textContent = accionesTomadas;
+        editandoActa.querySelector('.col-firmaConformidad').textContent = firmaConformidad;
+        editandoActa.querySelector('.col-firmaCoordinador').textContent = firmaCoordinador;
+        
+        editandoActa = null;
+      } else {
+        // Crear nuevo
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${String(idActa).padStart(3, '0')}</td>
+        <td class="col-fecha">${fecha}</td>
+        <td class="col-hora">${hora}</td>
+        <td class="col-datosProducto">${datosProducto}</td>
+        <td class="col-observaciones">${observaciones}</td>
+        <td class="col-accionesTomadas">${accionesTomadas}</td>
+        <td class="col-firmaConformidad">${firmaConformidad}</td>
+        <td class="col-firmaCoordinador">${firmaCoordinador}</td>
+        <td>
+          <button type="button" onclick="editarActa(this)">Editar</button>
+          <button type="button" onclick="eliminarActa(this)">Eliminar</button>
+          </td>
+        `;
+        tablaActas.appendChild(row);
+        idActa++;
+      }
+      
+      formActa.reset();
+    });
+    
+    function eliminarActa(btn) {
+      const row = btn.closest('tr');
+      if (editandoActa === row) editandoActa = null;
+      row.remove();
+    }
+    
+    function editarActa(btn) {
+      const row = btn.closest('tr');
+      document.getElementById('fecha').value = row.querySelector('.col-fecha').textContent;
+      document.getElementById('hora').value = row.querySelector('.col-hora').textContent;
+      document.getElementById('datosProducto').value = row.querySelector('.col-datosProducto').textContent;
+      document.getElementById('observaciones').value = row.querySelector('.col-observaciones').textContent;
+      document.getElementById('accionesTomadas').value = row.querySelector('.col-accionesTomadas').textContent;
+      document.getElementById('firmaConformidad').value = row.querySelector('.col-firmaConformidad').textContent;
+      document.getElementById('firmaCoordinador').value = row.querySelector('.col-firmaCoordinador').textContent;
+      
+      editandoActa = row;
+    }
+    </script>
+  
+
+    <script src="/static/js/resaltar.js"></script>
+
+    <script src="/static/js/notificacion.js"></script>
+
+    <script>
+      resaltar()
+    </script>
+</body>
+
+</html>
