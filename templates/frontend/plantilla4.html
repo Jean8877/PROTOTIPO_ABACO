@@ -151,54 +151,72 @@
   </div>
   <!-- 🔹 Modal para actualizar Parroquia -->
   <div class="modal fade" id="modalActualizarCategoria" tabindex="-1" aria-labelledby="modalActualizarParroquiaLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="modalActualizartipodonanteLabel">Actualizar Acta de vencimiento</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalActualizartipodonanteLabel">Actualizar Donaciones</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formActualizartipodonante">
+                        <div class="mb-3">
+                            <label for="idTipoDonanteModal" class="form-label">ID</label>
+                            <input type="text" id="idTipoDonanteModal" class="form-control" readonly>
+                        </div>
+                        <div>
+                            <label for="montoTipoDonanteModal" class="form-label">fecha de Ingreso</label>
+                            <input type="date" id="montoTipoDonanteModal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombreTipoDonanteModal" class="form-label">Nombre o ID del donante</label>
+                            <input type="text" id="nombreTipoDonanteModal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombreTipoDonanteModal" class="form-label">Nombre del producto</label>
+                            <input type="text" id="nombreTipoDonanteModal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="codigoBarraModal" class="form-label">Código de barra</label>
+                            <input type="text" id="codigoBarraModal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cantidadTipoDonanteModal" class="form-label">Cantidad</label>
+                            <input type="number" id="cantidadTipoDonanteModal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pesoUnitarioModal" class="form-label">Peso unitario</label>
+                            <input type="number" id="pesoUnitarioModal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="unidadMedidaModal" class="form-label">Unidad de medida</label>
+                            <select id="unidadMedidaModal" class="form-select" required>
+                                <option value="">Seleccione la unidad de medida</option>
+                                <option value="kg">Kilogramos</option>
+                                <option value="g">Gramos</option>
+                                <option value="l">Litros</option>
+                                <option value="ml">Mililitros</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="montoTipoDonanteModal" class="form-label">fecha de vencimiento</label>
+                            <input type="date" id="montoTipoDonanteModal" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcionTipoDonanteModal" class="form-label">Descripción</label>
+                            <input type="text" id="descripcionTipoDonanteModal" class="form-control" required>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <form id="formActualizartipodonante">
-            <div class="mb-3">
-              <label for="idTipoDonanteModal" class="form-label">ID</label>
-              <input type="text" id="idTipoDonanteModal" class="form-control" readonly>
-            </div>
-            <div>
-              <label for="montoTipoDonanteModal" class="form-label">fecha </label>
-              <input type="date" id="montoTipoDonanteModal" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="pesoUnitarioModal" class="form-label">Nombre del producto</label>
-              <input type="text" id="pesoUnitarioModal" class="form-control" required>
-            </div>
-        
-            <div class="mb-3">
-              <label for="unidadMedidaModal" class="form-label">Acciones tomadas</label>
-              <select id="unidadMedidaModal" class="form-select" required>
-                <option value="">Seleccione el metodo de pago</option>
-                <option value="efectivo">Efectivo</option>
-                <option value="tarjeta">Tarjeta</option>
-                <option value="transferencia">Transferencia</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="cantidadTipoDonanteModal" class="form-label">Observaciones</label>
-              <input type="text" id="cantidadTipoDonanteModal" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="descripcionTipoDonanteModal" class="form-label">Firma de conformidad</label>
-              <input type="text" id="descripcionTipoDonanteModal" class="form-control" required>
-            </div>
-            <div class="d-flex justify-content-end">
-              <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
-              <button type="submit" class="btn btn-success">Actualizar</button>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
-  </div>
   <script>
     // Abrir modal
     const modal = new bootstrap.Modal(document.getElementById('modalActualizarCategoria'));
