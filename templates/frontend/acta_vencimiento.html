@@ -14,10 +14,10 @@
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   <style>
-    .sidebar{
-    width: 78px;
-    background-color: #198754;
-  }
+    .sidebar {
+      width: 78px;
+      background-color: #198754;
+    }
   </style>
 
 </head>
@@ -40,19 +40,20 @@
   <div class="main-layout">
     <!-- SIDEBAR -->
     <div class="sidebar">
-            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-            <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
-            <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
-            <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
-            <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
-            <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
-            <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
-            <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
-            <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
-            <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
-            <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
-            <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
-        </div>
+      <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+      <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+      <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+      <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+      <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+      <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+      <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+      <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+      <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+      <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+      <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+      <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar
+          sesión</span></a>
+    </div>
 
     <!-- CONTENIDO -->
     <div class="content">
@@ -64,7 +65,7 @@
         <h1>Crear Acta de Vencimiento</h1>
         <label for="fecha">Fecha</label>
         <input type="date" id="fecha" required />
-        
+
         <label for="datosProducto">Nombre del Producto</label>
         <input type="text" id="datosProducto" required />
         <label for="accionesTomadas">Acciones Tomadas</label>
@@ -100,17 +101,68 @@
     </div>
   </div>
 
-  
+  <!--modal de acta de vencimiento-->
+  <div class="modal fade" id="modalActualizarCategoria" tabindex="-1" aria-labelledby="modalActualizarParroquiaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="modalActualizartipodonanteLabel">Actualizar Acta de vencimiento</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formActualizartipodonante">
+            <div class="mb-3">
+              <label for="idTipoDonanteModal" class="form-label">ID</label>
+              <input type="text" id="idTipoDonanteModal" class="form-control" readonly>
+            </div>
+            <div>
+              <label for="montoTipoDonanteModal" class="form-label">fecha </label>
+              <input type="date" id="montoTipoDonanteModal" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="pesoUnitarioModal" class="form-label">Nombre del producto</label>
+              <input type="text" id="pesoUnitarioModal" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="unidadMedidaModal" class="form-label">Acciones tomadas</label>
+              <select id="unidadMedidaModal" class="form-select" required>
+                <option value="">Seleccione el metodo de pago</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="transferencia">Transferencia</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="cantidadTipoDonanteModal" class="form-label">Observaciones</label>
+              <input type="text" id="cantidadTipoDonanteModal" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="descripcionTipoDonanteModal" class="form-label">Firma de conformidad</label>
+              <input type="text" id="descripcionTipoDonanteModal" class="form-control" required>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-success">Actualizar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 
   <script>
     const formActa = document.getElementById('formActa');
     const tablaActas = document.getElementById('tablaActas').querySelector('tbody');
     let idActa = 1;
     let editandoActa = null;
-    
+
     formActa.addEventListener('submit', function (e) {
       e.preventDefault();
-      
+
       const fecha = document.getElementById('fecha').value;
       const hora = document.getElementById('hora').value;
       const datosProducto = document.getElementById('datosProducto').value.trim();
@@ -118,12 +170,12 @@
       const accionesTomadas = document.getElementById('accionesTomadas').value.trim();
       const firmaConformidad = document.getElementById('firmaConformidad').value.trim();
       const firmaCoordinador = document.getElementById('firmaCoordinador').value.trim();
-      
+
       if (!fecha || !hora || !datosProducto || !firmaConformidad || !firmaCoordinador) {
         alert('Por favor completa los campos obligatorios.');
         return;
       }
-      
+
       if (editandoActa) {
         // Editar
         editandoActa.querySelector('.col-fecha').textContent = fecha;
@@ -133,7 +185,7 @@
         editandoActa.querySelector('.col-accionesTomadas').textContent = accionesTomadas;
         editandoActa.querySelector('.col-firmaConformidad').textContent = firmaConformidad;
         editandoActa.querySelector('.col-firmaCoordinador').textContent = firmaCoordinador;
-        
+
         editandoActa = null;
       } else {
         // Crear nuevo
@@ -155,16 +207,16 @@
         tablaActas.appendChild(row);
         idActa++;
       }
-      
+
       formActa.reset();
     });
-    
+
     function eliminarActa(btn) {
       const row = btn.closest('tr');
       if (editandoActa === row) editandoActa = null;
       row.remove();
     }
-    
+
     function editarActa(btn) {
       const row = btn.closest('tr');
       document.getElementById('fecha').value = row.querySelector('.col-fecha').textContent;
@@ -174,19 +226,19 @@
       document.getElementById('accionesTomadas').value = row.querySelector('.col-accionesTomadas').textContent;
       document.getElementById('firmaConformidad').value = row.querySelector('.col-firmaConformidad').textContent;
       document.getElementById('firmaCoordinador').value = row.querySelector('.col-firmaCoordinador').textContent;
-      
+
       editandoActa = row;
     }
-    </script>
-  
+  </script>
 
-    <script src="/static/js/resaltar.js"></script>
 
-    <script src="/static/js/notificacion.js"></script>
+  <script src="/static/js/resaltar.js"></script>
 
-    <script>
-      resaltar()
-    </script>
+  <script src="/static/js/notificacion.js"></script>
+
+  <script>
+    resaltar()
+  </script>
 </body>
 
 </html>

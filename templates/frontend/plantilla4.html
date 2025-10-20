@@ -155,7 +155,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="modalActualizartipodonanteLabel">Actualizar Donaciones</h5>
+          <h5 class="modal-title" id="modalActualizartipodonanteLabel">Actualizar Acta de vencimiento</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
@@ -165,20 +165,16 @@
               <input type="text" id="idTipoDonanteModal" class="form-control" readonly>
             </div>
             <div>
-              <label for="montoTipoDonanteModal" class="form-label">fecha de Ingreso</label>
+              <label for="montoTipoDonanteModal" class="form-label">fecha </label>
               <input type="date" id="montoTipoDonanteModal" class="form-control" required>
             </div>
             <div class="mb-3">
-              <label for="pesoUnitarioModal" class="form-label">Nombre o ID del donante</label>
+              <label for="pesoUnitarioModal" class="form-label">Nombre del producto</label>
               <input type="text" id="pesoUnitarioModal" class="form-control" required>
             </div>
         
             <div class="mb-3">
-              <label for="cantidadTipoDonanteModal" class="form-label">Monto</label>
-              <input type="number" id="cantidadTipoDonanteModal" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="unidadMedidaModal" class="form-label">Metodo de pago</label>
+              <label for="unidadMedidaModal" class="form-label">Acciones tomadas</label>
               <select id="unidadMedidaModal" class="form-select" required>
                 <option value="">Seleccione el metodo de pago</option>
                 <option value="efectivo">Efectivo</option>
@@ -187,7 +183,11 @@
               </select>
             </div>
             <div class="mb-3">
-              <label for="descripcionTipoDonanteModal" class="form-label">Descripción</label>
+              <label for="cantidadTipoDonanteModal" class="form-label">Observaciones</label>
+              <input type="text" id="cantidadTipoDonanteModal" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="descripcionTipoDonanteModal" class="form-label">Firma de conformidad</label>
               <input type="text" id="descripcionTipoDonanteModal" class="form-control" required>
             </div>
             <div class="d-flex justify-content-end">
