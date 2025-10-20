@@ -46,6 +46,10 @@ function resaltar() {
         'permisos_asistentes.html': 10,
         'parametros.html': 10,
         'configuracion.html': 10,
+        'menu_manual.html': 10,
+        'tecnico.html':10,
+        'instalacion.html':10,
+        'manual_usuario.html':10
         
     };
     
