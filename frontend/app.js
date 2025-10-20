@@ -139,7 +139,6 @@ async function agregar_movimiento() {
         console.error(error)
     }
 }
-
 // ==========================================================================
 // =================== GET, UNIDAD DE MEDIDA  ===============================
 // ==========================================================================
@@ -1303,6 +1302,7 @@ async function llamar_tipo_entrega() {
         response.tipo_entrega.forEach(tipo =>  {
             const option = document.createElement("option")
             option.value = tipo.id_tipo_entrega;
+            option.dataset.descripcion = tipo.descripcion;
             option.text = `${tipo.nombre}`;
             select.appendChild(option)
         })
@@ -1425,6 +1425,7 @@ async function usuario() {
         llamar_estado()
         llamar_tipo_documento()
         llamar_tipo_usuario()
+
 
     }catch(error){
         console.error(error)
