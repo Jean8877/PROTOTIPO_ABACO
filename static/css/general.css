@@ -58,7 +58,7 @@ header {
 }
 
 .sidebar a:hover {
-    background-color: #495057;
+    background-color: #49505775;
     transition: all 0.3s ease;
 }
 
