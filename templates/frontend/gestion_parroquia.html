@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestión de Parroquias</title>
+  <link rel="stylesheet" href="/static/css/general.css">
+  <link rel="stylesheet" href="/static/css/select.css">
+  <link rel="shortcut icon" href="/static/images/imagen.png" type="image/x-icon">
+  <!-- Bootstrap y Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<style>
+  .sidebar{
+    width: 125px;
+    background-color: #198754;
+  }
+  
+.sidebar:hover {
+    width: 550px;
+}
+</style>
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <img src="/static/images/imagen.png" alt="logo de abaco">
+    <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
+    <div>
+      <i class="bi bi-person-circle"></i>
+      <span class="me-3"><strong>Karina</strong></span>
+      <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
+    </div>
+  </header>
+
+  <!-- LAYOUT -->
+  <div class="main-layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+      <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+      <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+      <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+      <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+      <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+      <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+      <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+      <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+      <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+      <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="content">
+
+      <form id="formParroquia">
+        <!-- 🔹 Botón de regresar en la esquina del formulario -->
+        <a href="menu_de_parroquias.html" class="btn btn-outline-success btn-sm position-absolute">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1>Registrar Nueva Parroquia</h1>
+        <label for="nombreParroquia">Nombre de la parroquia</label>
+        <input type="text" id="nombreParroquia" placeholder="Nombre de la parroquia" required>
+        <label for="tipo_organizacion">Tipo de organización</label>
+        <select id="tipo_organizacion" required>
+          <option value="">Tipo de organización</option>
+          <option value="permanente">Permanente</option>
+          <option value="esporadica">Esporádica</option>
+        </select>
+        <label for="nombrePadre">Nombre del padre</label>
+        <input type="text" id="nombrePadre" placeholder="Nombre del padre" required>
+        <label for="tipoDocumento">Tipo de documento</label>
+        <select id="tipoDocumento" required>
+          <option value="">Tipo de documento</option>
+          <option value="CC">Cédula</option>
+          <option value="TI">Tarjeta de Identidad</option>
+        </select>
+        <label for="numeroDocumento">Número de documento</label>
+        <input type="text" id="numeroDocumento" placeholder="Número de documento" required>
+        <label for="telefono">Número de teléfono</label>
+        <input type="tel" id="telefono" placeholder="Número de teléfono" required>
+        <label for="direccion">Dirección</label>
+        <input type="text" id="direccion" placeholder="Dirección" required>
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" placeholder="Correo electrónico" required>
+
+        <!-- consumo API departamentos y municipios -->
+        <div class="mb-3">
+          <label for="departamentos" class="form-label">Selecciona un departamento:</label>
+          <select class="form-select" id="departamentos" onchange="traer()">
+            <option selected disabled>Departamentos</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="municipios" class="form-label">Selecciona un municipio:</label>
+          <select class="form-select" id="municipios" disabled>
+            <option selected disabled>Municipios</option>
+          </select>
+        </div>
+
+        <button type="submit">Guardar Parroquia</button>
+      </form>
+
+      <h2>Lista de Parroquias Registradas</h2>
+
+      <table id="tablaParroquias">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Organización</th>
+            <th>Padre</th>
+            <th>Teléfono</th>
+            <th>Ciudad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se agregarán las filas dinámicas -->
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+   <!-- 🔹 Modal para actualizar Parroquia -->
+<div class="modal fade" id="modalActualizarParroquia" tabindex="-1" aria-labelledby="modalActualizarParroquiaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalActualizarParroquiaLabel">Actualizar Parroquia</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formActualizarParroquia">
+          <div class="mb-3">
+            <label for="idParroquiaModal" class="form-label">ID</label>
+            <input type="text" id="idParroquiaModal" class="form-control" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="nombreParroquiaModal" class="form-label">Nombre de la parroquia</label>
+            <input type="text" id="nombreParroquiaModal" class="form-control" required> 
+          </div>
+          
+          <div class="mb-3">
+            <label for="categoriaParroquiaModal" class="form-label">Tipo de Organización</label>
+            <select id="categoriaParroquiaModal" class="form-select" required>
+              <option value="">Selecciona un tipo</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="nombrePadreModal" class="form-label">Nombre del Padre</label>
+            <input type="text" id="nombrePadreModal" class="form-control" required> 
+          </div>
+          <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo de documento</label>
+            <select id="tipo" class="form-select" required>
+              <option value="">Selecciona un tipo</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="numeroDocumentoModal" class="form-label">Numero de documento</label>
+            <input type="text" id="numeroDocumentoModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="numeroTelefonoModal" class="form-label">Numero de telefono</label>
+            <input type="text" id="numeroTelefonoModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="direccionParroquiaModal" class="form-label">Dirección</label>
+            <input type="text" id="direccionParroquiaModal" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="correoParroquiaModal" class="form-label">Correo electrónico</label>
+            <input type="text" id="correoParroquiaModal" class="form-control" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="tipo" class="form-label">Seleccione un departamento</label>
+            <select id="tipo" class="form-select" required>
+              <option value="">Selecciona un departamento</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="tipo" class="form-label">Seleccione un municipio</label>
+            <select id="tipo" class="form-select" required>
+              <option value="">Selecciona un municipio</option>
+            </select>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success" >Actualizar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- SCRIPT -->
+  <script>
+    const formParroquia = document.getElementById('formParroquia');
+    const tablaParroquias = document.querySelector('#tablaParroquias tbody');
+    let idParroquia = 1;
+
+    formParroquia.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById('nombreParroquia').value;
+      const organizacion = document.getElementById('tipo_organizacion').value;
+      const padre = document.getElementById('nombrePadre').value;
+      const telefono = document.getElementById('telefono').value;
+
+      const municipioSelect = document.getElementById('municipios');
+      const municipio = municipioSelect.options[municipioSelect.selectedIndex]?.text || '';
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${String(idParroquia).padStart(3, '0')}</td>
+        <td>${nombre}</td>
+        <td>${organizacion}</td>
+        <td>${padre}</td>
+        <td>${telefono}</td>
+        <td>${municipio}</td>
+        <td>
+          <button onclick="editarParroquia(this)">Editar</button>
+          <button onclick="eliminarParroquia(this)">Eliminar</button>
+        </td>
+      `;
+
+      tablaParroquias.appendChild(row);
+      formParroquia.reset();
+      idParroquia++;
+    });
+
+    function eliminarParroquia(btn) {
+      const row = btn.parentElement.parentElement;
+      row.remove();
+    }
+
+    function editarParroquia(btn) {
+      const row = btn.parentElement.parentElement;
+      const cells = row.querySelectorAll('td');
+
+      document.getElementById('nombreParroquia').value = cells[1].textContent;
+      document.getElementById('tipo_organizacion').value = cells[2].textContent;
+      document.getElementById('nombrePadre').value = cells[3].textContent;
+      document.getElementById('telefono').value = cells[4].textContent;
+
+      eliminarParroquia(btn);
+    }
+
+    const selectDeptos = document.getElementById('departamentos');
+    const selectMunicipios = document.getElementById('municipios');
+
+    window.onload = () => {
+      fetch('https://api-colombia.com/api/v1/Department')
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(depto => {
+            const option = document.createElement('option');
+            option.value = depto.id;
+            option.textContent = depto.name;
+            selectDeptos.appendChild(option);
+          });
+        })
+        .catch(err => console.error('Error cargando departamentos:', err));
+    };
+
+    function traer() {
+      const id = selectDeptos.value;
+      selectMunicipios.innerHTML = '<option selected disabled>Cargando...</option>';
+      selectMunicipios.disabled = true;
+
+      fetch(`https://api-colombia.com/api/v1/Department/${id}/cities`)
+        .then(res => res.json())
+        .then(data => {
+          selectMunicipios.innerHTML = '';
+          if (data.length === 0) {
+            selectMunicipios.innerHTML = '<option disabled>No hay municipios</option>';
+            return;
+          }
+          selectMunicipios.disabled = false;
+          const defaultOption = document.createElement('option');
+          defaultOption.text = 'Seleccione un municipio';
+          defaultOption.disabled = true;
+          defaultOption.selected = true;
+          selectMunicipios.appendChild(defaultOption);
+
+          data.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city.id;
+            option.textContent = city.name;
+            selectMunicipios.appendChild(option);
+          });
+        })
+        .catch(err => {
+          console.error('Error cargando municipios:', err);
+          selectMunicipios.innerHTML = '<option disabled>Error al cargar</option>';
+        });
+    }
+  </script>
+
+  <script src="/static/js/resaltar.js"> </script>
+    <script src="/static/js/notificacion.js"></script>
+  <script>
+    resaltar()
+  </script>
+</body>
+
+</html>

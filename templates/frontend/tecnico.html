@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manual tecnico</title>
+    <link rel="stylesheet" href="/static/css/general.css">
+    <link rel="shortcut icon" href="/static/images/imagen.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <style>
+        .cuadro-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <img src="/static/images/imagen.png" alt="logo de abaco">
+        <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
+        <div>
+            <i class="bi bi-person-circle"></i>
+            <span class="me-3"> <strong>Karina</strong> </span>
+            <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
+        </div>
+    </header>
+
+    <!-- LAYOUT -->
+    <div class="main-layout">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+            <a href="menu_de_parroquias.html"><i class="bi bi-bank organizacion"
+                    id="organizacion"></i><span>Organizaciones</span></a>
+            <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+            <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+            <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+            <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+            <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+            <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+            <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
+            <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+            <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i
+                    class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="content">
+            <div class="cuadro-container">
+                <!-- 🔹 Botón de regresar en la esquina del formulario -->
+                <a href="menu_manual.html" class="btn btn-outline-success btn-sm position-absolute">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div class="row g-4 justify-content-center">
+                    <h1>Manual técnico</h1>
+                    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                        <div class="container-fluid">
+                            <a class="navbar-brand" href="#">Introduccion</a>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page" href="#">Requisistos del sistema</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#"> Arquitectura del software</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#"> Uso del software</a>
+                                    </li>
+                                    
+                                    <li class="nav-item">
+                                        <a class="nav-link disabled" aria-disabled="true"></a>
+                                    </li>
+                                </ul>
+                                <form class="d-flex" role="search">
+                                    <input class="form-control me-2" type="search" placeholder="Buscar"
+                                        aria-label="Search" />
+                                    <button class="btn btn-outline-success" type="submit">Buscar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/resaltar.js"></script>
+    <script src="/static/js/notificacion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        resaltar()
+    </script>
+
+</body>
+
+</html>

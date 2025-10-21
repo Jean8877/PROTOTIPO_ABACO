@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS # para permitir el acceso a la API desde el frontend
 import pymysql
@@ -6,20 +7,52 @@ import bcrypt # incriptar contrasena
 from flasgger import Swagger
 
 app = Flask(__name__)
+
+import os
+from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS # para permitir el acceso a la API desde el frontend
+import pymysql
+from flasgger import Swagger
+import bcrypt # incriptar contrasena
+
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
+# import pymysql.cursors
+
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static"))
+origin/main
 CORS(app)
 CORS(app, origins=["http://localhost:64135", "http://10.4.215.103:5000"])
 
 swagger = Swagger(app)
 
+<<<<<<< HEAD
+=======
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return app.send_static_file(filename)#para llamar archivos estaticos
+
+
+>>>>>>> origin/main
 #conexion a la base de datos
 def conectar(vhost, vuser, vpass, vdb):
     conn = pymysql.connect(host=vhost, user=vuser, passwd=vpass, db=vdb, charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor )
     return conn
 
+<<<<<<< HEAD
 # ruta inicial
 @app.route("/", methods=['GET'])
 def index():
     return jsonify({"mensaje": "API del Banco de Alimentos"})
+=======
+
+
+# ruta inicial
+@app.route("/", methods=['GET'])
+def index():
+    return render_template("frontend/index.html")
+>>>>>>> origin/main
 
 # ============================================================
 # ===============   RUTA PARA TIPO_USUARIO   ===============
@@ -238,7 +271,11 @@ def eliminar_tipo_documento(codigo):
 # ============================================================
 
 
+<<<<<<< HEAD
 @app.route("/tipo_gasto", methods=['GET'])
+=======
+@app.route("/tipo_gastos", methods=['GET'])
+>>>>>>> origin/main
 def tipo_gasto():
     """
     Consulta de lista de tipos de gasto
