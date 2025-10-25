@@ -4338,54 +4338,96 @@ def registro_producto():
               descripcion:
                 type: string
               cantidad:
-                type: string
+                type: number
               codigo_barras:
                 type: string
               stock:
-                type: string
+                type: number
               stock_maximo:
-                type: string
+                type: number
               stock_minimo:
-                type: string
+                type: number
               categoria_producto:
-                type: string
+                type: integer
               subcategoria_producto:
-                type: string
+                type: integer
               estado:
+                type: integer
+              fecha_vencimiento:
                 type: string
               unidad_de_medida:
-                type: string
+                type: integer
     responses:
       200:
         description: Producto registrado
     """
     try:
         data = request.get_json()
-        nombre = data['nombre']
-        descripcion = data['descripcion']
-        cantidad = data['cantidad']
-        codigo_barras = data['codigo_barras']
-        stock = data['stock']
-        stock_maximo = data['stock_maximo']
-        stock_minimo = data['stock_minimo']
-        categoria_producto = data['categoria_producto']
-        subcategoria_producto = data['subcategoria_producto']
-        estado = data['estado']
-        unidad_de_medida = data['unidad_de_medida']
-        
+
+        # ==================== VALIDACIÓN DE CAMPOS ====================
+        campos_obligatorios = ['nombre', 'codigo_barras']
+        for campo in campos_obligatorios:
+            if campo not in data or not str(data[campo]).strip():
+                return jsonify({'mensaje': f'El campo "{campo}" es obligatorio.'}), 400
+
+        nombre = data['nombre'].strip()
+        descripcion = data.get('descripcion', '').strip()
+        cantidad = data.get('cantidad', 0)
+        codigo_barras = data['codigo_barras'].strip()
+        stock = data.get('stock', 0)
+        stock_maximo = data.get('stock_maximo', 0)
+        stock_minimo = data.get('stock_minimo', 0)
+        categoria_producto = data.get('categoria_producto')
+        subcategoria_producto = data.get('subcategoria_producto')
+        estado = data.get('estado')
+        fecha_vencimiento = data.get('fecha_vencimiento')
+        unidad_de_medida = data.get('unidad_de_medida')
+
+        # ==================== VALIDACIÓN DE TIPOS ====================
+        try:
+            cantidad = float(cantidad)
+            stock = int(stock)
+            stock_maximo = int(stock_maximo)
+            stock_minimo = int(stock_minimo)
+        except ValueError:
+            return jsonify({'mensaje': 'Los campos de cantidad y stock deben ser numéricos.'}), 400
+
+        # ==================== VALIDACIÓN LÓGICA ====================
+        if stock_minimo > stock_maximo:
+            return jsonify({'mensaje': 'El stock mínimo no puede ser mayor que el stock máximo.'}), 400
+
+        # ==================== CONEXIÓN A BASE DE DATOS ====================
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
+
+        # ==================== VALIDAR CÓDIGO DE BARRAS REPETIDO ====================
+        cur.execute("SELECT codigo_barras FROM producto WHERE codigo_barras = %s", (codigo_barras,))
+        existente = cur.fetchone()
+        if existente:
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'El código de barras ya existe en otro producto.'}), 400
+
+        # ==================== INSERCIÓN ====================
         cur.execute("""
-                    INSERT INTO producto (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                    (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida))
+            INSERT INTO producto (
+                nombre, descripcion, cantidad, codigo_barras, fecha_vencimiento, 
+                stock, stock_maximo, stock_minimo, categoria_producto, 
+                subcategoria_producto, estado, unidad_de_medida
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (nombre, descripcion, cantidad, codigo_barras, fecha_vencimiento, stock,
+              stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida))
+
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+
+        return jsonify({'mensaje': 'Producto registrado correctamente.'}), 201
+
     except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
+        print("Error:", ex)
+        return jsonify({'mensaje': f'Error en el servidor: {str(ex)}'}), 500
+      
 
 # ============================================================
 # =============  RUTA PARA ACTUALIZAR PRODUCTO ===============

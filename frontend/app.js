@@ -293,6 +293,7 @@ async function agregar_producto() {
     try{
         const nombre_producto = document.getElementById("producto").value;
         const descripcion_producto = document.getElementById("descripcion").value;
+        const fecha_vencimiento_producto = document.getElementById("fecha_vencimiento").value;
         const cantidad_producto = parseInt(document.getElementById("cantidad").value);
         const codi_barra_producto = document.getElementById("codigo_barras").value;
 
@@ -306,6 +307,7 @@ async function agregar_producto() {
         const nuevo_producto = {
             "nombre": nombre_producto,
             "descripcion": descripcion_producto,
+            "fecha_vencimiento": fecha_vencimiento_producto,
             "cantidad": cantidad_producto,
             "codigo_barras": codi_barra_producto,
             "stock": cantidad_producto,
