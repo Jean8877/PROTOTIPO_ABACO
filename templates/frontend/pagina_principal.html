@@ -70,13 +70,13 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
-                                    <input type="date" class="form-control" id="ingreso">
+                                    <input type="date" class="form-control" id="ingreso" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="Id_nombre" class="form-label">ID del Donante</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="nombre"
-                                            placeholder="Ej: Jean Carlos">
+                                            placeholder="Ej: Jean Carlos" required>
                                         <button class="btn btn-outline-secondary" type="button" id="buscarDonante">
                                             <i class="bi bi-search"></i>
                                         </button>
@@ -85,7 +85,8 @@
                                 <div class="col-md-6">
                                     <label for="nombre" class="form-label">Nombre del producto</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="nombre_producto" placeholder="Ej: Arroz">
+                                        <input type="text" class="form-control" id="nombre_producto"
+                                            placeholder="Ej: Arroz" required>
                                         <button class="btn btn-outline-secondary" type="button" id="BTN_buscarProducto">
                                             <i class="bi bi-search"></i>
                                         </button>
@@ -96,36 +97,29 @@
                                     <input type="text" class="form-control" id="codigo_barras"
                                         placeholder="Ej: 123456789012">
                                 </div>
+
                                 <div class="col-md-6">
-                                    <label for="categoria" class="form-label">Categoría</label>
-                                    <select id="categoria" class="form-select">
-                                        <option selected disabled>Seleccione...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="subcategoria" class="form-label">Subcategoría</label>
-                                    <select id="subcategoria" class="form-select">
-                                        <option selected disabled>Seleccione...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
                                     <label for="cantidad" class="form-label">Cantidad</label>
-                                    <input type="number" class="form-control" id="cantidad" min="0">
+                                    <input type="number" class="form-control" id="cantidad" min="0" required>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <label for="peso" class="form-label">Peso unitario (Kg)</label>
-                                    <input type="number" class="form-control" id="peso" step="0.01">
+                                    <input type="number" class="form-control" id="peso" min="" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="unidad_medida" class="form-label">Unidad de medida</label>
-                                    <select id="unidad_medida" class="form-select">
-                                        <option selected disabled>Seleccione...</option>
+                                    <select id="unidad_medida" class="form-select" required>
+                                        <option selected>Seleccione...</option>
+                                        <option selected>Kilogramos</option>
+                                        <option selected>Gramos</option>
+                                        <option selected>Toneladas</option>
+                                        <option selected>Paquetes</option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="vencimiento" class="form-label">Fecha de vencimiento</label>
-                                    <input type="date" class="form-control" id="vencimiento">
+                                    <input type="date" class="form-control" id="vencimiento" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="descripcion" class="form-label">Descripción</label>
@@ -142,6 +136,21 @@
                                 </button>
                             </div>
                         </form>
+
+                        <h2>Lista de Productos Donados</h2>
+                        <table id="tablaProductosdonandos">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Cantidad</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Filas de productos se agregarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
 
                         <!-- Formulario Monetaria -->
                         <form id="formMonetaria" class="d-none">
@@ -189,68 +198,12 @@
         </div>
 
 
-        <script>
-            // Toggle de formularios
-            const btnProducto = document.getElementById('btnProducto');
-            const btnMonetaria = document.getElementById('btnMonetaria');
-            const formProducto = document.getElementById('formProducto');
-            const formMonetaria = document.getElementById('formMonetaria');
-
-            btnProducto.addEventListener('click', () => {
-                btnProducto.classList.add('btn-success', 'active');
-                btnProducto.classList.remove('btn-outline-success');
-                btnMonetaria.classList.remove('btn-success', 'active');
-                btnMonetaria.classList.add('btn-outline-success');
-                formProducto.classList.remove('d-none');
-                formMonetaria.classList.add('d-none');
-            });
-
-            btnMonetaria.addEventListener('click', () => {
-                btnMonetaria.classList.add('btn-success', 'active');
-                btnMonetaria.classList.remove('btn-outline-success');
-                btnProducto.classList.remove('btn-success', 'active');
-                btnProducto.classList.add('btn-outline-success');
-                formMonetaria.classList.remove('d-none');
-                formProducto.classList.add('d-none');
-            });
-
-            formProducto.addEventListener('submit', function (e) {
-                e.preventDefault();
-                //validacion
-                const nombre = document.getElementById('nombre').value.trim();
-                if (!nombre) {
-                    swal("Error", "Por favor, completa todos los campos.", "error");
-                    return;
-                }
-                //guardar producto
-                swal("Éxito", "Producto guardado correctamente.", "success");
-                formProducto.reset();
-            });
-            formMonetaria.addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                const monto = document.getElementById('monto').value.trim();
-                const metodo = document.getElementById('metodoPago').value;
-
-                if (!monto || monto <= 0 || !metodo) {
-                    swal("Error", "Por favor ingresa un monto válido y selecciona un método de pago.", "error");
-                    return;
-                }
-
-                swal("Éxito", "Donación monetaria guardada correctamente.", "success");
-                formMonetaria.reset();
-            });
-
-
-
-
-
-        </script>
+        <script src="/static/js/mone_produc.js"></script>
         <script src="/static/js/resaltar.js"> </script>
-            <script src="/static/js/notificacion.js"></script>
-            <script>
-                resaltar()
-            </script>
+        <script src="/static/js/notificacion.js"></script>
+        <script>
+            resaltar()
+        </script>
 
 
 </body>

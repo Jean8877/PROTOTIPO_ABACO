@@ -55,6 +55,11 @@
                 <h1>Tabla de Productos</h1>
 
                 <div class="card shadow-sm">
+                    <form class="d-flex" role="search">
+                                <input class="form-control me-2" type="search" placeholder="Buscar"
+                                    aria-label="Search" />
+                                <button class="btn btn-outline-success" type="submit">Buscar</button>
+                            </form>
                     <div class="card-body">
                         <!-- Tabla Producto -->
                         <div id="listaProducto">
@@ -65,17 +70,15 @@
                                             <th>ID</th>
                                             <th>Producto</th>
                                             <th>Cantidad</th>
-                                            <th>Donante</th>
-                                            <th>Fecha Ingreso</th>
+                                            <th>Fecha de Vencimiento</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>1</td>
+                                            <td>001</td>
                                             <td>Arroz</td>
                                             <td>50 Kg</td>
-                                            <td>Juan Pérez</td>
                                             <td>2025-09-17</td>
                                             <td>
                                                 <button class="btn btn-sm btn-warning me-1 btn-edit"><i
@@ -85,10 +88,9 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>2</td>
+                                            <td>002</td>
                                             <td>Leche</td>
                                             <td>30 L</td>
-                                            <td>María López</td>
                                             <td>2025-09-15</td>
                                             <td>
                                                 <button class="btn btn-sm btn-warning me-1 btn-edit"><i
