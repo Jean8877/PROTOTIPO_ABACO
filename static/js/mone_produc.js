@@ -76,5 +76,27 @@
 
 
 
+document.addEventListener("DOMContentLoaded", function() {
+    const fechaIngreso = document.getElementById("ingreso");
+    const fechaIngresoMonetaria = document.getElementById("ingresoMonetaria"); 
+    const fechaVencimiento = document.getElementById("vencimiento");
 
+    // Obtener la fecha de hoy en formato YYYY-MM-DD
+    const hoy = new Date().toISOString().split("T")[0];
+
+    // 🔹 Fecha de ingreso: máximo hoy (no puede ser futura)
+    if (fechaIngreso) {
+        fechaIngreso.setAttribute("max", hoy);
+    }
+
+    // 🔹 Monetaria: tampoco se puede registrar con fecha futura
+    if (fechaIngresoMonetaria) {
+        fechaIngresoMonetaria.setAttribute("max", hoy);
+    }
+
+    // 🔹 Fecha de vencimiento: mínimo hoy (no puede ser pasada)
+    if (fechaVencimiento) {
+        fechaVencimiento.setAttribute("min", hoy);
+    }
+});
         
