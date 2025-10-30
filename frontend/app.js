@@ -75,6 +75,10 @@ function mostrar_movimiento(movimientos){
                 <td>${i.observacion}</td>
                 <td>${i.tipo_donacion}</td>
                 <td>${i.organizacion}</td>
+                <td>${i.responsable}</td>
+                <td>
+                <button type="button" onclick="eliminar_movimiento_producto(${i.codigo})">Eliminar</button>
+                </td>
             </tr>
         `;
     });
@@ -140,6 +144,24 @@ async function agregar_movimiento() {
     }
 }
 // ==========================================================================
+// ===============  DELETE, MOVIMIENTO DE PRODUCTO   ========================
+// ==========================================================================
+
+async function eliminar_movimiento_producto(codigo) {
+    try {
+        const promesa = await fetch(`${URL_BASE}/eliminar_movimiento_producto/${codigo}`, {method: 'DELETE',});
+        const response = await promesa.json()
+        console.log("Movimiento de producto eliminado:", response)
+
+        movimiento_producto();
+        return response
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+// ==========================================================================
 // =================== GET, UNIDAD DE MEDIDA  ===============================
 // ==========================================================================
     
@@ -203,6 +225,7 @@ async function llamar_unidad_medida() {
     try {
         const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, { method: 'GET' });
         const response = await promesa.json();
+        window.listaUnidades = response.unidad_de_medida;
 
 
         const select = document.getElementById("unidad_medida");
@@ -240,7 +263,6 @@ async function eliminar_unidad_de_medida(codigo) {
 // ==========================================================================
 // ===================  GET, PRODUCTO   ==============================
 // ==========================================================================
-
 function mostrar_producto(producto) {
     let info = "";
     producto.producto.forEach(i => {
@@ -248,20 +270,16 @@ function mostrar_producto(producto) {
         <tr>
                 <td>${i.id_producto}</td>
                 <td>${i.nombre}</td>
-                <td>${i.fecha_vencimiento}</td>
+                <td>${i.categoria}</td>
+                <td>${i.subcategoria}</td>
                 <td>${i.descripcion}</td>
-                <td>${i.cantidad}</td>
-                <td>${i.codigo_barras}</td>
-                <td>${i.stock}</td>
-                <td>${i.stock_maximo}</td>
                 <td>${i.stock_minimo}</td>
-                <td>${i.categoria_producto}</td>
-                <td>${i.subcategoria_producto}</td>
                 <td>${i.unidad_de_medida}</td>
                 <td>${i.estado}</td>
-                <td>$${i.fecha_registro}</td>
                 <td>
-                    <button type="button" onclick="eliminar_producto(${i.id_producto})">Eliminar</button> 
+                    <button type="button" onclick="eliminar_producto(${i.id_producto})">Eliminar</button>
+                    <button type="button" onclick="abrirModalVer(${i.id_producto})">Ver</button>
+                    <button type="button" onclick="abrirModalEditar(${i.id_producto})">Actualizar</button>
                 </td>
                 </tr>
                 `;
@@ -277,7 +295,6 @@ function mostrar_producto(producto) {
             mostrar_producto(response)
             llamar_categoria()
             llamar_estado()
-            llamar_subcategoria()
             llamar_unidad_medida()
 
         }catch (error) {
@@ -285,83 +302,403 @@ function mostrar_producto(producto) {
         }
     }
 
-
 // ==========================================================================
-// ====================  POST, PRODUCTO   ====================================
+// ====================  POST, PRODUCTO  ====================================
 // ==========================================================================
-async function agregar_producto() {
-    try{
-        const nombre_producto = document.getElementById("producto").value;
-        const descripcion_producto = document.getElementById("descripcion").value;
-        const fecha_vencimiento_producto = document.getElementById("fecha_vencimiento").value;
-        const cantidad_producto = parseInt(document.getElementById("cantidad").value);
-        const codi_barra_producto = document.getElementById("codigo_barras").value;
+async function agregar_producto(event) {
+  event.preventDefault();
 
-        const stock_maxi_producto = document.getElementById("stock_maximo").value;
-        const stock_minim_producto = document.getElementById("stock_minimo").value;
-        const categoria_producto = document.getElementById("categoria").value;
-        const subcategoria_producto = document.getElementById("subcategoria").value;
-        const estado = document.getElementById("estado").value;
-        const unidad_de_medida_producto = document.getElementById("unidad_medida").value;
+  try {
+    const categoria_producto = document.getElementById("categoria").value;
+    const subcategoria_producto = document.getElementById("subcategoria").value;
+    const nombre_producto = document.getElementById("nombre").value;
+    const stock_minimo_producto = document.getElementById("stock_minimo").value;
+    const unidad_de_medida_producto = document.getElementById("unidad_medida").value;
+    const descripcionInput = document.getElementById("descripcion");
+    const descripcion_producto = descripcionInput ? descripcionInput.value : "";
 
-        const nuevo_producto = {
-            "nombre": nombre_producto,
-            "descripcion": descripcion_producto,
-            "fecha_vencimiento": fecha_vencimiento_producto,
-            "cantidad": cantidad_producto,
-            "codigo_barras": codi_barra_producto,
-            "stock": cantidad_producto,
-            "stock_minimo": stock_minim_producto,
-            "stock_maximo": stock_maxi_producto,
-            "categoria_producto": categoria_producto,
-            "subcategoria_producto": subcategoria_producto,
-            "estado": estado,
-            "unidad_de_medida": unidad_de_medida_producto
-        }
-
-        const promesa = await fetch(`${URL_BASE}/registro_producto`, {
-            method: 'POST',
-            body : JSON.stringify(nuevo_producto),
-            headers: {
-                "Content-Type" : "application/json"
-            }
-        })
-
-        const response = await promesa.json()
-        console.log(response)
-        
-        document.getElementById("producto").value = "";
-        document.getElementById("descripcion").value = "";
-        document.getElementById("cantidad").value = "";
-        document.getElementById("codigo_barras").value = "";
-        document.getElementById("stock_maximo").value = "";
-        document.getElementById("stock_minimo").value = "";
-        document.getElementById("categoria").value = "";
-        document.getElementById("subcategoria").value = "";
-        document.getElementById("estado").value = "";
-        document.getElementById("unidad_medida").value = "";
-
-        producto();
-    } catch (error) {
-        console.error(error)
+    // Validaciones simples antes de enviar
+    if (!categoria_producto || !subcategoria_producto || !nombre_producto || !unidad_de_medida_producto) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Campos incompletos",
+        text: "Por favor, complete todos los campos obligatorios.",
+        confirmButtonColor: "#198754"
+      });
     }
+
+    const nuevo_producto = {
+      categoria_producto,
+      subcategoria_producto,
+      nombre: nombre_producto,
+      stock_minimo: stock_minimo_producto,
+      unidad_de_medida: unidad_de_medida_producto,
+      descripcion: descripcion_producto
+    };
+
+    const promesa = await fetch(`${URL_BASE}/registro_producto`, {
+      method: "POST",
+      body: JSON.stringify(nuevo_producto),
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const response = await promesa.json();
+    console.log(response);
+
+    if (promesa.ok) {
+      // Notificación de éxito
+      await Swal.fire({
+        icon: "success",
+        title: "Producto registrado",
+        text: response.mensaje || "El producto fue agregado correctamente.",
+        showConfirmButton: false,
+        timer: 1500
+      });
+
+      // Limpiar el formulario
+      document.getElementById("formProducto").reset();
+
+      // Actualizar la tabla
+      producto();
+
+    } else {
+      // Error desde el backend
+      Swal.fire({
+        icon: "error",
+        title: "Error al registrar",
+        text: response.mensaje || "No se pudo registrar el producto.",
+        confirmButtonColor: "#d33"
+      });
+    }
+
+  } catch (error) {
+    console.error("Error al registrar producto:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error inesperado",
+      text: "Ocurrió un problema al registrar el producto.",
+      confirmButtonColor: "#d33"
+    });
+  }
 }
+
+// ==========================================================================
+// ======================== ACTUALIZAR, PRODUCTO  ===========================
+// ==========================================================================
+
+async function cargarCategoriasEditar(categoriaActual = "") {
+  try {
+    const response = await fetch(`${URL_BASE}/categoria_producto`);
+    const data = await response.json();
+
+    const categorias = data.categoria_producto;
+    const select = document.getElementById("categoria_editar");
+    select.innerHTML = '<option value="">Seleccione una categoría</option>';
+
+    categorias.forEach((c) => {
+      const option = document.createElement("option");
+      option.value = c.codigo;
+      option.textContent = c.descripcion;
+
+      // 🔹 Si esta categoría es la actual, la marcamos como seleccionada
+      if (c.descripcion === categoriaActual || c.codigo === categoriaActual) {
+        option.selected = true;
+      }
+
+      select.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error("Error al cargar categorías:", error);
+  }
+}
+
+
+// ==========================================================================
+// ================ CARGAR LA OPCION DE LA SUBCATEGORIA   ===================
+// ==========================================================================
+async function cargarSubcategoriasEditar() {
+  try {
+    const response = await fetch(`${URL_BASE}/subcategoria_producto`);
+    const data = await response.json();
+
+    const subcategorias = data.subcategoria_producto;
+    const select = document.getElementById("subcategoria_editar");
+    select.innerHTML = '<option value="">Seleccione una subcategoría</option>';
+
+    subcategorias.forEach((s) => {
+      const option = document.createElement("option");
+      option.value = s.codigo; // usa "codigo"
+      option.textContent = s.descripcion; // usa "descripcion"
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar subcategorías:", error);
+  }
+}
+
+// ==========================================================================
+// =====================   GUARDAR CAMBIOS   ===============================
+// ==========================================================================
+async function guardar_cambios() {
+  const id = document.getElementById("id_editar").value;
+
+  if (!id) {
+    alert("Error: no se encontró el ID del producto a editar.");
+    return;
+  }
+
+  // Obtener valores
+  const categoria = document.getElementById("categoria_editar").value;
+  const subcategoria = document.getElementById("subcategoria_editar").value;
+  const nombre = document.getElementById("nombre_editar").value.trim();
+  const stock_minimo = document.getElementById("stock_minimo_editar").value;
+  const unidad_de_medida = document.getElementById(
+    "unidad_medida_editar"
+  ).value;
+  const descripcion = document
+    .getElementById("descripcion_editar")
+    .value.trim();
+  const estado = document.getElementById("estado_editar").value;
+
+  // Validar unidad de medida
+  if (!unidad_de_medida) {
+    alert("Por favor, seleccione una unidad de medida antes de guardar.");
+    return;
+  }
+
+  const producto_actualizado = {
+    categoria_producto: parseInt(categoria) || null,
+    subcategoria_producto: parseInt(subcategoria) || null,
+    nombre,
+    stock_minimo: parseInt(stock_minimo) || 0,
+    unidad_de_medida: parseInt(unidad_de_medida), // ✅ importante
+    descripcion,
+    estado: parseInt(estado) || null,
+  };
+
+  try {
+    const response = await fetch(`${URL_BASE}/actualizar_producto/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(producto_actualizado),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.mensaje || "Error en la actualización");
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Producto actualizado correctamente",
+      showConfirmButton: false,
+      timer: 2000,
+      background: "#fefefe",
+      color: "#333",
+      iconColor: "#28a745",
+    });
+
+
+    // Cerrar el modal correctamente
+    const modal = bootstrap.Modal.getInstance(
+      document.getElementById("modalEditarProducto")
+    );
+    if (modal) modal.hide();
+
+    // Refrescar la tabla si existe la función producto()
+    if (typeof producto === "function") {
+      producto();
+    }
+  } catch (error) {
+    console.error("Error al guardar cambios:", error);
+    alert(
+      "❌ No se pudo actualizar el producto. Revisa la consola para más detalles."
+    );
+  }
+}
+
+
+// ==========================================================================
+// =======================   ABRIR MODAL EDITAR   ===========================
+// ==========================================================================
+async function abrirModalEditar(codigo) {
+  try {
+    await cargarCategoriasEditar();
+    await cargarSubcategoriasEditar();
+    await cargarUnidadesEditar();
+    await cargarEstadosEditar();
+
+    const response = await fetch(`${URL_BASE}/producto/${codigo}`);
+    const data = await response.json();
+
+    if (!response.ok || !data.producto) {
+      alert("Error al cargar el producto.");
+      return;
+    }
+
+    const producto = data.producto;
+
+    document.getElementById("id_editar").value = producto.id_producto;
+    document.getElementById("categoria_editar").value =
+      producto.categoria_producto;
+    document.getElementById("subcategoria_editar").value =
+      producto.subcategoria_producto;
+    document.getElementById("nombre_editar").value = producto.nombre;
+    document.getElementById("descripcion_editar").value = producto.descripcion;
+    document.getElementById("stock_minimo_editar").value =
+      producto.stock_minimo;
+    document.getElementById("unidad_medida_editar").value =
+      producto.unidad_de_medida || "";
+
+    const modal = new bootstrap.Modal(
+      document.getElementById("modalEditarProducto")
+    );
+    modal.show();
+  } catch (error) {
+    console.error("Error al abrir el modal de edición:", error);
+    alert("No se pudo abrir el modal de edición.");
+  }
+}
+// ==========================================================================
+// ====================   CARGAR ESTADOS EDITAR   ===========================
+// ==========================================================================
+async function cargarEstadosEditar() {
+  try {
+    const response = await fetch(`${URL_BASE}/estado`);
+    const data = await response.json();
+    console.log("Estados recibidos:", data);
+
+    const estados = data.estado;
+    const select = document.getElementById("estado_editar");
+    select.innerHTML = '<option value="">Seleccione un estado</option>';
+
+    estados.forEach((e) => {
+      const option = document.createElement("option");
+      option.value = e.id_estado; // ← valor que se guarda
+      option.textContent = e.nombre; // ← texto visible ("Activo" o "Inactivo")
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar estados:", error);
+  }
+}
+
+// ==========================================================================
+// ==================   CARGAR UNIDADES DE MEDIDA   ========================
+// ==========================================================================
+async function cargarUnidadesEditar() {
+  try {
+    const response = await fetch(`${URL_BASE}/unidad_de_medida`);
+    const data = await response.json();
+
+    const select = document.getElementById("unidad_medida_editar");
+    select.innerHTML = '<option value="">Seleccione una unidad</option>';
+
+    data.unidad_de_medida.forEach((u) => {
+      const option = document.createElement("option");
+      option.value = u.codigo; // código numérico
+      option.textContent = u.nombre; // nombre visible
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar unidades de medida:", error);
+  }
+}
+
+
+// ==========================================================================
+// ======================== ABRIR MODAL VER PRODUCTO =====================
+// ==========================================================================
+async function abrirModalVer(id_producto) {
+  try {
+    const response = await fetch(`${URL_BASE}/producto/${id_producto}`);
+    const data = await response.json();
+
+    if (response.ok && data.producto) {
+      const p = data.producto;
+
+      // Buscar nombres descriptivos
+      const categoria =
+        window.listaCategorias?.find((c) => c.codigo === p.categoria_producto)
+          ?.descripcion || "Sin categoría";
+      const subcategoria =
+        window.listaSubcategorias?.find(
+          (s) => s.codigo === p.subcategoria_producto
+        )?.descripcion || "Sin subcategoría";
+      const unidad =
+        window.listaUnidades?.find((u) => u.codigo === p.unidad_de_medida)
+          ?.descripcion || "Sin unidad";
+      const estado =
+        window.listaEstados?.find((e) => e.codigo === p.estado)?.descripcion ||
+        "Sin estado";
+
+      // Asignar los valores al modal
+      document.getElementById("ver_id").innerText = p.id_producto;
+      document.getElementById("ver_nombre").innerText = p.nombre;
+      document.getElementById("ver_descripcion").innerText =
+        p.descripcion || "Sin descripción";
+      document.getElementById("ver_stock_minimo").innerText = p.stock_minimo;
+      document.getElementById("ver_categoria").innerText = categoria;
+      document.getElementById("ver_subcategoria").innerText = subcategoria;
+      document.getElementById("ver_estado").innerText = estado;
+      document.getElementById("ver_unidad").innerText = unidad;
+
+      // Mostrar modal
+      const modal = new bootstrap.Modal(document.getElementById("modalVer"));
+      modal.show();
+    } else {
+      alert("Producto no encontrado");
+    }
+  } catch (error) {
+    console.error("Error al obtener el producto:", error);
+    alert("Ocurrió un error al intentar ver el producto.");
+  }
+}
+
+
+
 // ==========================================================================
 // ======================== DELETE,  PRODUCTO  ==============================
 // ==========================================================================
-
 async function eliminar_producto(codigo) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/eliminar_producto/${codigo}`, {method: 'DELETE',});
-        const response = await promesa.json()
-        console.log("Producto eliminada:", response)
+  try {
+    const confirmacion = await Swal.fire({
+      title: "¿Eliminar producto?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
 
-        producto();
-        return response
+    if (!confirmacion.isConfirmed) return;
 
-    } catch (error) {
-        console.error(error)
-    }
+    const promesa = await fetch(`${URL_BASE}/eliminar_producto/${codigo}`, {
+      method: "DELETE",
+    });
+
+    const response = await promesa.json();
+    console.log("Producto eliminado:", response);
+
+    await Swal.fire({
+      icon: "success",
+      title: "Eliminado",
+      text: "El producto fue eliminado correctamente.",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+
+    producto(); // recarga la tabla
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Ocurrió un problema al eliminar el producto.",
+    });
+  }
 }
 
 
@@ -503,50 +840,91 @@ async function agregar_subcategoria() {
         console.error(error)
     }
 }
+// ==========================================================================
+// =========== LLAMAR CATEGORÍA Y SUBCATEGORÍA (DEPENDIENTE) ===============
+// ==========================================================================
 
-// ==========================================================================
-// =================== LLAMAR CATEGORIA A SUBCATEGORIA =========================
-// ==========================================================================
+// Cargar categorías en el select principal
 async function llamar_categoria() {
     try {
         const promesa = await fetch(`${URL_BASE}/categoria_producto`, { method: 'GET' });
         const response = await promesa.json();
 
-        const select = document.getElementById("categoria");
-        select.innerHTML = "<option value=''>Seleccione una categoría</option>";
+        const selectCategoria = document.getElementById("categoria");
+        selectCategoria.innerHTML = "<option value=''>Seleccione una categoría</option>";
 
-        response.categoria_producto.forEach(categoria => {
+        // Guardar lista globalmente para reutilizar
+        window.listaCategorias = response.categoria_producto || [];
+
+        // Llenar el select de categorías
+        window.listaCategorias.forEach(categoria => {
             const option = document.createElement("option");
             option.value = categoria.codigo;
-            option.text = categoria.descripcion;
-            select.appendChild(option);
+            option.textContent = categoria.descripcion;
+            selectCategoria.appendChild(option);
         });
+
+        // Escuchar el cambio de categoría para cargar subcategorías dependientes
+        selectCategoria.addEventListener("change", async function () {
+            const categoriaSeleccionada = this.value;
+            if (categoriaSeleccionada) {
+                await llamar_subcategoria_por_categoria(categoriaSeleccionada);
+            } else {
+                limpiar_subcategorias();
+            }
+        });
+
     } catch (error) {
         console.error("Error al cargar categorías:", error);
     }
 }
 
-// ==========================================================================
-// =================== LLAMAR CATEGORIA A PRODUCTO =========================
-// ==========================================================================
-async function llamar_subcategoria() {
+// Limpiar subcategorías cuando no hay categoría seleccionada
+function limpiar_subcategorias() {
+    const selectSub = document.getElementById("subcategoria");
+    selectSub.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
+}
+
+// Cargar subcategorías asociadas a la categoría seleccionada
+async function llamar_subcategoria_por_categoria(categoria_id) {
     try {
-        const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, { method: 'GET' });
+        const promesa = await fetch(`${URL_BASE}/subcategoria/${categoria_id}`, { method: 'GET' });
         const response = await promesa.json();
 
- const select = document.getElementById("subcategoria");
-        select.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
+        const selectSub = document.getElementById("subcategoria");
+        selectSub.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
 
-        response.subcategoria_producto.forEach(sub => {
+        // Verificar estructura del JSON
+        const subcategorias = response.subcategoria_producto || response;
+
+        // Guardar globalmente para el modal de visualización
+        window.listaSubcategorias = subcategorias;
+
+        // Llenar select con las subcategorías
+        subcategorias.forEach(sub => {
             const option = document.createElement("option");
-            option.value = sub.codigo;       // el ID de la subcategoría
-            option.text = sub.descripcion;   // el nombre que se muestra
-            select.appendChild(option);
+            option.value = sub.codigo;
+            option.textContent = sub.descripcion;
+            selectSub.appendChild(option);
         });
+
     } catch (error) {
         console.error("Error al cargar subcategorías:", error);
     }
 }
+// ==========================================================================
+// ============== CARGAR TODAS LAS SUBCATEGORÍAS (para el modal) ============
+// ==========================================================================
+async function llamar_todas_subcategorias() {
+  try {
+    const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, { method: 'GET' });
+    const response = await promesa.json();
+    window.listaSubcategorias = response.subcategoria_producto || [];
+  } catch (error) {
+    console.error("Error al cargar todas las subcategorías:", error);
+  }
+}
+
 
 // ==========================================================================
 // =================== DELETE, SUBCATEGORIA PRODUCTO ========================
@@ -655,26 +1033,34 @@ async function eliminar_bodega(codigo) {
     }
 }
 
-// =======================================================================
-// ====================== LLAMAR ESTADO =================================
-// =======================================================================
-async function llamar_estado() {
+    // =======================================================================
+    // ====================== LLAMAR ESTADO =================================
+    // =======================================================================
+    async function llamar_estado() {
     try {
-        const promesa = await fetch(`${URL_BASE}/estado`, {method: 'GET'});
-        const response = await promesa.json()
+        const promesa = await fetch(`${URL_BASE}/estado`, { method: "GET" });
+        const response = await promesa.json();
+        window.listaEstados = response.estado; // guardar para uso futuro
 
-        const select = document.getElementById("estado");
-        select.innerHTML = "";
-        response.estado.forEach(estado =>  {
-            const option = document.createElement("option")
+        const selectIds = ["estado", "estado_editar"]; // puede llenar ambos si existen
+        selectIds.forEach((id) => {
+        const select = document.getElementById(id);
+        if (select) {
+            select.innerHTML = "";
+            response.estado.forEach((estado) => {
+            const option = document.createElement("option");
             option.value = estado.id_estado;
-    option.text = `${estado.nombre} - ${estado.descripcion}`;
-            select.appendChild(option)
-        })
+            option.text = `${estado.nombre} - ${estado.descripcion}`;
+            select.appendChild(option);
+            });
+        }
+        });
     } catch (error) {
-        console.error("Error al cargar es estado", error)
+        console.error("Error al cargar el estado", error);
     }
-}
+    }
+
+
 
 // ==========================================================================
 // ====================== GET, TIPO DONANTE =================================

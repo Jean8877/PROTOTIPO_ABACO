@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS # para permitir el acceso a la API desde el frontend
 import pymysql
+from datetime import date
 
 import pymysql.cursors
 
@@ -2413,6 +2414,10 @@ def eliminar_certificado_donante(codigo):
         return jsonify({'mensaje': 'Error al eliminar el certificado de donante'})
 
 
+
+
+
+
 # ============================================================
 # =============  RUTA CATEGORIA PRODUCTO  ===========
 # ============================================================
@@ -4271,7 +4276,25 @@ def producto():
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
-        cur.execute("SELECT * FROM producto")
+        cur.execute("""
+            SELECT 
+                p.id_producto,
+                p.nombre,
+                p.descripcion,
+                p.cantidad,
+                p.stock,
+                p.stock_minimo,
+                c.descripcion AS categoria,
+                s.descripcion AS subcategoria,
+                e.nombre AS estado,
+                e.descripcion AS descripcion_estado,
+                u.nombre AS unidad_de_medida
+            FROM producto p
+            LEFT JOIN categoria_producto c ON p.categoria_producto = c.codigo
+            LEFT JOIN subcategoria_producto s ON p.subcategoria_producto = s.codigo
+            LEFT JOIN estado e ON p.estado = e.id_estado
+            LEFT JOIN unidad_de_medida u ON p.unidad_de_medida = u.codigo
+        """)
         datos= cur.fetchall()
         cur.close()
         conn.close()
@@ -4283,226 +4306,231 @@ def producto():
         print(ex)
         return jsonify({'Mensaje': 'Error'})
       
-# ============================================================
-# ================= RUTA INDIVIDUAL PRODUCTO  ======================
-# ============================================================
 
+# ============================================================
+# =============== RUTA INDIVIDUAL PRODUCTO ===================
+# ============================================================
 @app.route("/producto/<int:codigo>", methods=['GET'])
 def producto_individual(codigo):
-
     """
-    Obtener la lista de productos
+    Obtener un producto individual
     ---
     tags:
       - producto
     responses:
       200:
-        description: Lista de productos
+        description: Datos del producto
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
-        cur= conn.cursor()
-        cur.execute("SELECT * FROM producto WHERE id = %s", (codigo,))
-        datos= cur.fetchall()
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+
+        cur.execute("SELECT * FROM producto WHERE id_producto = %s", (codigo,))
+        dato = cur.fetchone()
         cur.close()
         conn.close()
-        if datos:
-            return jsonify({'producto': datos})
+
+        if dato:
+            return jsonify({
+                'mensaje': 'Producto encontrado',
+                'producto': dato
+            })
         else:
-            return jsonify({'mensaje': 'producto no encontrado'})
+            return jsonify({'mensaje': 'Producto no encontrado'})
     except Exception as ex:
-        print(ex)
-        return jsonify({'Mensaje': 'Error'})
+        print("Error:", ex)
+        return jsonify({'mensaje': 'Error al obtener el producto'})
 
 # ============================================================
-# ============== RUTA AGREGAR PRODUCTOS   ====================
+# =============  RUTA PARA REGISTRAR PRODUCTO  ================
 # ============================================================
-
 @app.route("/registro_producto", methods=['POST'])
 def registro_producto():
     """
-    Registrar un nuevo producto
+    Registrar un nuevo producto (acepta ids o nombres para selects)
     ---
     tags:
       - producto
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              nombre:
-                type: string
-              descripcion:
-                type: string
-              cantidad:
-                type: number
-              codigo_barras:
-                type: string
-              stock:
-                type: number
-              stock_maximo:
-                type: number
-              stock_minimo:
-                type: number
-              categoria_producto:
-                type: integer
-              subcategoria_producto:
-                type: integer
-              estado:
-                type: integer
-              fecha_vencimiento:
-                type: string
-              unidad_de_medida:
-                type: integer
-    responses:
-      200:
-        description: Producto registrado
     """
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
 
-        # ==================== VALIDACIÓN DE CAMPOS ====================
-        campos_obligatorios = ['nombre', 'codigo_barras']
-        for campo in campos_obligatorios:
-            if campo not in data or not str(data[campo]).strip():
-                return jsonify({'mensaje': f'El campo "{campo}" es obligatorio.'}), 400
+        # Campos obligatorios
+        required = ['nombre', 'categoria_producto', 'subcategoria_producto', 'unidad_de_medida', 'stock_minimo']
+        for campo in required:
+            if campo not in data or str(data[campo]).strip() == "":
+                return jsonify({'mensaje': f'El campo \"{campo}\" es obligatorio.'}), 400
 
-        nombre = data['nombre'].strip()
-        descripcion = data.get('descripcion', '').strip()
-        cantidad = data.get('cantidad', 0)
-        codigo_barras = data['codigo_barras'].strip()
-        stock = data.get('stock', 0)
-        stock_maximo = data.get('stock_maximo', 0)
-        stock_minimo = data.get('stock_minimo', 0)
-        categoria_producto = data.get('categoria_producto')
-        subcategoria_producto = data.get('subcategoria_producto')
-        estado = data.get('estado')
-        fecha_vencimiento = data.get('fecha_vencimiento')
-        unidad_de_medida = data.get('unidad_de_medida')
+        nombre = str(data['nombre']).strip()
+        descripcion = str(data.get('descripcion', '')).strip()
+        raw_categoria = data['categoria_producto']
+        raw_subcategoria = data['subcategoria_producto']
+        raw_unidad = data['unidad_de_medida']
+        raw_stock_min = data['stock_minimo']
 
-        # ==================== VALIDACIÓN DE TIPOS ====================
+        # ==================== Validaciones de tipos básicos ====================
         try:
-            cantidad = float(cantidad)
-            stock = int(stock)
-            stock_maximo = int(stock_maximo)
-            stock_minimo = int(stock_minimo)
-        except ValueError:
-            return jsonify({'mensaje': 'Los campos de cantidad y stock deben ser numéricos.'}), 400
+            stock_minimo = int(raw_stock_min)
+        except (ValueError, TypeError):
+            return jsonify({'mensaje': 'stock_minimo debe ser un número entero válido.'}), 400
 
-        # ==================== VALIDACIÓN LÓGICA ====================
-        if stock_minimo > stock_maximo:
-            return jsonify({'mensaje': 'El stock mínimo no puede ser mayor que el stock máximo.'}), 400
+        if stock_minimo < 0:
+            return jsonify({'mensaje': 'stock_minimo debe ser mayor o igual a 0.'}), 400
 
-        # ==================== CONEXIÓN A BASE DE DATOS ====================
+        # ==================== Conexión DB ====================
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
 
-        # ==================== VALIDAR CÓDIGO DE BARRAS REPETIDO ====================
-        cur.execute("SELECT codigo_barras FROM producto WHERE codigo_barras = %s", (codigo_barras,))
-        existente = cur.fetchone()
-        if existente:
+        # ==================== Resolver IDs ====================
+        def resolve_id(raw_value, table, id_col='codigo', name_col='nombre', cur=None):
+            try:
+                candidate_id = int(raw_value)
+                cur.execute(f"SELECT {id_col} FROM {table} WHERE {id_col} = %s LIMIT 1", (candidate_id,))
+                if cur.fetchone():
+                    return candidate_id
+                raise ValueError(f"No existe en {table} el id {candidate_id}")
+            except (ValueError, TypeError):
+                name = str(raw_value).strip()
+                if name == "":
+                    raise ValueError(f"Valor vacío para {table}")
+                cur.execute(f"SELECT {id_col} FROM {table} WHERE {name_col} = %s LIMIT 1", (name,))
+                row = cur.fetchone()
+                if row:
+                    return row[0]
+                raise ValueError(f"No se encontró en {table} un registro con nombre '{name}'")
+
+        try:
+            categoria_id = resolve_id(raw_categoria, 'categoria_producto', 'codigo', 'nombre', cur)
+            subcategoria_id = resolve_id(raw_subcategoria, 'subcategoria_producto', 'codigo', 'nombre', cur)
+            unidad_id = resolve_id(raw_unidad, 'unidad_de_medida', 'codigo', 'nombre', cur)
+        except ValueError as ve:
             cur.close()
             conn.close()
-            return jsonify({'mensaje': 'El código de barras ya existe en otro producto.'}), 400
+            return jsonify({'mensaje': str(ve)}), 400
 
-        # ==================== INSERCIÓN ====================
+        # ==============================================================
+        # 🔍 VALIDACIÓN ESTRICTA: subcategoría pertenece a la categoría
+        # ==============================================================
+        cur.execute("""
+            SELECT 1 
+            FROM subcategoria_producto 
+            WHERE codigo = %s AND categoria_producto = %s
+        """, (subcategoria_id, categoria_id))
+        relacion_valida = cur.fetchone()
+
+        if not relacion_valida:
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'La subcategoría no pertenece a la categoría seleccionada.'}), 400
+
+        # ==================== Nombre único ====================
+        cur.execute("SELECT id_producto FROM producto WHERE nombre = %s LIMIT 1", (nombre,))
+        if cur.fetchone():
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'Ya existe un producto con ese nombre.'}), 400
+
+        # ==================== Inserción ====================
+        estado_activo = 1  # asumo que 1 es el estado activo
+
         cur.execute("""
             INSERT INTO producto (
-                nombre, descripcion, cantidad, codigo_barras, fecha_vencimiento, 
-                stock, stock_maximo, stock_minimo, categoria_producto, 
-                subcategoria_producto, estado, unidad_de_medida
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (nombre, descripcion, cantidad, codigo_barras, fecha_vencimiento, stock,
-              stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida))
+                nombre, descripcion, categoria_producto, subcategoria_producto,
+                unidad_de_medida, stock_minimo, estado
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (nombre, descripcion, categoria_id, subcategoria_id, unidad_id, stock_minimo, estado_activo))
 
         conn.commit()
         cur.close()
         conn.close()
 
-        return jsonify({'mensaje': 'Producto registrado correctamente.'}), 201
+        return jsonify({'mensaje': 'Producto registrado correctamente y marcado como activo.'}), 201
 
     except Exception as ex:
-        print("Error:", ex)
-        return jsonify({'mensaje': f'Error en el servidor: {str(ex)}'}), 500
+        print("Error en /registro_producto:", ex)
+        return jsonify({'mensaje': f'Error interno del servidor: {str(ex)}'}), 500
       
-
 # ============================================================
 # =============  RUTA PARA ACTUALIZAR PRODUCTO ===============
 # ============================================================
-
-@app.route("/actualizar_producto/<id>", methods=["PUT"])
+@app.route("/actualizar_producto/<int:id>", methods=["PUT"])
 def actualizar_producto(id):
     """
     Actualizar un producto existente
-    ---
-    tags:
-      - producto
-    parameters:
-      - name: id
-        in: path
-        required: true
-        type: integer
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              nombre:
-                type: string
-              descripcion:
-                type: string
-              cantidad:
-                type: string
-              codigo_barras:
-                type: string
-              stock:
-                type: string
-              stock_maximo:
-                type: string
-              stock_minimo:
-                type: string
-              categoria_producto:
-                type: string
-              subcategoria_producto:
-                type: string
-              estado:
-                type: string
-              unidad_de_medida:
-                type: string
-    responses:
-      200:
-        description: Producto actualizado
     """
     try:
         data = request.get_json()
-        nombre = data['nombre']
-        descripcion = data['descripcion']
-        cantidad = data['cantidad']
-        codigo_barras = data['codigo_barras']
-        stock = data['stock']
-        stock_maximo = data['stock_maximo']
-        stock_minimo = data['stock_minimo']
-        categoria_producto = data['categoria_producto']
-        subcategoria_producto = data['subcategoria_producto']
-        estado = data['estado']
-        unidad_de_medida = data['unidad_de_medida']
+        print(" Datos recibidos:", data)
+
+        categoria_producto = data.get('categoria_producto')
+        subcategoria_producto = data.get('subcategoria_producto')
+        nombre = data.get('nombre')
+        stock_minimo = data.get('stock_minimo')
+        unidad_de_medida = data.get('unidad_de_medida')
+        descripcion = data.get('descripcion')
+        estado = data.get('estado')
+
+        print("Valores para actualizar:", (
+            nombre, descripcion, stock_minimo,
+            categoria_producto, subcategoria_producto,
+            unidad_de_medida, estado, id
+        ))
 
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
+
         cur.execute("""
-                    UPDATE producto SET nombre= %s, descripcion= %s, cantidad= %s, codigo_barras= %s, stock= %s, stock_maximo= %s, stock_minimo= %s, categoria_producto= %s, subcategoria_producto= %s, estado= %s, unidad_de_medida= %s WHERE id_producto= %s""", 
-                    (nombre, descripcion, cantidad, codigo_barras, stock, stock_maximo, stock_minimo, categoria_producto, subcategoria_producto, estado, unidad_de_medida,id))
+            UPDATE producto
+            SET nombre = %s,
+                descripcion = %s,
+                stock_minimo = %s,
+                categoria_producto = %s,
+                subcategoria_producto = %s,
+                unidad_de_medida = %s,
+                estado = %s
+            WHERE id_producto = %s
+        """, (
+            nombre, descripcion, stock_minimo,
+            categoria_producto, subcategoria_producto,
+            unidad_de_medida, estado, id
+        ))
+
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
+
+        return jsonify({'mensaje': 'Producto actualizado correctamente'})
+
     except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
+        print("❌ Error al actualizar producto:", ex)
+        return jsonify({'mensaje': 'Error al actualizar el producto'}), 500
+
+# ============================================================
+# ========== RUTA SUBCATEGORÍAS POR CATEGORÍA ================
+# ============================================================
+@app.route('/subcategoria/<int:categoria_id>', methods=['GET'])
+def obtener_subcategorias_por_categoria(categoria_id):
+    try:
+        conn = conectar("localhost", "root", "Es1084734914", "proyecto")
+        cur = conn.cursor(pymysql.cursors.DictCursor)
+
+        cur.execute("""
+            SELECT codigo, descripcion 
+            FROM subcategoria_producto 
+            WHERE categoria_producto = %s
+            ORDER BY descripcion
+        """, (categoria_id,))
+        subcategorias = cur.fetchall()
+
+        cur.close()
+        conn.close()
+
+        # Retornar con clave consistente
+        return jsonify({"subcategoria_producto": subcategorias}), 200
+
+    except Exception as ex:
+        print("Error al obtener subcategorías por categoría:", ex)
+        return jsonify({"mensaje": f"Error interno del servidor: {str(ex)}"}), 500
 
 # ============================================================
 # =============  RUTA PARA ELIMINAR PRODUCTO  ================
