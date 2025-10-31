@@ -65,7 +65,7 @@
                 const metodo = document.getElementById('metodoPago').value;
 
                 if (!monto || monto <= 0 || !metodo) {
-                    swal("Error", "Por favor ingresa un monto válido y selecciona un método de pago.", "error");
+                    swal("Error", "Por favor selecciona un método de Donación.", "error");
                     return;
                 }
 

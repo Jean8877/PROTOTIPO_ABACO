@@ -42,4 +42,24 @@
             padding: 8px 15px;
             font-size: 14px;
         }
-    
+    /* --- Botón Regresar --- */
+.container.bg-white.p-4.rounded.shadow {
+  position: relative; /* el botón se posiciona dentro del contenedor del formulario */
+}
+
+.container.bg-white.p-4.rounded.shadow .btn-outline-success.position-absolute {
+  position: sticky;  /* ✅ se mantiene visible al hacer scroll */
+  top: 10px;
+  left: 10px;
+  z-index: 20;
+  padding: 6px 12px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease-in-out;
+}
+
+.container.bg-white.p-4.rounded.shadow .btn-outline-success.position-absolute:hover {
+  background: #198754;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}

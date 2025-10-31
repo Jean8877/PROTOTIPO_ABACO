@@ -7,6 +7,8 @@ html {
     padding: 0;
     height: 100%;
     background-color: #f5f5f5;
+    overflow: hidden; /* Evita que toda la página se desplace */
+
 }
 
 /* HEADER */
@@ -24,8 +26,37 @@ header {
 .main-layout {
     display: flex;
     height: calc(100vh - 60px);
+    
     /* Resta el alto del header */
 }
+/* CONTENEDOR CENTRAL CON SCROLL INTERNO */
+.container {
+    flex: 1;
+    overflow-y: auto; /* ✅ Scroll solo en el contenido */
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+/* Barra de scroll personalizada */
+.container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background-color: #198754;
+    border-radius: 4px;
+}
+/* --- BOTÓN DE REGRESAR FIJO DENTRO DEL FORMULARIO --- */
+.container form {
+    position: relative; /* <-- Define el contenedor de referencia */
+}
+
+.container form .btn.position-absolute {
+    top: 15px;
+    left: 15px;
+    z-index: 10;
+}
+
 
 /* SIDEBAR */
 .sidebar {
@@ -120,13 +151,15 @@ header img {
 }
 
 /* CONTENIDO */
-.content {
+/*.content {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
     background-color: #f5f5f5;
     position: relative;
-}
+      overflow-y: auto; /* ✅ Scroll solo dentro del contenedor */
+
+/**/
 
 /* --- ESTILOS DEL FORMULARIO Y TABLA --- */
 form,
