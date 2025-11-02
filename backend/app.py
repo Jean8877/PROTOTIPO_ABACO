@@ -4281,8 +4281,6 @@ def producto():
                 p.id_producto,
                 p.nombre,
                 p.descripcion,
-                p.cantidad,
-                p.stock,
                 p.stock_minimo,
                 c.descripcion AS categoria,
                 s.descripcion AS subcategoria,

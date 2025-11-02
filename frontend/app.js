@@ -84,7 +84,6 @@ function mostrar_movimiento(movimientos){
     });
     document.getElementById("tbodyMovimientos").innerHTML = info;
 }
-
 async function movimiento_producto() {
     try{
         const promesa = await fetch(`${URL_BASE}/movimiento_producto`, {method : 'GET'});
@@ -180,14 +179,13 @@ async function eliminar_movimiento_producto(codigo) {
         });
         document.getElementById("tbodyunidad_de_medida").innerHTML = info;
     }
-    
-    async function unidad_de_medida() {        
-        try{
-            const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, {method: 'GET'});
+    async function unidad_de_medida() {
+        try {
+            const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, { method: 'GET' });
             const response = await promesa.json();
             console.log(response)
-            mostrar_uni_medida  (response)
-        }catch(error){
+            mostrar_uni_medida(response)
+        } catch (error) {
             console.error(error)
         }
     }
@@ -278,7 +276,6 @@ function mostrar_producto(producto) {
                 <td>${i.estado}</td>
                 <td>
                     <button type="button" onclick="eliminar_producto(${i.id_producto})">Eliminar</button>
-                    <button type="button" onclick="abrirModalVer(${i.id_producto})">Ver</button>
                     <button type="button" onclick="abrirModalEditar(${i.id_producto})">Actualizar</button>
                 </td>
                 </tr>
@@ -413,7 +410,6 @@ async function cargarCategoriasEditar(categoriaActual = "") {
   }
 }
 
-
 // ==========================================================================
 // ================ CARGAR LA OPCION DE LA SUBCATEGORIA   ===================
 // ==========================================================================
@@ -519,7 +515,6 @@ async function guardar_cambios() {
   }
 }
 
-
 // ==========================================================================
 // =======================   ABRIR MODAL EDITAR   ===========================
 // ==========================================================================
@@ -608,54 +603,6 @@ async function cargarUnidadesEditar() {
 }
 
 
-// ==========================================================================
-// ======================== ABRIR MODAL VER PRODUCTO =====================
-// ==========================================================================
-async function abrirModalVer(id_producto) {
-  try {
-    const response = await fetch(`${URL_BASE}/producto/${id_producto}`);
-    const data = await response.json();
-
-    if (response.ok && data.producto) {
-      const p = data.producto;
-
-      // Buscar nombres descriptivos
-      const categoria =
-        window.listaCategorias?.find((c) => c.codigo === p.categoria_producto)
-          ?.descripcion || "Sin categoría";
-      const subcategoria =
-        window.listaSubcategorias?.find(
-          (s) => s.codigo === p.subcategoria_producto
-        )?.descripcion || "Sin subcategoría";
-      const unidad =
-        window.listaUnidades?.find((u) => u.codigo === p.unidad_de_medida)
-          ?.descripcion || "Sin unidad";
-      const estado =
-        window.listaEstados?.find((e) => e.codigo === p.estado)?.descripcion ||
-        "Sin estado";
-
-      // Asignar los valores al modal
-      document.getElementById("ver_id").innerText = p.id_producto;
-      document.getElementById("ver_nombre").innerText = p.nombre;
-      document.getElementById("ver_descripcion").innerText =
-        p.descripcion || "Sin descripción";
-      document.getElementById("ver_stock_minimo").innerText = p.stock_minimo;
-      document.getElementById("ver_categoria").innerText = categoria;
-      document.getElementById("ver_subcategoria").innerText = subcategoria;
-      document.getElementById("ver_estado").innerText = estado;
-      document.getElementById("ver_unidad").innerText = unidad;
-
-      // Mostrar modal
-      const modal = new bootstrap.Modal(document.getElementById("modalVer"));
-      modal.show();
-    } else {
-      alert("Producto no encontrado");
-    }
-  } catch (error) {
-    console.error("Error al obtener el producto:", error);
-    alert("Ocurrió un error al intentar ver el producto.");
-  }
-}
 
 
 
@@ -701,7 +648,6 @@ async function eliminar_producto(codigo) {
   }
 }
 
-
 // ==========================================================================
 // =================== GET, CATEGORIA PORDUCTO ==============================
 // ==========================================================================
@@ -709,13 +655,13 @@ async function eliminar_producto(codigo) {
     function mostrar_categoria(categoria) {
         let info = "";
         categoria.categoria_producto.forEach(i => {
-            info +=`
+            info += `
             <tr>
             <td>${i.codigo}</td>
             <td>${i.descripcion}</td>
             <td>
                 <button type="button" onclick="eliminar_categoria(${i.codigo})">Eliminar</button>
-                <button type="button" onclick="mostrar_categoria(${i.codigo})">Actualizar</button>
+                <button type="button" onclick="abrirModalActualizarCategoria(${i.codigo}, '${i.descripcion}')">Actualizar</button>
             </td>
             </tr>
             `;
@@ -798,18 +744,17 @@ function mostrar_subcategoria(subcategoria) {
     });
     document.getElementById("tbodysubcategoria_producto").innerHTML = info;
 }
-
-async function subcategoria_producto() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_subcategoria(response)
-        llamar_categoria()
-    }catch(error){
-        console.error("Error al obtener subcategorías:", error)
+    async function subcategoria_producto() {
+        try{
+            const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, {method: 'GET'});
+            const response = await promesa.json();
+            console.log(response)
+            mostrar_subcategoria(response)
+            llamar_categoria()
+        }catch(error){
+            console.error("Error al obtener subcategorías:", error)
+        }
     }
-}
 
 // ==========================================================================
 // =================== POST, SUBCATEGORIA PRODUCTO===========================
@@ -853,10 +798,8 @@ async function llamar_categoria() {
         const selectCategoria = document.getElementById("categoria");
         selectCategoria.innerHTML = "<option value=''>Seleccione una categoría</option>";
 
-        // Guardar lista globalmente para reutilizar
         window.listaCategorias = response.categoria_producto || [];
 
-        // Llenar el select de categorías
         window.listaCategorias.forEach(categoria => {
             const option = document.createElement("option");
             option.value = categoria.codigo;
@@ -864,7 +807,6 @@ async function llamar_categoria() {
             selectCategoria.appendChild(option);
         });
 
-        // Escuchar el cambio de categoría para cargar subcategorías dependientes
         selectCategoria.addEventListener("change", async function () {
             const categoriaSeleccionada = this.value;
             if (categoriaSeleccionada) {
@@ -879,13 +821,11 @@ async function llamar_categoria() {
     }
 }
 
-// Limpiar subcategorías cuando no hay categoría seleccionada
 function limpiar_subcategorias() {
     const selectSub = document.getElementById("subcategoria");
     selectSub.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
 }
 
-// Cargar subcategorías asociadas a la categoría seleccionada
 async function llamar_subcategoria_por_categoria(categoria_id) {
     try {
         const promesa = await fetch(`${URL_BASE}/subcategoria/${categoria_id}`, { method: 'GET' });
@@ -924,7 +864,6 @@ async function llamar_todas_subcategorias() {
     console.error("Error al cargar todas las subcategorías:", error);
   }
 }
-
 
 // ==========================================================================
 // =================== DELETE, SUBCATEGORIA PRODUCTO ========================
@@ -1060,8 +999,6 @@ async function eliminar_bodega(codigo) {
     }
     }
 
-
-
 // ==========================================================================
 // ====================== GET, TIPO DONANTE =================================
 // ==========================================================================
@@ -1147,7 +1084,6 @@ async function llamar_tipo_documento() {
         console.error("Error al cargar el tipo de documento", error)
     }
 }
-
 
 // =======================================================================
 // ===================== LLAMAR TIPO_DONANTE =============================
@@ -1304,7 +1240,6 @@ async function agregar_donante() {
     }
 }
 
-
 // ==========================================================================
 // ====================== DELETE,DONANTE ====================================
 // ==========================================================================
@@ -1388,7 +1323,6 @@ async function gasto() {
     }
 }
 
-
 // ==========================================================================
 // ================  CONSULTA GASTO INDIVIDUAL    ===========================
 // ==========================================================================
@@ -1409,8 +1343,6 @@ async function gasto_id(id) {
 // ==========================================================================
 // ===================  GET, TIPO ORGANIZACION   ===========================
 // ==========================================================================
-
-
 
 function mostrartipo_organizacion(tipo_organizacion) {
     let info ="";
