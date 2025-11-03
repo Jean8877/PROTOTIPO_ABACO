@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-  <script src="app.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión de Tipo de Donantes</title>
@@ -21,7 +20,7 @@
     <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
     <div>
       <i class="bi bi-person-circle"></i>
-      <span class="me-3"> <strong>Karina</strong> </span>
+      <span class="me-3"> <strong>{{ usuario }}</strong> </span>
       <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
     </div>
   </header>
@@ -39,80 +38,93 @@
       <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
       <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
       <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
-<a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i
-                    class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
-                      </div>
-
-     <div class="container my-4">
-
-    <div class="container bg-white p-4 rounded shadow">
-      <form id="formTipoDonante">
-        <!-- 🔹 Botón de regresar en la esquina del formulario -->
-        <a href="menu_donante.html" class="btn btn-outline-success btn-sm position-absolute">
-          <i class="bi bi-arrow-left"></i>
-        </a>
-        <h1>Registrar Tipo de Donante</h1>
-        <label for="nombreTipo">Nombre del tipo de Donante</label>
-        <input type="text" id="nombreTipo" placeholder="Nombre del tipo de Donante" required />
-        <label for="descripcionTipo">Descripción del tipo de Donante</label>
-        <textarea id="descripcionTipo" placeholder="Descripción del tipo de Donante" required></textarea>
-        <button type="submit">Guardar Tipo de Donante</button>
-      </form>
-
-      <h2>Lista de Tipos de Donantes</h2>
-      <table id="tablaTiposDonantes">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tipo de Donante</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tbodytipo_donante"></tbody>
-      </table>
+      <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar
+          sesión</span></a>
     </div>
-  </div>
 
-  <!-- 🔹 Modal para actualizar Tipo de Donante -->
-  <div class="modal fade" id="modalActualizarCategoria" tabindex="-1" aria-labelledby="modalActualizarParroquiaLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="modalActualizartipodonanteLabel">Actualizar Fundación</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <form id="formActualizartipodonante">
-          <div class="mb-3">
-            <label for="idTipoDonanteModal" class="form-label">ID</label>
-            <input type="text" id="idTipoDonanteModal" class="form-control" readonly>
-          </div>
-          
-          <div class="mb-3">
-            <label for="nombreTipoDonanteModal" class="form-label">Nombre del tipo de donante</label>
-            <input type="text" id="nombreTipoDonanteModal" class="form-control" required>
-          </div>
-         
-          <div class="mb-3">
-            <label for="descripcionTipoDonanteModal" class="form-label">Descripción</label>
-            <input type="text" id="descripcionTipoDonanteModal" class="form-control" required>
-          </div>
-          <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-success">Actualizar</button>
-          </div>
+    <div class="container my-4">
+
+      <div class="container bg-white p-4 rounded shadow">
+        <form id="formTipoDonante">
+          <!-- 🔹 Botón de regresar en la esquina del formulario -->
+          <a href="menu_donante.html" class="btn btn-outline-success btn-sm position-absolute">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+          <h1>Registrar Tipo de Donante</h1>
+          <label for="nombreTipo">Nombre del tipo de Donante</label>
+          <input type="text" id="nombreTipo" name="nombreTipo" placeholder="Nombre del tipo de Donante" required />
+          <label for="descripcionTipo">Descripción del tipo de Donante</label>
+          <textarea id="descripcionTipo" name="descripcionTipo" placeholder="Descripción del tipo de Donante" required></textarea>
+          <button type="submit">Guardar Tipo de Donante</button>
         </form>
+
+        <h2>Lista de Tipos de Donantes</h2>
+        <table id="tablaTiposDonantes">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tipo de Donante</th>
+              <th>Estado</th>
+              <th>Fecha Registro</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbodytipo_donante"></tbody>
+        </table>
       </div>
     </div>
-  </div>
-</div>
 
-  <script>
-    tipo_donante()
-    resaltar()
-  </script>
-  <script src="/static/js/notificacion.js"></script>
-  <script src="/static/js/resaltar.js"></script>
+    <!-- 🔹 Modal para actualizar Tipo de Donante -->
+    <div class="modal fade" id="modalActualizarCategoria" tabindex="-1" aria-labelledby="modalActualizarParroquiaLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title" id="modalActualizartipodonanteLabel">Actualizar Fundación</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+              aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formActualizartipodonante">
+              <div class="mb-3">
+                <label for="idTipoDonanteModal" class="form-label">ID</label>
+                <input type="text" id="idTipoDonanteModal" class="form-control" readonly>
+              </div>
+
+              <div class="mb-3">
+                <label for="nombreTipoDonanteModal"  class="form-label">Nombre del tipo de donante</label>
+                <input type="text" id="nombreTipoDonanteModal" name="nombreTipoDonanteModal" class="form-control" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="descripcionTipoDonanteModal" class="form-label">Descripción</label>
+                <input type="text" id="descripcionTipoDonanteModal" name="descripcionTipoDonanteModal" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label for="estadoTipoDonanteModal" class="form-label">Estado</label>
+                <select id="estadoTipoDonanteModal" name="estadoTipoDonanteModal" class="form-control">
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+      resaltar()
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/tipo_donante.js"></script>
+    <script src="/static/js/notificacion.js"></script>
+    <script src="/static/js/resaltar.js"></script>
 </body>
 
 </html>
