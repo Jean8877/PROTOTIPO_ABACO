@@ -115,7 +115,7 @@ async function eliminarTipo(id) {
         const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
-            swal("Eliminado", "Tipo de donante eliminado!", "success");
+            swal("Eliminado", "Tipo de donante eliminado! " +  id, "success");
             tipo_donante();
         } else {
             swal("Error", data.message, "error");

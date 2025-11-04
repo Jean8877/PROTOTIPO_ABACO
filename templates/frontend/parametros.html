@@ -24,7 +24,7 @@
         <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
         <div>
             <i class="bi bi-person-circle"></i>
-            <span class="me-3"> <strong>Karina</strong> </span>
+            <span class="me-3"> <strong>{{ usuario }}</strong> </span>
             <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
         </div>
     </header>
@@ -126,82 +126,11 @@
     </div>
 
     <!-- JS parametrización -->
-    <script>
-        'use strict';
-        const STORAGE_KEY = 'paramsBancoAlimentos_v1';
-        const initialStructure = { document: [], gender: [], status: [] };
-        let systemParams = {};
-        function saveParams() { localStorage.setItem(STORAGE_KEY, JSON.stringify(systemParams)); }
-        function loadParams() {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            systemParams = raw ? JSON.parse(raw) : initialStructure;
-        }
-        function showNotification(msg, type = 'success') {
-            const n = document.getElementById('notification');
-            n.textContent = msg;
-            n.className = `notification ${type} show`;
-            setTimeout(() => { n.className = `notification ${type}`; }, 2500);
-        }
-        const paramsContainer = document.getElementById('paramsContainer');
-        function clearParamsGrid() { paramsContainer.innerHTML = ''; }
-        function createParamCard(type, param) {
-            const card = document.createElement('article');
-            card.className = 'param-card';
-            card.dataset.type = type;
-            card.dataset.code = param.code;
-            card.innerHTML = `
-        <div class="param-header">
-          <span class="param-code">${param.code}</span>
-          <span class="param-status ${param.status === 'active' ? 'status-active' : 'status-inactive'}">
-            ${param.status === 'active' ? 'Activo' : 'Inactivo'}
-          </span>
-        </div>
-        <h3 class="param-name">${param.name}</h3>
-        <div class="param-desc">${param.description || ''}</div>
-        <div class="param-actions">
-          <button class="action-btn edit-btn" data-action="edit"><i class="fas fa-edit"></i> Editar</button>
-          <button class="action-btn toggle-btn" data-action="toggle">${param.status === 'active'
-                    ? '<i class="fas fa-ban"></i> Desactivar' : '<i class="fas fa-check"></i> Activar'}</button>
-          <button class="action-btn delete-btn" data-action="delete"><i class="fas fa-trash"></i> Eliminar</button>
-        </div>`;
-            return card;
-        }
-        function renderParams(filterType = 'all', searchTerm = '') {
-            clearParamsGrid();
-            const term = searchTerm.toLowerCase();
-            Object.keys(systemParams).forEach(type => {
-                systemParams[type].forEach(param => {
-                    if (filterType !== 'all' && filterType !== type) return;
-                    if (term && !param.name.toLowerCase().includes(term) && !param.code.toLowerCase().includes(term)) return;
-                    paramsContainer.appendChild(createParamCard(type, param));
-                });
-            });
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            loadParams();
-            renderParams();
-            document.getElementById('openAdd').addEventListener('click', () => {
-                document.getElementById('modal').classList.add('show');
-            });
-            document.getElementById('closeModalBtn').addEventListener('click', () => {
-                document.getElementById('modal').classList.remove('show');
-            });
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                renderParams(getActiveFilter(), e.target.value);
-            });
-            document.querySelectorAll('.param-type-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.param-type-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderParams(btn.dataset.type, document.getElementById('searchInput').value);
-                });
-            });
-        });
-
-    </script>
+    
 <script>
     resaltar()
   </script>
+  <script src="/static/js/tipo_documento.js"></script>
     <script src="/static/js/resaltar.js"></script>
     <script src="/static/js/notificacion.js"></script>
 </body>

@@ -33,7 +33,7 @@
     <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
     <div>
       <i class="bi bi-person-circle"></i>
-      <span class="me-3"> <strong>Karina</strong> </span>
+      <span class="me-3"> <strong>{{ usuario }}</strong> </span>
       <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
 
 
@@ -44,17 +44,17 @@
   <div class="main-layout">
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-      <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
-      <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
-      <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
-      <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
-      <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
-      <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
-      <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
-      <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
-      <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
-      <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+      <a href="{{ url_for('menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+      <a href="{{ url_for('menu_de_parroquias') }}"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+      <a href="{{ url_for('menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+      <a href="{{ url_for('menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+      <a href="{{ url_for('pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+      <a href="{{ url_for('lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+      <a href="{{ url_for('tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+      <a href="{{ url_for('movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+      <a href="{{ url_for('menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
+      <a href="{{ url_for('menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+      <a href="{{ url_for('pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
       <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar
           sesión</span></a>
     </div>
@@ -69,7 +69,7 @@
         <div class="row g-4 justify-content-center">
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='menu_de_parroquias.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('menu_de_parroquias')}}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="64" height="64" viewBox="0 0 64 64">
                 <path fill="currentColor"
                   d="M61.063 60.125h-.938v-15.01c.731.035 1.443-.371 1.739-1.074a1.754 1.754 0 0 0-.965-2.297l-15.774-6.443v-6.386l.348.141c.906.367 1.956-.058 2.329-.944c.376-.887-.059-1.914-.963-2.28l-13.276-5.523V9.813h4.688V6.688h-4.688V2h-3.125v4.688H25.75v3.125h4.688v10.495l-13.276 5.523c-.904.366-1.339 1.394-.963 2.28c.373.887 1.423 1.312 2.327.944l.35-.142V35.3L3.099 41.744a1.754 1.754 0 0 0-.963 2.297c.294.703 1.008 1.11 1.739 1.074v15.01h-.937c-.517 0-.938.422-.938.938s.421.937.938.937h58.125c.514 0 .937-.422.937-.937s-.423-.938-.937-.938m-42.188 0H5.75V44.466l13.125-5.361zm12.188-1.562H28.25V55.75h2.813zm0-4.063H28.25v-2.813c0-1.742 1.199-3.198 2.813-3.617zm4.687 4.063h-2.813V55.75h2.813zm0-4.063h-2.813v-6.429c1.612.419 2.813 1.875 2.813 3.616zm7.5 5.625h-5.625v-8.438a5.625 5.625 0 0 0-11.25 0v8.438H20.75V28.153L32 23.59l11.25 4.564zm15 0H45.125V39.104l13.125 5.361z" />
@@ -83,7 +83,7 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='menu_producto.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('menu_producto')}}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 24 24">
                 <path fill="none"
                   d="M7 3h9a3 3 0 0 1 3 3v13a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3m0 1a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3v6.7l-3-2.1l-3 2.1zm5 0H8v4.78l2-1.4l2 1.4zM9 19v-2H7v-1h2v-2h1v2h2v1h-2v2z"
@@ -97,7 +97,7 @@
 
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='menu_donante.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('menu_donante')}}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 24 24">
                 <g fill="none">
                   <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-linecap="round" stroke-width="0.5" />
@@ -114,7 +114,7 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='pagina_principal.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('pagina_principal')}}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 256 256">
                 <path fill="currentColor"
                   d="M227.9 144.24a20.45 20.45 0 0 0-17.84-3.53l-11.95 2.75C223.26 121.88 236 100.58 236 80c0-24.26-19.5-44-43.46-44A43.41 43.41 0 0 0 156 55.44A43.41 43.41 0 0 0 119.46 36C95.5 36 76 55.74 76 80c0 11.85 4.11 23.44 12.81 36a27.8 27.8 0 0 0-18.67 8.17L46.34 148H16a12 12 0 0 0-12 12v40a12 12 0 0 0 12 12h104a4 4 0 0 0 1-.12l64-16a5 5 0 0 0 .6-.2l38.82-16.54l.22-.1a20.6 20.6 0 0 0 3.29-34.8ZM119.46 44a35.15 35.15 0 0 1 32.84 21.52a4 4 0 0 0 7.4 0A35.15 35.15 0 0 1 192.54 44C211.76 44 228 60.49 228 80c0 21.27-16.13 44-47.94 67.61L160.75 152a23.76 23.76 0 0 0 3.25-12a24 24 0 0 0-24-24H98.69C88.69 103 84 91.5 84 80c0-19.51 16.24-36 35.46-36M12 200v-40a4 4 0 0 1 4-4h28v48H16a4 4 0 0 1-4-4m209.13-28.17l-38.41 16.37l-63.21 15.8H52v-50.34l23.8-23.8A19.86 19.86 0 0 1 89.94 124H140a16 16 0 0 1 0 32h-28a4 4 0 0 0 0 8h32a4 4 0 0 0 .9-.1l67-15.41h.16a12.6 12.6 0 0 1 9 23.38Z" />
@@ -125,7 +125,7 @@
             </div>
           </div>
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='lista_donaciones.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('lista_donaciones')}}'">
               <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                 stroke-width="0.5">
                 <path fill="none" stroke="currentColor" stroke-width="0.9"
@@ -145,7 +145,7 @@
             </div>
           </div>
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='tabla_producto.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('tabla_producto')}}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 32 32"
                 fill="none" stroke="currentColor" stroke-width="1">
                 <path d="M8 18h6v2H8zm0 4h10v2H8z" />
@@ -163,7 +163,7 @@
 
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='movimiento_inv.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('movimiento_inv')}}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 32 32">
                 <path fill="none"
                   d="M12 13h14.2l-2.6 2.6L25 17l5-5l-5-5l-1.4 1.4l2.6 2.6H12zm16 6H14.8l2.6-2.6L16 15l-5 5l5 5l1.4-1.4l-2.6-2.6H28zM22 7V4c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v24c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-3h-2v3H4V4h16v3z"
@@ -177,7 +177,7 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='menu_gastos.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('menu_gastos')}}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 48 48">
                 <rect width="39" height="31" x="4.5" y="8.5" fill="none" stroke="currentColor" stroke-linecap="round"
                   stroke-linejoin="round" rx="4" ry="4" stroke-width="1" />
@@ -194,7 +194,7 @@
 
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='menu_reportes.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('menu_reportes')}}'">
               <!-- Outline: documento con gráfico de barras -->
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" class="icon-report" width="70" height="70"
                 viewBox="0 0 48 48" fill="none" style="--icon-stroke:1">
@@ -215,7 +215,7 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-6 col-lg-4">
-            <div class="card text-center p-3" onclick="window.location.href='pag_confi.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{url_for('pag_confi')}}'">
               <!-- Settings / Gear Filled -->
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" class="icon-settings-filled" width="70"
                 height="70" viewBox="0 0 24 24" fill="none">

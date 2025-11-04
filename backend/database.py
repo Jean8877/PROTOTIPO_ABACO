@@ -1,10 +1,10 @@
 import pymysql
 
-def conectar():
-    return pymysql.connectar(
+def get_db_connection():
+    return pymysql.connect(
         host='localhost',
         user='root',
         password='123456',
-        db='proyecto',
+        db='banco_alimentos',
         cursorclass=pymysql.cursors.DictCursor
     )

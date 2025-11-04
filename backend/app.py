@@ -5,11 +5,13 @@ from flask_cors import CORS
 from flasgger import Swagger
 import bcrypt 
 import os
+from datetime import datetime, timedelta
 
 from db import get_db_connection
 from routes.tipo_donante import tipo_donante_bp
 from routes.donante import donantes_bp
 
+from routes.tipo_documento import tipo_documento_bp
 
 # Obtenemos la ruta absoluta de la carpeta "backend"
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -17,15 +19,15 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 app = Flask(
     __name__,
-      template_folder=os.path.join(BASE_DIR, 'templates'),
-      #template_folder=os.path.join(BASE_DIR, 'templates', 'frontend'),
+      #template_folder=os.path.join(BASE_DIR, 'templates'),
+      template_folder=os.path.join(BASE_DIR, 'templates', 'frontend'),
       static_folder=os.path.join(BASE_DIR, 'static')
       )
 
 
 app.register_blueprint(tipo_donante_bp)
-#app.register_blueprint(tipo_donante_bp, url_prefix='/tipo_donante')
-app.register_blueprint(donantes_bp, url_prefix='/donantes')
+app.register_blueprint(donantes_bp, url_prefix='/api/donantes')
+app.register_blueprint(tipo_documento_bp, url_prefix='/api/tipo_documento')
 
 
 CORS(app)  # Habilitar CORS para todas las rutas
@@ -44,12 +46,13 @@ app.secret_key = 'clave-segura'  #  Necesario para manejar sesiones
 # ==============================
 @app.route('/')
 def index():
-    return render_template('frontend/index.html')
+    return render_template('index.html')
 
 
 # ==============================
 # 3️ PROCESAR LOGIN
 # ==============================
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -65,21 +68,64 @@ def login():
 
     cursor = connection.cursor(dictionary=True)
 
-    # Buscar usuario en la BD
-    query = "SELECT * FROM usuarios WHERE correo = %s AND contrasena = %s"
-    cursor.execute(query, (username, password))
+    # Buscar usuario por correo
+    cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (username,))
     user = cursor.fetchone()
 
-    cursor.close()
-    connection.close()
+    if not user:
+        cursor.close()
+        connection.close()
+        return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 401
 
-    if user:
-        # Guardamos info básica en la sesión
+    #  Verificar si el usuario está bloqueado
+    if user['bloqueado_hasta'] and user['bloqueado_hasta'] > datetime.now():
+        tiempo_restante = (user['bloqueado_hasta'] - datetime.now()).seconds // 60
+        return jsonify({
+            'success': False,
+            'message': f'Cuenta bloqueada. Intenta de nuevo en {tiempo_restante} minutos.'
+        }), 403
+
+    # 🔑 Validar contraseña (sin hash)
+    if user['contrasena'] == password:
+        # Reiniciar intentos fallidos si el login es correcto
+        cursor.execute("""
+            UPDATE usuarios 
+            SET intentos_fallidos = 0, bloqueado_hasta = NULL
+            WHERE id_usuario = %s
+        """, (user['id_usuario'],))
+        connection.commit()
+
+        # Guardar sesión
         session['usuario'] = user['nombre_completo']
         session['rol_id'] = user['rol_id']
+
+        cursor.close()
+        connection.close()
+
         return jsonify({'success': True})
+
     else:
-        return jsonify({'success': False, 'message': 'Correo o contraseña incorrectos'}), 401
+        # Incrementar contador de intentos fallidos
+        nuevos_intentos = user['intentos_fallidos'] + 1
+        bloqueado_hasta = None
+
+        if nuevos_intentos >= 3:
+            bloqueado_hasta = datetime.now() + timedelta(hours=2)
+            mensaje = "Cuenta bloqueada por 2 horas debido a múltiples intentos fallidos."
+        else:
+            mensaje = f"Contraseña incorrecta. Intento {nuevos_intentos}/3."
+
+        cursor.execute("""
+            UPDATE usuarios 
+            SET intentos_fallidos = %s, bloqueado_hasta = %s 
+            WHERE id_usuario = %s
+        """, (nuevos_intentos, bloqueado_hasta, user['id_usuario']))
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        return jsonify({'success': False, 'message': mensaje}), 401
 
 # ==============================
 # 4️ PÁGINA PRINCIPAL (POST LOGIN)
@@ -88,7 +134,7 @@ def login():
 def pagina_principal():
     if 'usuario' not in session:
         return redirect(url_for('index'))  # Bloquear acceso si no hay sesión
-    return render_template('frontend/pagina_principal.html', usuario=session['usuario'])
+    return render_template('pagina_principal.html', usuario=session['usuario'])
 
 
 # ==============================
@@ -107,23 +153,18 @@ def logout():
 @app.route('/menu_central')
 def menu_central():
     usuario = session["usuario"]  
-    return render_template('frontend/menu_central.html', usuario=usuario)
+    return render_template('menu_central.html', usuario=usuario)
 
 # Página principal del menú de Donantes
 @app.route('/menu_de_parroquias')
 def menu_de_parroquias():
     usuario = session["usuario"]  
-    return render_template('frontend/menu_de_parroquias.html', usuario=usuario)
+    return render_template('menu_de_parroquias.html', usuario=usuario)
 
 @app.route('/menu_producto')
 def menu_producto():
     usuario = session["usuario"]  
-    return render_template('frontend/menu_producto.html', usuario=usuario)
-
-@app.route('/menu_gastos')
-def menu_gastos():
-    usuario = session["usuario"]  
-    return render_template('frontend/menu_gastos.html', usuario=usuario)
+    return render_template('menu_producto.html', usuario=usuario)
 
 
 
@@ -131,20 +172,59 @@ def menu_gastos():
 @app.route('/menu_donante')
 def menu_donante():
     usuario = session["usuario"]  # aquí puedes pasar la info real del usuario logueado
-    return render_template('frontend/menu_donante.html', usuario=usuario)
+    return render_template('menu_donante.html', usuario=usuario)
 
 # Página para crear/listar tipos de donante
 @app.route('/tipo_donante')
 def tipo_donante_page():
     usuario = session["usuario"]
-    return render_template('frontend/tipo_donante.html', usuario=usuario)
+    return render_template('tipo_donante.html', usuario=usuario)
 
 
 # Página para crear/listar tipos de donante
 @app.route('/donante')
 def donante_page():
     usuario = session["usuario"]
-    return render_template('frontend/donante.html', usuario=usuario)
+    return render_template('donante.html', usuario=usuario)
+
+
+
+
+@app.route('/lista_donaciones')
+def lista_donaciones():
+    usuario = session["usuario"]  
+    return render_template('lista_donaciones.html', usuario=usuario)
+
+@app.route('/tabla_producto')
+def tabla_producto():
+    usuario = session["usuario"]  
+    return render_template('tabla_producto.html', usuario=usuario)
+
+@app.route('/movimiento_inv')
+def movimiento_inv():
+    usuario = session["usuario"]  
+    return render_template('movimiento_inv.html', usuario=usuario)
+
+@app.route('/menu_gastos')
+def menu_gastos():
+    usuario = session["usuario"]  
+    return render_template('menu_gastos.html', usuario=usuario)
+
+@app.route('/menu_reportes')
+def menu_reportes():
+    usuario = session["usuario"]  
+    return render_template('menu_reportes.html', usuario=usuario)
+
+@app.route('/pag_confi')
+def pag_confi():
+    usuario = session["usuario"]  
+    return render_template('pag_confi.html', usuario=usuario)
+
+@app.route('/parametros')
+def parametros():
+    usuario = session["usuario"]  
+    return render_template('parametros.html', usuario=usuario)
+
 
 
 if __name__ == '__main__':

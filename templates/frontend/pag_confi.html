@@ -42,7 +42,7 @@
         <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
         <div>
             <i class="bi bi-person-circle"></i>
-            <span class="me-3"> <strong>Karina</strong> </span>
+            <span class="me-3"> <strong>{{ usuario }}</strong> </span>
             <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="mostrarNotificaciones()"></i>
         </div>
     </header>
@@ -93,7 +93,7 @@
 
                     <!-- Card 3 -->
                     <div class="col-12 col-sm-6 col-lg-4 ">
-                        <div class="card card-config p-4" onclick="window.location.href='parametros.html'">
+                        <div class="card card-config p-4"  onclick="window.location.href='{{ url_for('parametros') }}'">
                             <i class="bi bi-bar-chart-line"></i>
                             <h5>Parametrización</h5>
                             <p>Configura los parámetros del sistema.</p>
