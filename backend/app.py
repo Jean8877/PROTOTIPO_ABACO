@@ -7,6 +7,7 @@ import bcrypt
 import os
 from datetime import datetime, timedelta
 
+from routes.rutas import rutas_dp
 from db import get_db_connection
 from routes.tipo_donante import tipo_donante_bp
 from routes.donante import donantes_bp
@@ -24,7 +25,7 @@ app = Flask(
       static_folder=os.path.join(BASE_DIR, 'static')
       )
 
-
+app.register_blueprint(rutas_dp)
 app.register_blueprint(tipo_donante_bp)
 app.register_blueprint(donantes_bp, url_prefix='/api/donantes')
 app.register_blueprint(tipo_documento_bp, url_prefix='/api/tipo_documento')
@@ -130,11 +131,7 @@ def login():
 # ==============================
 # 4️ PÁGINA PRINCIPAL (POST LOGIN)
 # ==============================
-@app.route('/pagina_principal')
-def pagina_principal():
-    if 'usuario' not in session:
-        return redirect(url_for('index'))  # Bloquear acceso si no hay sesión
-    return render_template('pagina_principal.html', usuario=session['usuario'])
+
 
 
 # ==============================
@@ -145,87 +142,6 @@ def logout():
     session.clear()
     flash('Sesión cerrada correctamente', 'info')
     return redirect(url_for('index'))
-
-
-
-
-# Página principal del menú de Donantes
-@app.route('/menu_central')
-def menu_central():
-    usuario = session["usuario"]  
-    return render_template('menu_central.html', usuario=usuario)
-
-# Página principal del menú de Donantes
-@app.route('/menu_de_parroquias')
-def menu_de_parroquias():
-    usuario = session["usuario"]  
-    return render_template('menu_de_parroquias.html', usuario=usuario)
-
-@app.route('/menu_producto')
-def menu_producto():
-    usuario = session["usuario"]  
-    return render_template('menu_producto.html', usuario=usuario)
-
-
-
-# Página principal del menú de Donantes
-@app.route('/menu_donante')
-def menu_donante():
-    usuario = session["usuario"]  # aquí puedes pasar la info real del usuario logueado
-    return render_template('menu_donante.html', usuario=usuario)
-
-# Página para crear/listar tipos de donante
-@app.route('/tipo_donante')
-def tipo_donante_page():
-    usuario = session["usuario"]
-    return render_template('tipo_donante.html', usuario=usuario)
-
-
-# Página para crear/listar tipos de donante
-@app.route('/donante')
-def donante_page():
-    usuario = session["usuario"]
-    return render_template('donante.html', usuario=usuario)
-
-
-
-
-@app.route('/lista_donaciones')
-def lista_donaciones():
-    usuario = session["usuario"]  
-    return render_template('lista_donaciones.html', usuario=usuario)
-
-@app.route('/tabla_producto')
-def tabla_producto():
-    usuario = session["usuario"]  
-    return render_template('tabla_producto.html', usuario=usuario)
-
-@app.route('/movimiento_inv')
-def movimiento_inv():
-    usuario = session["usuario"]  
-    return render_template('movimiento_inv.html', usuario=usuario)
-
-@app.route('/menu_gastos')
-def menu_gastos():
-    usuario = session["usuario"]  
-    return render_template('menu_gastos.html', usuario=usuario)
-
-@app.route('/menu_reportes')
-def menu_reportes():
-    usuario = session["usuario"]  
-    return render_template('menu_reportes.html', usuario=usuario)
-
-@app.route('/pag_confi')
-def pag_confi():
-    usuario = session["usuario"]  
-    return render_template('pag_confi.html', usuario=usuario)
-
-@app.route('/parametros')
-def parametros():
-    usuario = session["usuario"]  
-    return render_template('parametros.html', usuario=usuario)
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

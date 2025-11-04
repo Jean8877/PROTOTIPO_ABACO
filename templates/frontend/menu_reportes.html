@@ -31,17 +31,17 @@
   <div class="main-layout">
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <a href="{{ url_for('menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-      <a href="{{ url_for('menu_de_parroquias') }}"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
-      <a href="{{ url_for('menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
-      <a href="{{ url_for('menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
-      <a href="{{ url_for('pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
-      <a href="{{ url_for('lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
-      <a href="{{ url_for('tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
-      <a href="{{ url_for('movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
-      <a href="{{ url_for('menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
-      <a href="{{ url_for('menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
-      <a href="{{ url_for('pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+      <a href="{{ url_for('rutas_dp.menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+      <a href="{{ url_for('rutas_dp.menu_de_parroquias') }}"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+      <a href="{{ url_for('rutas_dp.menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+      <a href="{{ url_for('rutas_dp.menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+      <a href="{{ url_for('rutas_dp.pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+      <a href="{{ url_for('rutas_dp.lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+      <a href="{{ url_for('rutas_dp.tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+      <a href="{{ url_for('rutas_dp.movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+      <a href="{{ url_for('rutas_dp.menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
+      <a href="{{ url_for('rutas_dp.menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+      <a href="{{ url_for('rutas_dp.pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
             <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
     </div>
 
@@ -53,7 +53,7 @@
         <div class="row g-4 justify-content-center">
 
           <div class="col-6 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='reportes.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.reportes') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 28 28">
                 <path fill="currentColor"
                   d="M6.75 2A2.75 2.75 0 0 0 4 4.75v5.879c-.61.504-1 1.267-1 2.121v9.5A3.75 3.75 0 0 0 6.75 26h14.5A3.75 3.75 0 0 0 25 22.25v-2.5a2.75 2.75 0 0 0-2-2.646V7.25a2.75 2.75 0 0 0-1.5-2.45V17h-1V4.75A2.75 2.75 0 0 0 17.75 2zM19 17h-.672a1.25 1.25 0 0 1-.883-.366l-5.829-5.828A2.75 2.75 0 0 0 9.672 10H5.75q-.127 0-.25.011V4.75c0-.69.56-1.25 1.25-1.25h11c.69 0 1.25.56 1.25 1.25zM4.5 12.75c0-.69.56-1.25 1.25-1.25h3.922c.331 0 .649.132.883.366l5.829 5.829a2.75 2.75 0 0 0 1.944.805h3.922c.69 0 1.25.56 1.25 1.25v2.5a2.25 2.25 0 0 1-2.25 2.25H6.75a2.25 2.25 0 0 1-2.25-2.25z" />
@@ -65,7 +65,7 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='donaciones_producto.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.donaciones_producto') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="140" height="64" viewBox="0 0 140 64"
                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <!-- Caja -->
@@ -91,7 +91,7 @@
             </div>
           </div>
           <div class="col-6 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='semaforos.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.semaforos') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 24 24">
                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                   stroke-width="1.5"
@@ -104,7 +104,7 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='certificacion_donante.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.certificacion_donante') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 24 24">
                 <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                   stroke-miterlimit="10" stroke-width="0.7">
@@ -124,7 +124,7 @@
 
 
           <div class="col-6 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='acta_vencimiento.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.acta_vencimiento') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" width="70" height="70" viewBox="0 0 32 32">
                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="0.7"
                   d="M6 3v26h20V9.594l-.281-.313l-6-6L19.406 3zm2 2h10v6h6v16H8zm12 1.438L22.563 9H20zM11 13v2h10v-2zm0 4v2h10v-2zm0 4v2h10v-2z" />

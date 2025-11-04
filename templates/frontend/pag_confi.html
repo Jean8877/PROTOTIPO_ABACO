@@ -51,17 +51,17 @@
     <div class="main-layout">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-            <a href="menu_de_parroquias.html"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
-            <a href="menu_producto.html"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
-            <a href="menu_donante.html"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
-            <a href="pagina_principal.html"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
-            <a href="lista_donaciones.html"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
-            <a href="tabla_producto.html"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
-            <a href="movimiento_inv.html"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
-            <a href="menu_gastos.html"><i class="bi bi-coin"></i><span>Gastos</span></a>
-            <a href="menu_reportes.html"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
-            <a href="pag_confi.html"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a href="{{ url_for('rutas_dp.menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+            <a href="{{ url_for('rutas_dp.menu_de_parroquias') }}"><i class="bi bi-bank"></i><span>Organizaciones</span></a>
+            <a href="{{ url_for('rutas_dp.menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+            <a href="{{ url_for('rutas_dp.menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+            <a href="{{ url_for('rutas_dp.pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+            <a href="{{ url_for('rutas_dp.lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+            <a href="{{ url_for('rutas_dp.tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+            <a href="{{ url_for('rutas_dp.movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+            <a href="{{ url_for('rutas_dp.menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
+            <a href="{{ url_for('rutas_dp.menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+            <a href="{{ url_for('rutas_dp.pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
             <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i
                     class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
         </div>
@@ -75,7 +75,7 @@
 
                     <!-- Card 1 -->
                     <div class="col-12 col-sm-6 col-lg-4">
-                        <div class="card card-config p-4" onclick="window.location.href='permisos_asistentes.html'">
+                        <div class="card card-config p-4" onclick="window.location.href='{{ url_for('rutas_dp.permisos_asistentes') }}'">
                             <i class="bi bi-people-fill"></i>
                             <h5>Gestión de Usuarios</h5>
                             <p>Administra roles, permisos y accesos de usuarios.</p>
@@ -84,7 +84,7 @@
 
                     <!-- Card 2 -->
                     <div class="col-12 col-sm-6 col-lg-4">
-                        <div class="card card-config p-4" onclick="window.location.href='plantilla4.html'">
+                        <div class="card card-config p-4" onclick="window.location.href='{{ url_for('rutas_dp.plantilla4') }}'">
                             <i class="bi bi-person"></i>
                             <h5>Perfil</h5>
                             <p>Construcción.</p>
@@ -93,7 +93,7 @@
 
                     <!-- Card 3 -->
                     <div class="col-12 col-sm-6 col-lg-4 ">
-                        <div class="card card-config p-4"  onclick="window.location.href='{{ url_for('parametros') }}'">
+                        <div class="card card-config p-4"  onclick="window.location.href='{{ url_for('rutas_dp.parametros') }}'">
                             <i class="bi bi-bar-chart-line"></i>
                             <h5>Parametrización</h5>
                             <p>Configura los parámetros del sistema.</p>
@@ -102,7 +102,7 @@
 
                     <!-- Card 4 -->
                     <div class="col-12 col-sm-6 col-lg-4 mx-auto">
-                        <div class="card card-config p-4" onclick="window.location.href='configuracion.html'">
+                        <div class="card card-config p-4" onclick="window.location.href='{{ url_for('rutas_dp.configuracion') }}'">
                             <i class="bi bi-gear"></i>
                             <h5>Ajuste generales del sistema</h5>
                             <p>Ajusta configuraciones generales del sistema.</p>
@@ -110,7 +110,7 @@
                     </div>
                     <!-- Card 5 -->
                     <div class="col-12 col-sm-6 col-lg-4 mx-auto">
-                        <div class="card card-config p-4" onclick="window.location.href='menu_manual.html'">
+                        <div class="card card-config p-4" onclick="window.location.href='{{ url_for('rutas_dp.menu_manual') }}'">
                             <i class="bi bi-book-half"></i>
                             <h5>Manuales de usuarios </h5>
                             <p>manual de usuario</p>

@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 import pymysql.cursors
-from db import get_db_connection  # Asegúrate que devuelva una conexión pymysql
+from db import get_db_connection  # tu función que devuelve la conexión pymysql
 
-donantes_bp = Blueprint('donantes_bp', __name__)
+donantes_bp = Blueprint('donantes_bp', __name__, url_prefix='/api/donantes')
 
 # ==============================
 # LISTAR TODOS LOS DONANTES
@@ -13,10 +13,8 @@ def listar_donantes():
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
         cursor.execute("""
-            SELECT d.id_donante, d.nombre, 
-                   td.nombre AS tipo_documento, 
-                   d.numero_documento,
-                   t.nombre AS tipo_nombre, 
+            SELECT d.id_donante, d.nombre, td.nombre AS tipo_documento, 
+                   d.numero_documento, t.id_tipo AS tipo_id, t.nombre AS tipo_nombre,
                    d.correo, d.telefono, d.direccion, d.estado
             FROM donantes d
             LEFT JOIN tipo_documento td ON d.tipo_doc_id = td.id_tipo_doc
@@ -30,6 +28,7 @@ def listar_donantes():
     finally:
         cursor.close()
         conn.close()
+
 
 # ==============================
 # CREAR NUEVO DONANTE
@@ -45,29 +44,38 @@ def crear_donante():
     telefono = data.get('telefono', '')
     direccion = data.get('direccion', '')
 
+    if not nombre or not tipo_id:
+        return jsonify({'success': False, 'message': 'Nombre y tipo de donante son obligatorios'}), 400
+
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
-        # Verificar si ya existe
         cursor.execute("""
             SELECT * FROM donantes 
-            WHERE numero_documento = %s OR correo = %s
+            WHERE numero_documento=%s OR correo=%s
         """, (numero_documento, correo))
-        existente = cursor.fetchone()
-        if existente:
-            return jsonify({
-                'success': False,
-                'message': 'El donante ya está registrado'
-            }), 409
+        if cursor.fetchone():
+            return jsonify({'success': False, 'message': 'El donante ya está registrado'}), 409
 
-        # Insertar nuevo donante
         cursor.execute("""
             INSERT INTO donantes (nombre, tipo_doc_id, numero_documento, tipo_id, correo, telefono, direccion)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s)
         """, (nombre, tipo_doc_id, numero_documento, tipo_id, correo, telefono, direccion))
         conn.commit()
         nuevo_id = cursor.lastrowid
-        return jsonify({'success': True, 'id_donante': nuevo_id})
+
+        # Devolver el objeto completo
+        cursor.execute("""
+            SELECT d.id_donante, d.nombre, td.nombre AS tipo_documento, 
+                   d.numero_documento, t.id_tipo AS tipo_id, t.nombre AS tipo_nombre,
+                   d.correo, d.telefono, d.direccion, d.estado
+            FROM donantes d
+            LEFT JOIN tipo_documento td ON d.tipo_doc_id = td.id_tipo_doc
+            LEFT JOIN tipo_donante t ON d.tipo_id = t.id_tipo
+            WHERE d.id_donante=%s
+        """, (nuevo_id,))
+        donante = cursor.fetchone()
+        return jsonify({'success': True, 'donante': donante}), 201
     except Exception as e:
         conn.rollback()
         print("Error crear_donante:", e)
@@ -75,6 +83,7 @@ def crear_donante():
     finally:
         cursor.close()
         conn.close()
+
 
 # ==============================
 # ACTUALIZAR DONANTE
@@ -91,16 +100,32 @@ def actualizar_donante(id_donante):
     direccion = data.get('direccion', '')
     estado = data.get('estado', 'Activo')
 
+    if not nombre or not tipo_id:
+        return jsonify({'success': False, 'message': 'Nombre y tipo de donante son obligatorios'}), 400
+
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
         cursor.execute("""
             UPDATE donantes
-            SET nombre=%s, tipo_doc_id=%s, numero_documento=%s, tipo_id=%s, correo=%s, telefono=%s, direccion=%s, estado=%s
+            SET nombre=%s, tipo_doc_id=%s, numero_documento=%s, tipo_id=%s,
+                correo=%s, telefono=%s, direccion=%s, estado=%s
             WHERE id_donante=%s
         """, (nombre, tipo_doc_id, numero_documento, tipo_id, correo, telefono, direccion, estado, id_donante))
         conn.commit()
-        return jsonify({'success': True})
+
+        # Devolver el objeto actualizado
+        cursor.execute("""
+            SELECT d.id_donante, d.nombre, td.nombre AS tipo_documento, 
+                   d.numero_documento, t.id_tipo AS tipo_id, t.nombre AS tipo_nombre,
+                   d.correo, d.telefono, d.direccion, d.estado
+            FROM donantes d
+            LEFT JOIN tipo_documento td ON d.tipo_doc_id = td.id_tipo_doc
+            LEFT JOIN tipo_donante t ON d.tipo_id = t.id_tipo
+            WHERE d.id_donante=%s
+        """, (id_donante,))
+        donante = cursor.fetchone()
+        return jsonify({'success': True, 'donante': donante})
     except Exception as e:
         conn.rollback()
         print("Error actualizar_donante:", e)
@@ -108,6 +133,7 @@ def actualizar_donante(id_donante):
     finally:
         cursor.close()
         conn.close()
+
 
 # ==============================
 # ELIMINAR DONANTE
@@ -128,6 +154,7 @@ def eliminar_donante(id_donante):
         cursor.close()
         conn.close()
 
+
 # ==============================
 # OBTENER TIPOS DE DONANTE
 # ==============================
@@ -145,6 +172,7 @@ def obtener_tipos_donante():
     finally:
         cursor.close()
         conn.close()
+
 
 # ==============================
 # OBTENER TIPOS DE DOCUMENTO

@@ -31,7 +31,7 @@
         <div class="login-left">
             <div class="login-container">
                 <!-- 🔹 Botón de regresar en la esquina del formulario -->
-                <a href="index.html" class="btn btn-outline-success btn-sm position-absolute"
+                <a href="{{ url_for('rutas_dp.index') }}" class="btn btn-outline-success btn-sm position-absolute"
                     style="top: 10px; left: 10px;">
                     <i class="bi bi-arrow-left"></i>
                 </a>
@@ -45,7 +45,7 @@
                 <h2 class="text-center mb-4 fw-bold">Recuperar Contraseña</h2>
 
                 <!-- Formulario -->
-                <form id="loginForm" action="pagina_principal.html" method="GET">
+                <form id="loginForm" action="{{ url_for('rutas_dp.pagina_principal') }}" method="GET">
                     <div class="mb-3">
                         <label for="username" class="form-label">Correo Electrónico</label>
                         <input type="text" class="form-control" id="username" name="username"

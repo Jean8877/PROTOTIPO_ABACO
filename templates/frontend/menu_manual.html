@@ -39,18 +39,18 @@
     <div class="main-layout">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <a href="{{ url_for('menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-            <a href="{{ url_for('menu_de_parroquias') }}"><i class="bi bi-bank organizacion"
+            <a href="{{ url_for('rutas_dp.menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+            <a href="{{ url_for('rutas_dp.menu_de_parroquias') }}"><i class="bi bi-bank organizacion"
                     id="organizacion"></i><span>Organizaciones</span></a>
-            <a href="{{ url_for('menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
-            <a href="{{ url_for('menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
-            <a href="{{ url_for('pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
-            <a href="{{ url_for('lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
-            <a href="{{ url_for('tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
-            <a href="{{ url_for('movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
-            <a href="{{ url_for('menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
-            <a href="{{ url_for('menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
-            <a href="{{ url_for('pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+            <a href="{{ url_for('rutas_dp.menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+            <a href="{{ url_for('rutas_dp.menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+            <a href="{{ url_for('rutas_dp.pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+            <a href="{{ url_for('rutas_dp.lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+            <a href="{{ url_for('rutas_dp.tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+            <a href="{{ url_for('rutas_dp.movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+            <a href="{{ url_for('rutas_dp.menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
+            <a href="{{ url_for('rutas_dp.menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+            <a href="{{ url_for('rutas_dp.pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
             <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i
                     class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span></a>
         </div>
@@ -65,7 +65,7 @@
 
                     <!-- Tipo de organización -->
                     <div class="col-12 col-sm-4 col-md-3 col-lg-3">
-                        <div class="card text-center p-3" onclick="window.location.href='tecnico.html'">
+                        <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.tecnico') }}'">
                             <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                                 <!-- Libro base -->
                                 <path fill="none"
@@ -94,7 +94,7 @@
 
                     <!-- Parroquias -->
                     <div class="col-12 col-sm-4 col-md-3 col-lg-3">
-                        <div class="card text-center p-3" onclick="window.location.href='manual_usuario.html'">
+                        <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.manual_usuario') }}'">
                             <svg class="mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                                 <!-- Dispositivo -->
                                 <path fill="none" d="M16 16h32v24H16z" stroke="currentColor" stroke-width="1" />
@@ -124,7 +124,7 @@
 
                     <!-- Fundaciones -->
                     <div class="col-12 col-sm-4 col-md-3 col-lg-3">
-                        <div class="card text-center p-3" onclick="window.location.href='instalacion.html'">
+                        <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.instalacion') }}'">
                             <svg class="mx-auto"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                                 <!-- Servidor/CPU -->
                                 <path fill="none"

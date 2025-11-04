@@ -39,18 +39,18 @@
   <div class="main-layout">
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <a href="{{ url_for('menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
-      <a href="{{ url_for('menu_de_parroquias') }}"><i class="bi bi-bank organizacion"
+      <a href="{{ url_for('rutas_dp.menu_central') }}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
+      <a href="{{ url_for('rutas_dp.menu_de_parroquias') }}"><i class="bi bi-bank organizacion"
           id="organizacion"></i><span>Organizaciones</span></a>
-      <a href="{{ url_for('menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
-      <a href="{{ url_for('menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
-      <a href="{{ url_for('pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
-      <a href="{{ url_for('lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
-      <a href="{{ url_for('tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
-      <a href="{{ url_for('movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
-      <a href="{{ url_for('menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
-      <a href="{{ url_for('menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
-      <a href="{{ url_for('pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
+      <a href="{{ url_for('rutas_dp.menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
+      <a href="{{ url_for('rutas_dp.menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
+      <a href="{{ url_for('rutas_dp.pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
+      <a href="{{ url_for('rutas_dp.lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+      <a href="{{ url_for('rutas_dp.tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
+      <a href="{{ url_for('rutas_dp.movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
+      <a href="{{ url_for('rutas_dp.menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
+      <a href="{{ url_for('rutas_dp.menu_reportes') }}"><i class="bi bi-graph-up"></i><span>Reportes</span></a>
+      <a href="{{ url_for('rutas_dp.pag_confi') }}"><i class="bi bi-gear-fill"></i><span>Configuración</span></a>
       <a class="mt-auto" style="cursor: row-resize;" onclick="cerrar()"><i class="bi bi-box-arrow-left"></i><span>Cerrar
           sesión</span></a>
     </div>
@@ -65,7 +65,7 @@
 
           <!-- Tipo de organización -->
           <div class="col-12 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='crear_organizacion.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.crear_organizacion') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" viewBox="0 0 512 512">
                 <path fill="none"
                   d="M247.759 14.358L16 125.946V184h480v-58.362ZM464 152H48v-5.946l200.241-96.412L464 146.362ZM16 496h480V392H16Zm32-72h416v40H48Zm24-216h32v160H72zm336 0h32v160h-32zm-224 0h32v160h-32zm112 0h32v160h-32z"
@@ -79,7 +79,7 @@
 
           <!-- Parroquias -->
           <div class="col-12 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='gestion_parroquia.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.gestion_parroquia') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" viewBox="0 0 64 64">
                 <path fill="none"
                   d="M61.063 60.125h-.938v-15.01c.731.035 1.443-.371 1.739-1.074a1.754 1.754 0 0 0-.965-2.297l-15.774-6.443v-6.386l.348.141c.906.367 1.956-.058 2.329-.944c.376-.887-.059-1.914-.963-2.28l-13.276-5.523V9.813h4.688V6.688h-4.688V2h-3.125v4.688H25.75v3.125h4.688v10.495l-13.276 5.523c-.904.366-1.339 1.394-.963 2.28c.373.887 1.423 1.312 2.327.944l.35-.142V35.3L3.099 41.744a1.754 1.754 0 0 0-.963 2.297c.294.703 1.008 1.11 1.739 1.074v15.01h-.937c-.517 0-.938.422-.938.938s.421.937.938.937h58.125c.514 0 .937-.422.937-.937s-.423-.938-.937-.938m-42.188 0H5.75V44.466l13.125-5.361zm12.188-1.562H28.25V55.75h2.813zm0-4.063H28.25v-2.813c0-1.742 1.199-3.198 2.813-3.617zm4.687 4.063h-2.813V55.75h2.813zm0-4.063h-2.813v-6.429c1.612.419 2.813 1.875 2.813 3.616zm7.5 5.625h-5.625v-8.438a5.625 5.625 0 0 0-11.25 0v8.438H20.75V28.153L32 23.59l11.25 4.564zm15 0H45.125V39.104l13.125 5.361z"
@@ -93,7 +93,7 @@
 
           <!-- Fundaciones -->
           <div class="col-12 col-sm-4 col-md-3 col-lg-3">
-            <div class="card text-center p-3" onclick="window.location.href='fundaciones.html'">
+            <div class="card text-center p-3" onclick="window.location.href='{{ url_for('rutas_dp.fundaciones') }}'">
               <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="7" width="18" height="14" rx="2" ry="2" />
