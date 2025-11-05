@@ -60,7 +60,7 @@ header {
 
 /* SIDEBAR */
 .sidebar {
-    width: 70px;
+    width: 60px;
     background-color: #198754;
     color: white;
     transition: width 0.3s;
@@ -76,7 +76,7 @@ header {
 }
 
 .sidebar:hover {
-    width: 250px;
+    width: 200px;
 }
 
 .sidebar a {

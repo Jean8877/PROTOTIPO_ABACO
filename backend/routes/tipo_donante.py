@@ -117,12 +117,21 @@ def eliminar_tipo_donante(id_tipo):
     try:
         cursor.execute("DELETE FROM tipo_donante WHERE id_tipo=%s", (id_tipo,))
         conn.commit()
-    except Exception as e:
-        conn.rollback()
         cursor.close()
         conn.close()
-        return jsonify({'success': False, 'message': str(e)}), 400
+        return jsonify({'success': True, 'message': 'Tipo de donante eliminado correctamente.'}), 200
 
-    cursor.close()
-    conn.close()
-    return jsonify({'success': True})
+    except Exception as e:
+        conn.rollback()
+        mensaje_error = str(e)
+
+        # Detectar el error 1451 (violación de clave foránea)
+        if "1451" in mensaje_error:
+            mensaje = "No se puede eliminar este tipo de donante porque tiene donantes asociados."
+        else:
+            mensaje = "Error al eliminar el tipo de donante."
+
+        cursor.close()
+        conn.close()
+        return jsonify({'success': False, 'message': mensaje}), 400
+

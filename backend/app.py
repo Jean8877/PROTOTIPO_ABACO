@@ -7,10 +7,18 @@ import bcrypt
 import os
 from datetime import datetime, timedelta
 
+
+# ==============================
+# IMPORTACIÓN DE RUTAS
+# ==============================
+
 from routes.rutas import rutas_dp
 from db import get_db_connection
 from routes.tipo_donante import tipo_donante_bp
 from routes.donante import donantes_bp
+from routes.categoria import categorias_bp
+from routes.subcategoria import subcategorias_bp
+from routes.productos import productos_bp
 
 from routes.tipo_documento import tipo_documento_bp
 
@@ -25,14 +33,23 @@ app = Flask(
       static_folder=os.path.join(BASE_DIR, 'static')
       )
 
+CORS(app)  # Habilitar CORS para todas las rutas
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]}})
+
+swagger = Swagger(app)
+
+# ==============================
+# REGISTRO DE BLUEPRINTS
+# ==============================
+
 app.register_blueprint(rutas_dp)
 app.register_blueprint(tipo_donante_bp)
 app.register_blueprint(donantes_bp, url_prefix='/api/donantes')
 app.register_blueprint(tipo_documento_bp, url_prefix='/api/tipo_documento')
+app.register_blueprint(categorias_bp, url_prefix='/api/categorias')
+app.register_blueprint(subcategorias_bp, url_prefix='/api/subcategorias')
+app.register_blueprint(productos_bp, url_prefix='/api/productos')
 
-
-CORS(app)  # Habilitar CORS para todas las rutas
-swagger = Swagger(app)
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
@@ -41,7 +58,7 @@ def static_files(filename):
 
 app.secret_key = 'clave-segura'  #  Necesario para manejar sesiones
 
-
+app.permanent_session_lifetime = timedelta(minutes=30)  # Duración de la sesión
 # ==============================
 # 2️ RUTA PRINCIPAL - LOGIN
 # ==============================
@@ -60,6 +77,7 @@ def login():
     if not data:
         return jsonify({'success': False, 'message': 'No se enviaron datos'}), 400
 
+    session.permanent = True  # Hacer la sesión permanente
     username = data.get('username')
     password = data.get('password')
 
@@ -129,13 +147,7 @@ def login():
         return jsonify({'success': False, 'message': mensaje}), 401
 
 # ==============================
-# 4️ PÁGINA PRINCIPAL (POST LOGIN)
-# ==============================
-
-
-
-# ==============================
-# 5️ CERRAR SESIÓN
+# 54 CERRAR SESIÓN
 # ==============================
 @app.route('/logout')
 def logout():

@@ -1,0 +1,331 @@
+// ==============================
+// CONFIGURACIÓN INICIAL
+// ==============================
+let productos = [];
+let categorias = [];
+let subcategorias = [];
+let editandoProducto = null;
+
+const formProducto = document.getElementById('formProducto');
+const tablaProductos = document.getElementById('tablaProductos').querySelector('tbody');
+
+const API_PRODUCTOS = '/api/productos';
+const API_CATEGORIAS = '/api/categorias';
+const API_SUBCATEGORIAS = '/api/subcategorias';
+
+// ==============================
+// FUNCIÓN DE SIMILITUD
+// ==============================
+function es_similar(a, b) {
+    // Comparación simple case-insensitive
+    return a.toLowerCase() === b.toLowerCase() || 
+           a.toLowerCase().includes(b.toLowerCase()) || 
+           b.toLowerCase().includes(a.toLowerCase());
+}
+
+// ==============================
+// CARGAR CATEGORÍAS Y SUBCATEGORÍAS
+// ==============================
+async function cargarCategoriasYSubcategorias() {
+    try {
+        const resCat = await fetch(API_CATEGORIAS);
+        categorias = await resCat.json();
+
+        const selectCrear = document.getElementById('categoriaSelect');
+        const selectModalCat = document.getElementById('categoriaProductoModal');
+
+        selectCrear.innerHTML = '<option value="">Selecciona una categoría</option>';
+        selectModalCat.innerHTML = '<option value="">Selecciona una categoría</option>';
+
+        categorias.forEach(cat => {
+            selectCrear.innerHTML += `<option value="${cat[0]}">${cat[1]}</option>`;
+            selectModalCat.innerHTML += `<option value="${cat[0]}">${cat[1]}</option>`;
+        });
+
+        // Evento formulario crear producto
+        selectCrear.addEventListener('change', async () => {
+            const id_categoria = selectCrear.value;
+            const selectSub = document.getElementById('subcategoriaSelect');
+            selectSub.innerHTML = '';
+
+            if (!id_categoria) {
+                selectSub.innerHTML = '<option value="">Selecciona una categoría primero</option>';
+                selectSub.disabled = true;
+                return;
+            }
+
+            const resSub = await fetch(API_SUBCATEGORIAS);
+            const todasSub = await resSub.json();
+            const subRelacionadas = todasSub.filter(sub => sub[3].toString() === id_categoria.toString());
+
+            if (subRelacionadas.length > 0) {
+                subRelacionadas.forEach(sub => {
+                    selectSub.innerHTML += `<option value="${sub[0]}">${sub[1]}</option>`;
+                });
+                selectSub.disabled = false;
+            } else {
+                selectSub.innerHTML = '<option value="">No hay subcategorías</option>';
+                selectSub.disabled = true;
+            }
+        });
+
+        // Evento modal editar producto
+        selectModalCat.addEventListener('change', async () => {
+            const id_categoria = selectModalCat.value;
+            const selectSubModal = document.getElementById('subcategoriaProductoModal');
+            selectSubModal.innerHTML = '';
+
+            if (!id_categoria) {
+                selectSubModal.innerHTML = '<option value="">Selecciona una categoría primero</option>';
+                selectSubModal.disabled = true;
+                return;
+            }
+
+            const resSub = await fetch(API_SUBCATEGORIAS);
+            const todasSub = await resSub.json();
+            const subRelacionadas = todasSub.filter(sub => sub[3].toString() === id_categoria.toString());
+
+            if (subRelacionadas.length > 0) {
+                subRelacionadas.forEach(sub => {
+                    selectSubModal.innerHTML += `<option value="${sub[0]}">${sub[1]}</option>`;
+                });
+                selectSubModal.disabled = false;
+            } else {
+                selectSubModal.innerHTML = '<option value="">No hay subcategorías</option>';
+                selectSubModal.disabled = true;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error cargando categorías y subcategorías:', error);
+        swal("Error", "No se pudieron cargar las categorías y subcategorías", "error");
+    }
+}
+
+// ==============================
+// CARGAR PRODUCTOS
+// ==============================
+async function cargarProductos() {
+    try {
+        const res = await fetch(API_PRODUCTOS);
+        productos = await res.json();
+
+        tablaProductos.innerHTML = '';
+        productos.forEach(prod => agregarFilaProducto(prod));
+
+    } catch (error) {
+        console.error('Error cargando productos:', error);
+        swal("Error", "No se pudieron cargar los productos", "error");
+    }
+}
+
+// ==============================
+// BUSCADOR DE PRODUCTOS
+// ==============================
+const buscadorProductos = document.getElementById('buscadorProductos');
+buscadorProductos.addEventListener('input', () => {
+    const texto = buscadorProductos.value.toLowerCase();
+
+    Array.from(tablaProductos.rows).forEach(row => {
+        const nombre = row.querySelector('.col-nombre').textContent.toLowerCase();
+        const descripcion = row.querySelector('.col-descripcion').textContent.toLowerCase();
+        row.style.display = (nombre.includes(texto) || descripcion.includes(texto)) ? '' : 'none';
+    });
+});
+
+// ==============================
+// AGREGAR FILA DE PRODUCTO A LA TABLA
+// ==============================
+function agregarFilaProducto(prod) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td class="col-id">${prod[0]}</td>
+        <td class="col-nombre">${prod[1]}</td>
+        <td class="col-stock">${prod[2]}</td>
+        <td class="col-unidad">${prod[3]}</td>
+        <td class="col-descripcion">${prod[4]}</td>
+        <td>
+            <button class="btn btn-sm btn-success me-2" onclick="abrirModalEditarProducto(${prod[0]})">
+                <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${prod[0]})">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </td>
+    `;
+    tablaProductos.appendChild(row);
+}
+
+// ==============================
+// CREAR PRODUCTO
+// ==============================
+formProducto.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const nombre = document.getElementById('productoSelect').value.trim();
+    const id_categoria = document.getElementById('categoriaSelect').value;
+    const id_subcategoria = document.getElementById('subcategoriaSelect').value;
+    const stock_minimo = document.getElementById('cantidadProducto').value;
+    const unidad_medida = document.querySelector('#formProducto select:nth-of-type(2)').value;
+    const descripcion = document.getElementById('descripcionProducto').value.trim();
+
+    if (!nombre || !id_categoria || !id_subcategoria || !stock_minimo || !unidad_medida) {
+        swal("Error", "Todos los campos son obligatorios", "error");
+        return;
+    }
+
+    if (productos.some(p => es_similar(p.nombre, nombre))) {
+        swal("Error", "Ya existe un producto con nombre similar", "error");
+        return;
+    }
+
+    try {
+        const res = await fetch(API_PRODUCTOS, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, id_categoria, id_subcategoria, stock_minimo, unidad_medida, descripcion })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            productos.push(data.producto);
+            agregarFilaProducto(data.producto);
+            formProducto.reset();
+            swal("Éxito", "Producto creado correctamente", "success");
+        } else {
+            swal("Error", data.message || "No se pudo crear el producto", "error");
+        }
+    } catch (error) {
+        console.error('Error creando producto:', error);
+        swal("Error", "No se pudo crear el producto", "error");
+    }
+});
+
+// ==============================
+// ABRIR MODAL EDITAR PRODUCTO
+// ==============================
+async function abrirModalEditarProducto(id) {
+    try {
+        const prod = productos.find(p => p.id_producto == id);
+
+        document.getElementById('idProductoModal').value = prod.id_producto;
+        document.getElementById('nombreProductoModal').value = prod.nombre;
+        document.getElementById('nombreStockModal').value = prod.stock_minimo;
+        document.getElementById('descripcionProductoModal').value = prod.descripcion;
+        document.getElementById('categoriaProductoModal').value = prod.id_categoria;
+
+        const event = new Event('change');
+        document.getElementById('categoriaProductoModal').dispatchEvent(event);
+
+        // Después de cargar subcategorías
+        setTimeout(() => {
+            document.getElementById('subcategoriaProductoModal').value = prod.id_subcategoria;
+        }, 100);
+
+        editandoProducto = Array.from(tablaProductos.rows).find(
+            row => row.querySelector('.col-id').textContent == id
+        );
+
+        const modal = new bootstrap.Modal(document.getElementById('modalActualizarProducto'));
+        modal.show();
+
+    } catch (error) {
+        console.error('Error cargando producto:', error);
+        swal("Error", "No se pudo cargar el producto", "error");
+    }
+}
+
+// ==============================
+// ACTUALIZAR PRODUCTO
+// ==============================
+document.getElementById('formActualizarProducto').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('idProductoModal').value;
+    const nombre = document.getElementById('nombreProductoModal').value.trim();
+    const id_categoria = document.getElementById('categoriaProductoModal').value;
+    const id_subcategoria = document.getElementById('subcategoriaProductoModal').value;
+    const stock_minimo = document.getElementById('nombreStockModal').value;
+    const descripcion = document.getElementById('descripcionProductoModal').value.trim();
+    const unidad_medida = document.querySelector('#formActualizarProducto select').value;
+
+    if (!nombre || !id_categoria || !id_subcategoria || !stock_minimo || !unidad_medida) {
+        swal("Error", "Todos los campos son obligatorios", "error");
+        return;
+    }
+
+    if (productos.some(p => p.id_producto != id && es_similar(p.nombre, nombre))) {
+        swal("Error", "Ya existe un producto con nombre similar", "error");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_PRODUCTOS}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, id_categoria, id_subcategoria, stock_minimo, unidad_medida, descripcion })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            editandoProducto.querySelector('.col-nombre').textContent = data.producto.nombre;
+            editandoProducto.querySelector('.col-stock').textContent = data.producto.stock_minimo;
+            editandoProducto.querySelector('.col-unidad').textContent = data.producto.unidad_medida;
+            editandoProducto.querySelector('.col-descripcion').textContent = data.producto.descripcion;
+
+            const index = productos.findIndex(p => p.id_producto == id);
+            productos[index] = data.producto;
+
+            swal("Éxito", "Producto actualizado correctamente", "success");
+        } else {
+            swal("Error", data.message || "No se pudo actualizar el producto", "error");
+        }
+    } catch (error) {
+        console.error('Error actualizando producto:', error);
+        swal("Error", "No se pudo actualizar el producto", "error");
+    }
+});
+
+// ==============================
+// ELIMINAR PRODUCTO
+// ==============================
+async function eliminarProducto(id) {
+    const confirmar = await swal({
+        title: "¿Estás seguro?",
+        text: "Una vez eliminado, no podrás recuperarlo",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    });
+
+    if (!confirmar) return;
+
+    try {
+        const res = await fetch(`${API_PRODUCTOS}/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            const fila = Array.from(tablaProductos.rows).find(
+                row => row.querySelector('.col-id').textContent == id
+            );
+            fila.remove();
+
+            productos = productos.filter(p => p.id_producto != id);
+
+            swal("Éxito", "Producto eliminado correctamente", "success");
+        } else {
+            swal("Error", data.message || "No se pudo eliminar el producto", "error");
+        }
+    } catch (error) {
+        console.error('Error eliminando producto:', error);
+        swal("Error", "No se pudo eliminar el producto", "error");
+    }
+}
+
+// ==============================
+// INICIALIZACIÓN
+// ==============================
+document.addEventListener('DOMContentLoaded', () => {
+    cargarCategoriasYSubcategorias();
+    cargarProductos();
+});

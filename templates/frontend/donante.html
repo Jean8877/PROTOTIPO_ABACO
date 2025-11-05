@@ -11,8 +11,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  
 </head>
 
 <body>
@@ -38,7 +38,8 @@
       <a href="{{ url_for('rutas_dp.menu_producto') }}"><i class="bi bi-bookmark-plus"></i><span>Productos</span></a>
       <a href="{{ url_for('rutas_dp.menu_donante') }}"><i class="bi bi-people-fill"></i><span>Donantes</span></a>
       <a href="{{ url_for('rutas_dp.pagina_principal') }}"><i class="bi bi-heart-fill"></i><span>Donaciones</span></a>
-      <a href="{{ url_for('rutas_dp.lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de Donaciones</span></a>
+      <a href="{{ url_for('rutas_dp.lista_donaciones') }}"><i class="bi bi-bag-check"></i><span>Lista de
+          Donaciones</span></a>
       <a href="{{ url_for('rutas_dp.tabla_producto') }}"><i class="bi bi-table"></i><span>Tabla de Productos</span></a>
       <a href="{{ url_for('rutas_dp.movimiento_inv') }}"><i class="bi bi-box-seam"></i><span>Inventario</span></a>
       <a href="{{ url_for('rutas_dp.menu_gastos') }}"><i class="bi bi-coin"></i><span>Gastos</span></a>
@@ -49,111 +50,150 @@
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
-     <div class="container my-4">
+    <div class="container my-4">
 
-    <div class="container bg-white p-4 rounded shadow">
+      <div class="container bg-white p-4 rounded shadow">
 
-      <form id="formDonante">
-        <!-- 🔹 Botón de regresar en la esquina del formulario -->
-        <a href="{{ url_for('rutas_dp.menu_donante') }}" class="btn btn-outline-success btn-sm position-absolute">
-          <i class="bi bi-arrow-left"></i>
-        </a>
-        <h1>Registrar Nuevo Donante</h1>
-        <label for="nombreDonante">Nombre completo</label>
-        <input type="text" id="nombreDonante" placeholder="Nombre completo" required />
-        <label for="tipoDocumento">Tipo de documento</label>
-        <select id="tipoDocumento" required>
-        </select>
-        <label for="numeroDocumento">Número de documento</label>
-        <input type="text" id="numeroDocumento" placeholder="Número de documento" required />
-        <label for="tipoDonante">Tipo de Donante</label>
+        <form id="formDonante">
+          <!-- 🔹 Botón de regresar en la esquina del formulario -->
+          <a href="{{ url_for('rutas_dp.menu_donante') }}" class="btn btn-outline-success btn-sm position-absolute">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+          <h1>Registrar Nuevo Donante</h1>
+          <div class="mb-3">
 
-        <select id="tipoDonante" required>
-        </select>
-
-        <label for="telefono">Número de teléfono</label>
-        <input type="tel" id="telefono" placeholder="Número de teléfono" required />
-        <label for="correo">Correo electrónico</label>
-        <input type="email" id="correo" placeholder="Correo electrónico" required />
-        <label for="direccion">Dirección</label>
-        <input type="text" id="direccion" placeholder="Dirección" required />
-        <button type="submit">Guardar Donante</button>
-      </form>
-
-      <h2>Lista de Donantes</h2>
-      <table id="tablaDonantes">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre completo</th>
-            <th>Tipo Documento</th>
-            <th>Número Documento</th>
-            <th>Tipo de Donante</th>
-            <th>Teléfono</th>
-            <th>Correo</th>
-            <th>Dirección</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-  <!-- 🔹 Modal para actualizar Donante -->
-  <!-- Modal para actualizar Donante -->
-<div class="modal fade" id="modalActualizarDonante" tabindex="-1" aria-labelledby="modalActualizarDonanteLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title" id="modalActualizarDonanteLabel">Actualizar Donante</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <form id="formActualizarDonante">
-          <input type="hidden" id="editandoIdModal" />
-          
-          <label for="nombreDonanteModal">Nombre completo</label>
-          <input type="text" id="nombreDonanteModal" class="form-control" placeholder="Nombre completo" required />
-
-          <label for="tipoDocumentoModal">Tipo de documento</label>
-          <select id="tipoDocumentoModal" class="form-select" required>
-            <option value="">Seleccione un tipo de documento...</option>
-          </select>
-
-          <label for="numeroDocumentoModal">Número de documento</label>
-          <input type="text" id="numeroDocumentoModal" class="form-control" placeholder="Número de documento" required />
-
-          <label for="tipoDonanteModal">Tipo de Donante</label>
-          <select id="tipoDonanteModal" class="form-select" required>
-            <option value="">Seleccione un tipo de donante...</option>
-          </select>
-
-          <label for="telefonoModal">Número de teléfono</label>
-          <input type="tel" id="telefonoModal" class="form-control" placeholder="Número de teléfono" />
-
-          <label for="correoModal">Correo electrónico</label>
-          <input type="email" id="correoModal" class="form-control" placeholder="Correo electrónico" />
-
-          <label for="direccionModal">Dirección</label>
-          <input type="text" id="direccionModal" class="form-control" placeholder="Dirección" />
-
-          <div class="d-flex justify-content-end mt-3">
-            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-success">Actualizar</button>
+            <label for="nombreDonante">Nombre completo</label>
+            <input type="text" id="nombreDonante" placeholder="Nombre completo" required />
           </div>
+          <div class="mb-3">
+            <label for="tipoDocumento">Tipo de documento</label>
+            <select id="tipoDocumento" required>
+              <option value="">Seleccione un tipo de documento...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="numeroDocumento">Número de documento</label>
+            <input type="text" id="numeroDocumento" placeholder="Número de documento" />
+          </div>
+          <div class="mb-3">
+            <label for="tipoDonante">Tipo de Donante</label>
+
+            <select id="tipoDonante" required>
+              <option value="">Seleccione un tipo de donante...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="telefono">Número de teléfono</label>
+            <input type="tel" id="telefono" placeholder="Número de teléfono" />
+
+            <div class="mb-3">
+              <label for="correo">Correo electrónico</label>
+              <input type="email" id="correo" placeholder="Correo electrónico" />
+            </div>
+            <div class="mb-3">
+              <label for="direccion">Dirección</label>
+              <div class="input-group">
+                <input type="text" id="direccion" placeholder="Dirección" />
+              </div>
+            </div>
+            <button type="submit">Guardar Donante</button>
         </form>
+
+        <h2>Lista de Donantes</h2>
+        <div class="buscador-container" style="margin-bottom: 10px;">
+          <input type="text" id="buscadorDonantes" placeholder="🔍 Buscar donante..." class="form-control"
+            style="width: 300px; padding: 6px 10px; border-radius: 8px; border: 1px solid #ccc;">
+        </div>
+        <table id="tablaDonantes">
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Nombre completo</th>
+              <th>Tipo Documento</th>
+              <th>Número Documento</th>
+              <th>Tipo de Donante</th>
+              <th>Teléfono</th>
+              <th>Correo</th>
+              <th>Dirección</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
-  </div>
-</div>
+    <!-- 🔹 Modal para actualizar Donante -->
+    <!-- Modal para actualizar Donante -->
+    <!-- Modal Actualizar Donante -->
+    <div class="modal fade" id="modalActualizarDonante" tabindex="-1" aria-labelledby="modalActualizarDonanteLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <form id="formActualizarDonante">
+            <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="modalActualizarDonanteLabel">Editar Donante</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="editandoIdModal">
+
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input type="text" id="nombreDonanteModal" class="form-control" required>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Tipo de documento</label>
+                  <select id="tipoDocumentoModal" class="form-select"></select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Número de documento</label>
+                  <input type="text" id="numeroDocumentoModal" class="form-control">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Tipo de donante</label>
+                  <select id="tipoDonanteModal" class="form-select"></select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Teléfono</label>
+                  <input type="text" id="telefonoModal" class="form-control">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Correo</label>
+                <input type="email" id="correoModal" class="form-control">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Dirección</label>
+                <input type="text" id="direccionModal" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-success">Actualizar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
 
-  <script src="/static/js/donante.js"></script>
-  <script src="/static/js/resaltar.js"></script>
-  <script src="/static/js/notificacion.js"></script>
-  <script>
-    resaltar()
-  </script>
+
+    <script src="/static/js/donante.js"></script>
+    <script src="/static/js/resaltar.js"></script>
+    <script src="/static/js/notificacion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      resaltar()
+    </script>
 
 </body>
 

@@ -78,7 +78,7 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nombre</th>
+            <th>Categoría</th>
             <th>Descripción</th>
             <th>Acciones</th>
           </tr>
@@ -121,92 +121,11 @@
 </div>
 
 
-  <script>
-    let editandoCategoria = null;
-    
-    const formCategoria = document.getElementById('formCategoria');
-    const tablaCategorias = document.getElementById('tablaCategorias').querySelector('tbody');
-    let idCategoria = 1; // Contador autoincremental
-
-    formCategoria.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombreCategoria').value.trim();
-      const descripcion = document.getElementById('descripcionCategoria').value.trim();
-
-      if (!nombre || !descripcion) return;
-
-      if (editandoCategoria) {
-        // Editar fila existente
-        editandoCategoria.querySelector('.col-nombre').textContent = nombre;
-        editandoCategoria.querySelector('.col-descripcion').textContent = descripcion;
-        editandoCategoria = null;
-      } else {
-        // Agregar nueva fila con ID auto
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td class="col-id">${String(idCategoria).padStart(3, '0')}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-descripcion">${descripcion}</td>
-          <td>
-            <button onclick="editarCategoria(this)">Editar</button>
-            <button onclick="eliminarCategoria(this)">Eliminar</button>
-          </td>
-        `;
-        tablaCategorias.appendChild(row);
-        idCategoria++;
-      }
-
-      formCategoria.reset();
-    });
-
-    function eliminarCategoria(btn) {
-      const row = btn.closest('tr');
-      row.remove();
-    }
-
-    function editarCategoria(btn) {
-    const row = btn.closest('tr');
-    const id = row.querySelector('.col-id').textContent;
-    const nombre = row.querySelector('.col-nombre').textContent;
-    const descripcion = row.querySelector('.col-descripcion').textContent;
-
-    // Llenar modal
-    document.getElementById('idCategoriaModal').value = id;
-    document.getElementById('nombreCategoriaModal').value = nombre;
-    document.getElementById('descripcionCategoriaModal').value = descripcion;
-
-    // Guardar la fila actual para actualizarla luego
-    editandoCategoria = row;
-
-    // Abrir modal
-    const modal = new bootstrap.Modal(document.getElementById('modalActualizarCategoria'));
-    modal.show();
-}
-
-// Manejo del formulario de actualización
-document.getElementById('formActualizarCategoria').addEventListener('submit', function(e){
-    e.preventDefault();
-    const nombre = document.getElementById('nombreCategoriaModal').value.trim();
-    const descripcion = document.getElementById('descripcionCategoriaModal').value.trim();
-
-    if(!nombre || !descripcion) return;
-
-    // Actualizar fila
-    editandoCategoria.querySelector('.col-nombre').textContent = nombre;
-    editandoCategoria.querySelector('.col-descripcion').textContent = descripcion;
-
-    editandoCategoria = null;
-
-    // Cerrar modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalActualizarCategoria'));
-    modal.hide();
-});
-
-  </script>
+  
 
 <script src="/static/js/resaltar.js"></script>
 <script src="/static/js/notificacion.js"></script>
+<script src="/static/js/categoria.js"></script>
   <script>
     resaltar()
   </script>

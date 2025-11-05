@@ -1,8 +1,55 @@
 from flask import Blueprint, request, jsonify
-import pymysql.cursors
-from db import get_db_connection  # tu función que devuelve la conexión pymysql
+from db import get_db_connection
+import pymysql
 
 donantes_bp = Blueprint('donantes_bp', __name__, url_prefix='/api/donantes')
+
+# ==============================
+# OBTENER TIPOS DE DONANTE
+# ==============================
+# ==============================
+# OBTENER TIPOS DE DONANTE
+# ==============================
+@donantes_bp.route('/tipos', methods=['GET'])
+def obtener_tipos_donante():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id_tipo, nombre FROM tipo_donante WHERE estado='Activo'")
+        resultados = cursor.fetchall()
+        # Convertir la lista de listas a una lista de diccionarios
+        tipos = [{'id_tipo': fila[0], 'nombre': fila[1]} for fila in resultados]
+        print("Tipos de donante (formateados):", tipos)
+        return jsonify(tipos)
+    except Exception as e:
+        print("Error obtener_tipos_donante:", e)
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# ==============================
+# OBTENER TIPOS DE DOCUMENTO
+# ==============================
+@donantes_bp.route('/tipos_documento', methods=['GET'])
+def obtener_tipos_documento():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT id_tipo_doc, nombre FROM tipo_documento")
+        resultados = cursor.fetchall()
+        # Convertir la lista de listas a una lista de diccionarios
+        tipos = [{'id_tipo_doc': fila[0], 'nombre': fila[1]} for fila in resultados]
+        print("Tipos de documento (formateados):", tipos)
+        return jsonify(tipos)
+    except Exception as e:
+        print("Error obtener_tipos_documento:", e)
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # ==============================
 # LISTAR TODOS LOS DONANTES
@@ -13,9 +60,17 @@ def listar_donantes():
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
         cursor.execute("""
-            SELECT d.id_donante, d.nombre, td.nombre AS tipo_documento, 
-                   d.numero_documento, t.id_tipo AS tipo_id, t.nombre AS tipo_nombre,
-                   d.correo, d.telefono, d.direccion, d.estado
+            SELECT  
+                d.id_donante,
+                d.nombre,
+                td.nombre AS tipo_documento,
+                d.numero_documento,
+                t.id_tipo,
+                t.nombre AS tipo_nombre,
+                d.correo,
+                d.telefono,
+                d.direccion,
+                d.estado
             FROM donantes d
             LEFT JOIN tipo_documento td ON d.tipo_doc_id = td.id_tipo_doc
             LEFT JOIN tipo_donante t ON d.tipo_id = t.id_tipo
@@ -28,7 +83,6 @@ def listar_donantes():
     finally:
         cursor.close()
         conn.close()
-
 
 # ==============================
 # CREAR NUEVO DONANTE
@@ -48,11 +102,12 @@ def crear_donante():
         return jsonify({'success': False, 'message': 'Nombre y tipo de donante son obligatorios'}), 400
 
     conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor = conn.cursor()
     try:
         cursor.execute("""
             SELECT * FROM donantes 
-            WHERE numero_documento=%s OR correo=%s
+            WHERE (numero_documento=%s AND numero_documento IS NOT NULL)
+            OR (correo=%s AND correo IS NOT NULL)
         """, (numero_documento, correo))
         if cursor.fetchone():
             return jsonify({'success': False, 'message': 'El donante ya está registrado'}), 409
@@ -64,7 +119,6 @@ def crear_donante():
         conn.commit()
         nuevo_id = cursor.lastrowid
 
-        # Devolver el objeto completo
         cursor.execute("""
             SELECT d.id_donante, d.nombre, td.nombre AS tipo_documento, 
                    d.numero_documento, t.id_tipo AS tipo_id, t.nombre AS tipo_nombre,
@@ -83,7 +137,6 @@ def crear_donante():
     finally:
         cursor.close()
         conn.close()
-
 
 # ==============================
 # ACTUALIZAR DONANTE
@@ -104,7 +157,7 @@ def actualizar_donante(id_donante):
         return jsonify({'success': False, 'message': 'Nombre y tipo de donante son obligatorios'}), 400
 
     conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor = conn.cursor()
     try:
         cursor.execute("""
             UPDATE donantes
@@ -114,7 +167,6 @@ def actualizar_donante(id_donante):
         """, (nombre, tipo_doc_id, numero_documento, tipo_id, correo, telefono, direccion, estado, id_donante))
         conn.commit()
 
-        # Devolver el objeto actualizado
         cursor.execute("""
             SELECT d.id_donante, d.nombre, td.nombre AS tipo_documento, 
                    d.numero_documento, t.id_tipo AS tipo_id, t.nombre AS tipo_nombre,
@@ -135,13 +187,54 @@ def actualizar_donante(id_donante):
         conn.close()
 
 
+
+
+# ==============================
+# OBTENER DONANTE POR ID
+# ==============================
+@donantes_bp.route('/<int:id_donante>', methods=['GET'])
+def obtener_donante(id_donante):
+    conn = get_db_connection()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    try:
+        cursor.execute("""
+            SELECT  
+                d.id_donante,
+                d.nombre,
+                td.nombre AS tipo_documento,
+                d.numero_documento,
+                t.id_tipo,
+                t.nombre AS tipo_nombre,
+                d.correo,
+                d.telefono,
+                d.direccion,
+                d.estado
+            FROM donantes d
+            LEFT JOIN tipo_documento td ON d.tipo_doc_id = td.id_tipo_doc
+            LEFT JOIN tipo_donante t ON d.tipo_id = t.id_tipo
+            WHERE d.id_donante = %s
+        """, (id_donante,))
+        donante = cursor.fetchone()
+
+        if not donante:
+            return jsonify({'success': False, 'message': 'Donante no encontrado'}), 404
+
+        return jsonify(donante)
+    except Exception as e:
+        print("Error obtener_donante:", e)
+        return jsonify({'success': False, 'message': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+
 # ==============================
 # ELIMINAR DONANTE
 # ==============================
 @donantes_bp.route('/<int:id_donante>', methods=['DELETE'])
 def eliminar_donante(id_donante):
     conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor = conn.cursor()
     try:
         cursor.execute("DELETE FROM donantes WHERE id_donante=%s", (id_donante,))
         conn.commit()
@@ -149,44 +242,6 @@ def eliminar_donante(id_donante):
     except Exception as e:
         conn.rollback()
         print("Error eliminar_donante:", e)
-        return jsonify({'success': False, 'message': str(e)}), 500
-    finally:
-        cursor.close()
-        conn.close()
-
-
-# ==============================
-# OBTENER TIPOS DE DONANTE
-# ==============================
-@donantes_bp.route('/tipos', methods=['GET'])
-def obtener_tipos_donante():
-    conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    try:
-        cursor.execute("SELECT id_tipo, nombre FROM tipo_donante WHERE estado='Activo'")
-        tipos = cursor.fetchall()
-        return jsonify(tipos)
-    except Exception as e:
-        print("Error obtener_tipos_donante:", e)
-        return jsonify({'success': False, 'message': str(e)}), 500
-    finally:
-        cursor.close()
-        conn.close()
-
-
-# ==============================
-# OBTENER TIPOS DE DOCUMENTO
-# ==============================
-@donantes_bp.route('/tipos_documento', methods=['GET'])
-def obtener_tipos_documento():
-    conn = get_db_connection()
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
-    try:
-        cursor.execute("SELECT id_tipo_doc, nombre FROM tipo_documento")
-        tipos = cursor.fetchall()
-        return jsonify(tipos)
-    except Exception as e:
-        print("Error obtener_tipos_documento:", e)
         return jsonify({'success': False, 'message': str(e)}), 500
     finally:
         cursor.close()

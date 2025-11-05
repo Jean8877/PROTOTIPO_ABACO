@@ -105,7 +105,7 @@ async function eliminarTipo(id) {
         title: "¿Estás seguro?",
         text: "Una vez eliminado no se podrá recuperar!",
         icon: "warning",
-        buttons: true,
+        buttons: ["Cancelar", "Sí, eliminar"],
         dangerMode: true,
     });
 
@@ -114,14 +114,32 @@ async function eliminarTipo(id) {
     try {
         const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         const data = await res.json();
+
         if (data.success) {
-            swal("Eliminado", "Tipo de donante eliminado! " +  id, "success");
-            tipo_donante();
+            swal({
+                title: "Eliminado",
+                text: "El tipo de donante ha sido eliminado correctamente.",
+                icon: "success",
+                timer: 2000,
+                buttons: false,
+            });
+            tipo_donante(); // Recarga la lista
         } else {
-            swal("Error", data.message, "error");
+            // 🔴 Aquí mostramos el mensaje personalizado del backend
+            swal({
+                title: "No se puede eliminar",
+                text: data.message || "Ocurrió un error desconocido.",
+                icon: "error",
+                button: "Entendido",
+            });
         }
     } catch (error) {
         console.error('Error al eliminar tipo de donante:', error);
+        swal({
+            title: "Error del servidor",
+            text: "No se pudo conectar con el backend.",
+            icon: "error",
+        });
     }
 }
 

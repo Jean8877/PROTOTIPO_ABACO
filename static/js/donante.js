@@ -16,7 +16,9 @@ async function cargarTiposDonante() {
     try {
         const res = await fetch(`${API_DONANTES}/tipos`);
         if (!res.ok) throw new Error('No se pudo obtener los tipos de donante');
+
         const tipos = await res.json();
+        console.log("Tipos de donante:", tipos); // <- Para depuración
 
         selectTipoDonante.innerHTML = '<option value="">Seleccione un tipo...</option>';
         tipos.forEach(tipo => {
@@ -26,7 +28,7 @@ async function cargarTiposDonante() {
             selectTipoDonante.appendChild(option);
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error cargarTiposDonante:", error);
         Swal.fire('Error', 'No se pudieron cargar los tipos de donante', 'error');
     }
 }
@@ -38,7 +40,9 @@ async function cargarTiposDocumento() {
     try {
         const res = await fetch(`${API_DONANTES}/tipos_documento`);
         if (!res.ok) throw new Error('No se pudo obtener los tipos de documento');
+
         const tipos = await res.json();
+        console.log("Tipos de documento:", tipos); // <- Para depuración
 
         selectTipoDocumento.innerHTML = '<option value="">Seleccione un tipo de documento...</option>';
         tipos.forEach(tipo => {
@@ -48,7 +52,7 @@ async function cargarTiposDocumento() {
             selectTipoDocumento.appendChild(option);
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error cargarTiposDocumento:", error);
         Swal.fire('Error', 'No se pudieron cargar los tipos de documento', 'error');
     }
 }
@@ -65,28 +69,43 @@ async function cargarDonantes() {
         tablaDonantes.innerHTML = '';
 
         donantes.forEach(d => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${d.id_donante}</td>
-                <td>${d.nombre || ''}</td>
-                <td>${d.tipo_documento || 'Sin tipo'}</td>
-                <td>${d.numero_documento || ''}</td>
-                <td>${d.tipo_nombre || 'Sin tipo'}</td>
-                <td>${d.telefono || ''}</td>
-                <td>${d.correo || ''}</td>
-                <td>${d.direccion || ''}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary me-2" onclick="abrirModalEditarDonante(${d.id_donante})">
-                        <i class="bi bi-pencil-fill"></i>
-                    </button>
+    // Si es un array, conviértelo en objeto
+    const donante = Array.isArray(d)
+        ? {
+            id_donante: d[0],
+            nombre: d[1],
+            tipo_documento: d[2],
+            numero_documento: d[3],
+            tipo_id: d[4],
+            tipo_nombre: d[5],
+            correo: d[6],
+            telefono: d[7],
+            direccion: d[8],
+            estado: d[9]
+        }
+        : d;
 
-                    <button class="btn btn-sm btn-danger" onclick="eliminarDonante(${d.id_donante})">
-                        <i class="bi bi-trash-fill"></i>
-                    </button>
-                </td>
-            `;
-            tablaDonantes.appendChild(row);
-        });
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${donante.id_donante}</td>
+        <td>${donante.nombre || ''}</td>
+        <td>${donante.tipo_documento || 'Sin tipo'}</td>
+        <td>${donante.numero_documento || ''}</td>
+        <td>${donante.tipo_nombre || 'Sin tipo'}</td>
+        <td>${donante.telefono || ''}</td>
+        <td>${donante.correo || ''}</td>
+        <td>${donante.direccion || ''}</td>
+        <td>
+            <button class="btn btn-sm btn-primary me-2" onclick="abrirModalEditarDonante(${donante.id_donante})">
+                <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarDonante(${donante.id_donante})">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </td>
+    `;
+    tablaDonantes.appendChild(row);
+});
     } catch (error) {
         console.error(error);
         Swal.fire('Error', 'No se pudieron cargar los donantes', 'error');
@@ -94,18 +113,18 @@ async function cargarDonantes() {
 }
 
 // =============================
-// REGISTRAR O ACTUALIZAR DONANTE
+// REGISTRAR NUEVO DONANTE
 // =============================
 formDonante.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const nombre = document.getElementById('nombreDonante').value.trim();
     const tipo_id = selectTipoDonante.value;
-    const tipo_doc_id = selectTipoDocumento.value;
-    const numero_documento = document.getElementById('numeroDocumento').value.trim();
-    const correo = document.getElementById('correo').value.trim();
-    const telefono = document.getElementById('telefono').value.trim();
-    const direccion = document.getElementById('direccion').value.trim();
+    const tipo_doc_id = selectTipoDocumento.value || null;
+    const numero_documento = document.getElementById('numeroDocumento').value.trim() || null;
+    const correo = document.getElementById('correo').value.trim() || null;
+    const telefono = document.getElementById('telefono').value.trim() || null;
+    const direccion = document.getElementById('direccion').value.trim() || null;
 
     if (!nombre || !tipo_id) {
         return Swal.fire('Error', 'Por favor complete los campos obligatorios', 'warning');
@@ -114,25 +133,17 @@ formDonante.addEventListener('submit', async (e) => {
     const data = { nombre, tipo_id, tipo_doc_id, numero_documento, correo, telefono, direccion };
 
     try {
-        const url = editandoId ? `${API_DONANTES}/${editandoId}` : `${API_DONANTES}/`;
-        const method = editandoId ? 'PUT' : 'POST';
-
+        const url = `${API_DONANTES}/`;
         const res = await fetch(url, {
-            method,
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
         const result = await res.json();
         if (res.ok) {
-            Swal.fire({
-                icon: 'success',
-                title: editandoId ? 'Donante actualizado' : 'Donante registrado',
-                timer: 1500,
-                showConfirmButton: false
-            });
+            Swal.fire({ icon: 'success', title: 'Donante registrado', timer: 1500, showConfirmButton: false });
             formDonante.reset();
-            editandoId = null;
             await cargarDonantes();
         } else {
             Swal.fire('Error', result.message || 'No se pudo guardar el donante', 'error');
@@ -144,67 +155,34 @@ formDonante.addEventListener('submit', async (e) => {
 });
 
 // =============================
-// EDITAR DONANTE
+// ABRIR MODAL PARA EDITAR DONANTE
 // =============================
-async function editarDonante(id) {
-    try {
-        const res = await fetch(`${API_DONANTES}/${id}`);
-        if (!res.ok) throw new Error('No se pudo obtener el donante');
-
-        const d = await res.json();
-
-        document.getElementById('nombreDonante').value = d.nombre || '';
-        selectTipoDocumento.value = d.tipo_doc_id || '';
-        document.getElementById('numeroDocumento').value = d.numero_documento || '';
-        selectTipoDonante.value = d.tipo_id || '';
-        document.getElementById('telefono').value = d.telefono || '';
-        document.getElementById('correo').value = d.correo || '';
-        document.getElementById('direccion').value = d.direccion || '';
-
-        editandoId = id;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (error) {
-        console.error(error);
-        Swal.fire('Error', 'No se pudo cargar el donante para editar', 'error');
-    }
-}
-
 // =============================
-// ELIMINAR DONANTE
+// ABRIR MODAL PARA EDITAR DONANTE
 // =============================
-async function eliminarDonante(id) {
-    Swal.fire({
-        title: '¿Eliminar donante?',
-        text: 'Esta acción no se puede deshacer.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then(async (result) => {
-        if (result.isConfirmed) {
-            try {
-                const res = await fetch(`${API_DONANTES}/${id}`, { method: 'DELETE' });
-                if (res.ok) {
-                    Swal.fire('Eliminado', 'El donante ha sido eliminado.', 'success');
-                    await cargarDonantes();
-                } else {
-                    Swal.fire('Error', 'No se pudo eliminar el donante', 'error');
-                }
-            } catch (error) {
-                console.error(error);
-                Swal.fire('Error', 'No se pudo eliminar el donante', 'error');
-            }
-        }
-    });
-}
-
-
-// Abrir modal y llenar campos
 async function abrirModalEditarDonante(id) {
     try {
         const res = await fetch(`${API_DONANTES}/${id}`);
-        const d = await res.json();
+        if (!res.ok) throw new Error('No se pudo obtener el donante');
+        let d = await res.json();
 
+        // Si viene como array, convertirlo a objeto
+        if (Array.isArray(d)) {
+            d = {
+                id_donante: d[0],
+                nombre: d[1],
+                tipo_documento: d[2],
+                numero_documento: d[3],
+                tipo_id: d[4],
+                tipo_nombre: d[5],
+                correo: d[6],
+                telefono: d[7],
+                direccion: d[8],
+                estado: d[9]
+            };
+        }
+
+        // Asignar valores a los inputs del modal
         document.getElementById('editandoIdModal').value = d.id_donante;
         document.getElementById('nombreDonanteModal').value = d.nombre || '';
         document.getElementById('numeroDocumentoModal').value = d.numero_documento || '';
@@ -238,26 +216,33 @@ async function abrirModalEditarDonante(id) {
         });
         tipoDonanteModal.value = d.tipo_id || '';
 
-        const modal = new bootstrap.Modal(document.getElementById('modalActualizarDonante'));
+        // Mostrar el modal (asegúrate de tenerlo en tu HTML con el id correcto)
+        const modalElement = document.getElementById('modalActualizarDonante');
+        const modal = new bootstrap.Modal(modalElement);
         modal.show();
+
     } catch (error) {
-        console.error(error);
+        console.error("Error abrirModalEditarDonante:", error);
         Swal.fire('Error', 'No se pudo cargar el donante', 'error');
     }
 }
 
-// Enviar actualización desde modal
+
+// =============================
+// ACTUALIZAR DONANTE DESDE MODAL
+// =============================
 document.getElementById('formActualizarDonante').addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const id = document.getElementById('editandoIdModal').value;
     const data = {
         nombre: document.getElementById('nombreDonanteModal').value.trim(),
-        tipo_doc_id: document.getElementById('tipoDocumentoModal').value,
-        numero_documento: document.getElementById('numeroDocumentoModal').value.trim(),
         tipo_id: document.getElementById('tipoDonanteModal').value,
-        telefono: document.getElementById('telefonoModal').value.trim(),
-        correo: document.getElementById('correoModal').value.trim(),
-        direccion: document.getElementById('direccionModal').value.trim()
+        tipo_doc_id: document.getElementById('tipoDocumentoModal').value || null,
+        numero_documento: document.getElementById('numeroDocumentoModal').value.trim() || null,
+        correo: document.getElementById('correoModal').value.trim() || null,
+        telefono: document.getElementById('telefonoModal').value.trim() || null,
+        direccion: document.getElementById('direccionModal').value.trim() || null
     };
 
     try {
@@ -282,8 +267,59 @@ document.getElementById('formActualizarDonante').addEventListener('submit', asyn
 });
 
 // =============================
-// INICIO AUTOMÁTICO
+// ELIMINAR DONANTE
 // =============================
+async function eliminarDonante(id) {
+    Swal.fire({
+        title: '¿Eliminar donante?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const res = await fetch(`${API_DONANTES}/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    Swal.fire('Eliminado', 'El donante ha sido eliminado.', 'success');
+                    await cargarDonantes();
+                } else {
+                    Swal.fire('Error', 'No se pudo eliminar el donante', 'error');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    });
+}
+
+
+fetch(API_DONANTES)
+  .then(res => res.json())
+  .then(data => {
+    console.log('Datos recibidos del backend:', data);
+  })
+  .catch(err => console.error(err));
+
+// =============================
+// BUSCADOR DE DONANTES
+// =============================
+const buscador = document.getElementById('buscadorDonantes');
+const tabla = document.getElementById('tablaDonantes').getElementsByTagName('tbody')[0];
+
+buscador.addEventListener('keyup', function () {
+  const texto = this.value.toLowerCase().trim();
+  const filas = tabla.getElementsByTagName('tr');
+
+  for (let fila of filas) {
+    const contenidoFila = fila.textContent.toLowerCase();
+    fila.style.display = contenidoFila.includes(texto) ? '' : 'none';
+  }
+});
+
+
+
 document.addEventListener('DOMContentLoaded', async () => {
     await cargarTiposDonante();
     await cargarTiposDocumento();
