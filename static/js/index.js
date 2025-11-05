@@ -46,69 +46,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 // CONTROL AUTOMÁTICO DE SESIÓN
 // ============================
 
-// Duración igual a Flask → 5 minutos
-const DURACION_SESION = 5 * 60 * 1000; // 5 minutos
-const AVISO_EXPIRACION = 4 * 60 * 1000; // Aviso al minuto 4
+// Duración igual a Flask → 10 minutos
+//const DURACION_SESION = 10 * 60 * 1000; // 10 minutos
+//const AVISO_EXPIRACION = 9 * 60 * 1000; // Aviso al minuto 9
+// ============================
+// TEMPORIZADOR DE INACTIVIDAD
+// ============================
 
-let temporizadorAviso;
-let temporizadorCierre;
-
-// 🕒 Iniciar control de sesión
-function iniciarControlSesion() {
-  limpiarTemporizadores();
-
-  // Mostrar advertencia antes de expirar
-  temporizadorAviso = setTimeout(() => {
-    Swal.fire({
-      title: "Sesión a punto de expirar",
-      text: "Tu sesión se cerrará automáticamente en 1 minuto si no realizas ninguna acción.",
-      icon: "warning",
-      timer: 4000,
-      showConfirmButton: false
-    });
-  }, AVISO_EXPIRACION);
-
-  // Cerrar sesión automáticamente
-  temporizadorCierre = setTimeout(() => {
-    cerrarSesionAutomatica();
-  }, DURACION_SESION);
-}
-
-// 🔄 Limpiar temporizadores (para reiniciar)
-function limpiarTemporizadores() {
-  clearTimeout(temporizadorAviso);
-  clearTimeout(temporizadorCierre);
-}
-
-// 🚪 Cerrar sesión y redirigir al index
-function cerrarSesionAutomatica() {
-  fetch('/logout')
-    .then(() => {
-      Swal.fire({
-        title: "Sesión finalizada",
-        text: "Tu sesión ha expirado por inactividad.",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false
-      }).then(() => {
-        window.location.href = '/';
-      });
-    })
-    .catch(() => {
-      window.location.href = '/';
-    });
-}
-
-// 🎯 Detectar actividad del usuario
-['mousemove', 'keydown', 'click'].forEach(evento => {
-  document.addEventListener(evento, reiniciarSesion);
-});
-
-// 🔁 Reiniciar sesión si hay actividad
-function reiniciarSesion() {
-  limpiarTemporizadores();
-  iniciarControlSesion();
-}
-
-// Iniciar control cuando cargue la página
-window.onload = iniciarControlSesion;
