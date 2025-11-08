@@ -37,7 +37,7 @@ function agregarFilaCategoria(cat) {
         <td class="col-nombre">${cat[1]}</td>
         <td class="col-descripcion">${cat[2] || ''}</td>
         <td>
-            <button class="btn btn-sm btn-primary me-2" onclick="editarCategoria(this)">
+            <button class="btn btn-sm btn-success me-2" onclick="editarCategoria(this)">
                 <i class="bi bi-pencil-fill"></i>
             </button>
             <button class="btn btn-sm btn-danger" onclick="eliminarCategoria(this)">

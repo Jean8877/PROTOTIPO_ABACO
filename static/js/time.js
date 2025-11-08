@@ -1,5 +1,5 @@
-const TIEMPO_INACTIVIDAD = 1 * 30 * 1000; // 1 minuto
-const TIEMPO_RESPUESTA = 5 * 1000;   // 1 segundo para responder el modal
+const TIEMPO_INACTIVIDAD = 5 * 60 * 1000; // 1 minuto
+const TIEMPO_RESPUESTA = 4 * 60 * 1000;   // 1 segundo para responder el modal
 
 let temporizadorInactividad;
 let temporizadorRespuesta;

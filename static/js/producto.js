@@ -1,3 +1,4 @@
+//mira este codigo lo unico que toca hacerle es, que convierte ese array, a un objeto pero no meuvas mas nada, porque ahora si me esta mostrandos los demas producto que ya tenia guardado, solo que undifined
 // ==============================
 // CONFIGURACIÓN INICIAL
 // ==============================
@@ -18,9 +19,9 @@ const API_SUBCATEGORIAS = '/api/subcategorias';
 // ==============================
 function es_similar(a, b) {
     // Comparación simple case-insensitive
-    return a.toLowerCase() === b.toLowerCase() || 
-           a.toLowerCase().includes(b.toLowerCase()) || 
-           b.toLowerCase().includes(a.toLowerCase());
+    return a.toLowerCase() === b.toLowerCase() ||
+        a.toLowerCase().includes(b.toLowerCase()) ||
+        b.toLowerCase().includes(a.toLowerCase());
 }
 
 // ==============================
@@ -108,16 +109,56 @@ async function cargarCategoriasYSubcategorias() {
 async function cargarProductos() {
     try {
         const res = await fetch(API_PRODUCTOS);
-        productos = await res.json();
+        const data = await res.json();
 
-        tablaProductos.innerHTML = '';
-        productos.forEach(prod => agregarFilaProducto(prod));
+        console.log('Respuesta cruda del backend:', data);
+
+        // Si data es [ [4, 'pera', 100, ...] ], hacemos:
+
+        // Si quieres que cada producto sea un objeto con propiedades más claras:
+        productos = data.map(p => ({
+            id_producto: p[0],
+            nombre: p[1],
+            stock_minimo: p[2],
+            unidad_medida: p[3],
+            descripcion: p[4],
+            // otros campos si quieres
+            id_categoria: p[5],
+            id_subcategoria: p[6],
+            categoria: p[7],
+            subcategoria: p[8]
+        }));
+        console.log('Productos procesados:', productos);
+
+        const tabla = document.querySelector("#tablaProductos tbody");
+        tabla.innerHTML = '';
+        productos.forEach(prod => {
+            const fila = `
+                <tr>
+                    <td>${prod.id_producto}</td>
+                    <td>${prod.nombre}</td>
+                    <td>${prod.stock_minimo}</td>
+                    <td>${prod.unidad_medida}</td>
+                    <td>${prod.descripcion}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success me-2" onclick="abrirModalEditarProducto(${prod.id_producto})">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${prod.id_producto})">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tabla.insertAdjacentHTML("beforeend", fila);
+        });
 
     } catch (error) {
         console.error('Error cargando productos:', error);
         swal("Error", "No se pudieron cargar los productos", "error");
     }
 }
+
 
 // ==============================
 // BUSCADOR DE PRODUCTOS
@@ -138,6 +179,8 @@ buscadorProductos.addEventListener('input', () => {
 // ==============================
 function agregarFilaProducto(prod) {
     const row = document.createElement('tr');
+    row.dataset.id = prod.id_producto;
+    //row.dataset.id = prod[0]; 
     row.innerHTML = `
         <td class="col-id">${prod[0]}</td>
         <td class="col-nombre">${prod[1]}</td>
@@ -159,7 +202,7 @@ function agregarFilaProducto(prod) {
 // ==============================
 // CREAR PRODUCTO
 // ==============================
-formProducto.addEventListener('submit', async function(e) {
+formProducto.addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const nombre = document.getElementById('productoSelect').value.trim();
@@ -206,24 +249,32 @@ formProducto.addEventListener('submit', async function(e) {
 // ==============================
 async function abrirModalEditarProducto(id) {
     try {
-        const prod = productos.find(p => p.id_producto == id);
+        //const prod = productos.find(p => p.id_producto == id);
+        const producto = productos.find(p => p.id_producto === id);
 
-        document.getElementById('idProductoModal').value = prod.id_producto;
-        document.getElementById('nombreProductoModal').value = prod.nombre;
-        document.getElementById('nombreStockModal').value = prod.stock_minimo;
-        document.getElementById('descripcionProductoModal').value = prod.descripcion;
-        document.getElementById('categoriaProductoModal').value = prod.id_categoria;
+    if (!producto) {
+        console.error("Producto no encontrado:", id);
+        swal("Error", "No se pudo cargar el producto", "error");
+
+        return;
+    }
+
+        document.getElementById('idProductoModal').value = producto.id_producto;
+        document.getElementById('nombreProductoModal').value = producto.nombre;
+        document.getElementById('nombreStockModal').value = producto.stock_minimo;
+        document.getElementById('descripcionProductoModal').value = producto.descripcion;
+        document.getElementById('categoriaProductoModal').value = producto.id_categoria;
+
 
         const event = new Event('change');
         document.getElementById('categoriaProductoModal').dispatchEvent(event);
 
-        // Después de cargar subcategorías
         setTimeout(() => {
-            document.getElementById('subcategoriaProductoModal').value = prod.id_subcategoria;
+            document.getElementById('subcategoriaProductoModal').value = producto.id_subcategoria;
         }, 100);
 
         editandoProducto = Array.from(tablaProductos.rows).find(
-            row => row.querySelector('.col-id').textContent == id
+            row => row.children[0].textContent == id
         );
 
         const modal = new bootstrap.Modal(document.getElementById('modalActualizarProducto'));
@@ -238,7 +289,7 @@ async function abrirModalEditarProducto(id) {
 // ==============================
 // ACTUALIZAR PRODUCTO
 // ==============================
-document.getElementById('formActualizarProducto').addEventListener('submit', async function(e) {
+document.getElementById('formActualizarProducto').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const id = document.getElementById('idProductoModal').value;
@@ -305,10 +356,10 @@ async function eliminarProducto(id) {
         const data = await res.json();
 
         if (res.ok && data.success) {
-            const fila = Array.from(tablaProductos.rows).find(
-                row => row.querySelector('.col-id').textContent == id
-            );
-            fila.remove();
+            const fila = document.querySelector(`tr[data-id="${id}"]`);
+            if (fila) fila.remove();
+            //fila.remove();
+            //document.querySelector(`tr[data-id="${id}"]`).remove();
 
             productos = productos.filter(p => p.id_producto != id);
 

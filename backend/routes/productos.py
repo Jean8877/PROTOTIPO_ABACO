@@ -1,5 +1,5 @@
 # routes/productos.py
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session, redirect, url_for
 from db import get_db_connection
 from difflib import SequenceMatcher
 import pymysql
@@ -20,8 +20,11 @@ def es_similar(a, b, umbral=0.85):
 # ==============================
 @productos_bp.route('/', methods=['GET'])
 def listar_productos():
+    if 'usuario' not in session:
+        return jsonify({'success': False, 'message': 'Sesión expirada'}), 401
+
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
         cursor.execute("""
             SELECT p.id_producto, p.nombre, p.stock_minimo, p.unidad_medida, p.descripcion,
@@ -44,8 +47,11 @@ def listar_productos():
 # ==============================
 @productos_bp.route('/<int:id_producto>', methods=['GET'])
 def obtener_producto(id_producto):
+    if 'usuario' not in session:
+        return jsonify({'success': False, 'message': 'Sesión expirada'}), 401
+
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute("""
             SELECT p.id_producto, p.nombre, p.stock_minimo, p.unidad_medida, p.descripcion,
@@ -71,11 +77,18 @@ def obtener_producto(id_producto):
 # ==============================
 @productos_bp.route('/', methods=['POST'])
 def crear_producto():
+    if 'usuario' not in session:
+        return jsonify({'success': False, 'message': 'Sesión expirada'}), 401
+    print("\n========== DEBUG CREAR PRODUCTO ==========")
+    data = request.get_json(silent=True)
+
+    print("DATA RECIBIDA:", data)
+    print("==========================================\n")
     data = request.get_json()
     nombre = data.get('nombre')
     stock_minimo = data.get('stock_minimo')
     unidad_medida = data.get('unidad_medida')
-    descripcion = data.get('descripcion', '')
+    descripcion = data.get('descripcion', None)
     id_categoria = data.get('id_categoria')
     id_subcategoria = data.get('id_subcategoria')
 
@@ -83,7 +96,7 @@ def crear_producto():
         return jsonify({'success': False, 'message': 'Todos los campos son obligatorios'}), 400
 
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
         # Validar nombres similares en la misma subcategoría
         cursor.execute("SELECT nombre FROM productos WHERE id_subcategoria=%s", (id_subcategoria,))
@@ -118,6 +131,8 @@ def crear_producto():
 # ==============================
 @productos_bp.route('/<int:id_producto>', methods=['PUT'])
 def actualizar_producto(id_producto):
+    if 'usuario' not in session:
+        return jsonify({'success': False, 'message': 'Sesión expirada'}), 401
     data = request.get_json()
     nombre = data.get('nombre')
     stock_minimo = data.get('stock_minimo')
@@ -169,8 +184,10 @@ def actualizar_producto(id_producto):
 # ==============================
 @productos_bp.route('/<int:id_producto>', methods=['DELETE'])
 def eliminar_producto(id_producto):
+    if 'usuario' not in session:
+        return jsonify({'success': False, 'message': 'Sesión expirada'}), 401
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute("DELETE FROM productos WHERE id_producto=%s", (id_producto,))
         conn.commit()

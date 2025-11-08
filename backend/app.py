@@ -58,7 +58,7 @@ def static_files(filename):
 
 app.secret_key = 'clave-segura'  #  Necesario para manejar sesiones
 
-app.permanent_session_lifetime = timedelta(minutes=1)  # Duración de la sesión
+app.permanent_session_lifetime = timedelta(minutes=5)  # Duración de la sesión
 # ==============================
 # 2️ RUTA PRINCIPAL - LOGIN
 # ==============================
@@ -78,8 +78,10 @@ def login():
         return jsonify({'success': False, 'message': 'No se enviaron datos'}), 400
 
     session.permanent = True  # Hacer la sesión permanente
+
     username = data.get('username')
     password = data.get('password')
+    
 
     connection = get_db_connection()
     if not connection:

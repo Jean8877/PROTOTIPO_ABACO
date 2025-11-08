@@ -4,52 +4,52 @@ function resaltar() {
     
     // Mapeo de páginas a enlaces del sidebar
     const pageMap = {
-        'menu_central.html': 0,
+        'menu_central': 0,
         //mantiene el sidebar marcado en las paginas hijas
-        'menu_de_parroquias.html': 1,
-        'crear_organizacion.html': 1,
-        'gestion_parroquia.html': 1,
-        'fundaciones.html': 1,
+        'menu_de_parroquias': 1,
+        'crear_organizacion': 1,
+        'gestion_parroquia': 1,
+        'fundaciones': 1,
         
-        'menu_producto.html': 2,
+        'menu_producto': 2,
         //mantiene el sidebar marcado en las paginas hijas
-        'categoria.html': 2,
-        'subcategoria.html': 2,
-        'Producto.html': 2,
-        'Bodegas.html': 2,
+        'categoria': 2,
+        'subcategoria': 2,
+        'producto': 2,
+        'bodegas': 2,
         
-        'menu_donante.html': 3,
+        'menu_donante': 3,
         //mantiene el sidebar marcado en las paginas hijas
-        'tipo_donante.html': 3,
-        'donante.html': 3,
+        'tipo_donante': 3,
+        'donante': 3,
         
-        'pagina_principal.html': 4,
-        'lista_donaciones.html': 5,
-        'tabla_producto.html': 6,
-        'movimiento_inv.html': 7,
+        'pagina_principal': 4,
+        'lista_donaciones': 5,
+        'tabla_producto': 6,
+        'movimiento_inv': 7,
         
-        'menu_gastos.html': 8,
+        'menu_gastos': 8,
         //mantiene el sidebar marcado en las paginas hijas
-        'tipo_gastos.html': 8,
-        'registrar_gastos.html': 8,
+        'tipo_gastos': 8,
+        'registrar_gastos': 8,
         
-        'menu_reportes.html': 9,
+        'menu_reportes': 9,
         //mantiene el sidebar marcado en las paginas hijas
-        'reportes.html':9,
-        'donaciones_producto.html':9,
-        'semaforos.html':9,
-        'certificacion_donante.html':9,
-        'acta_vencimiento.html':9,
+        'reportes':9,
+        'donaciones_producto':9,
+        'semaforos':9,
+        'certificacion_donante':9,
+        'acta_vencimiento':9,
         
-        'pag_confi.html': 10,
+        'pag_confi': 10,
         //mantiene el sidebar marcado en las paginas hijas
-        'permisos_asistentes.html': 10,
-        'parametros.html': 10,
-        'configuracion.html': 10,
-        'menu_manual.html': 10,
-        'tecnico.html':10,
-        'instalacion.html':10,
-        'manual_usuario.html':10
+        'permisos_asistentes': 10,
+        'parametros': 10,
+        'configuracion': 10,
+        'menu_manual': 10,
+        'tecnico':10,
+        'instalacion':10,
+        'manual_usuario':10
         
     };
     
