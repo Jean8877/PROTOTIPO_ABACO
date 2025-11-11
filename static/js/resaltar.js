@@ -17,6 +17,7 @@ function resaltar() {
         'subcategoria': 2,
         'producto': 2,
         'bodegas': 2,
+        'unidad_medida': 2,
         
         'menu_donante': 3,
         //mantiene el sidebar marcado en las paginas hijas

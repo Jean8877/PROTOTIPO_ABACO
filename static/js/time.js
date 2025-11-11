@@ -1,10 +1,8 @@
-const TIEMPO_INACTIVIDAD = 5 * 60 * 1000; // 1 minuto
-const TIEMPO_RESPUESTA = 4 * 60 * 1000;   // 1 segundo para responder el modal
+const TIEMPO_INACTIVIDAD = 5 * 60 * 1000; // 5 minutos
+const TIEMPO_RESPUESTA = 30 * 1000;   // 30 segundos para responder el modal
 
 let temporizadorInactividad;
 let temporizadorRespuesta;
-
-mostrarModalInactividad;
 
 // Función que muestra el modal de aviso
 function mostrarModalInactividad() {

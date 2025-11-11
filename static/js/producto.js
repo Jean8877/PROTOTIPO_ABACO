@@ -5,6 +5,7 @@
 let productos = [];
 let categorias = [];
 let subcategorias = [];
+let unidades = [];
 let editandoProducto = null;
 
 const formProducto = document.getElementById('formProducto');
@@ -13,6 +14,7 @@ const tablaProductos = document.getElementById('tablaProductos').querySelector('
 const API_PRODUCTOS = '/api/productos';
 const API_CATEGORIAS = '/api/categorias';
 const API_SUBCATEGORIAS = '/api/subcategorias';
+const API_UNIDADES = '/api/unidades';
 
 // ==============================
 // FUNCIÓN DE SIMILITUD
@@ -103,6 +105,37 @@ async function cargarCategoriasYSubcategorias() {
     }
 }
 
+
+// ==============================
+// CARGAR UNIDADES DE MEDIDA
+// ==============================
+async function cargarUnidades() {
+    try {
+        const response = await fetch('/api/unidades');
+        if (!response.ok) throw new Error("Error al obtener unidades");
+
+        unidades = await response.json();
+
+        // Select de crear producto
+        const selectUnidad = document.getElementById('selectUnidad');
+        selectUnidad.innerHTML = `<option value="">Seleccione unidad</option>`;
+        unidades.forEach(unidad => {
+            selectUnidad.innerHTML += `<option value="${unidad[0]}">${unidad[1]}</option>`;
+        });
+
+        // Select del modal
+        const selectUnidadModal = document.getElementById('selectUnidadModal');
+        selectUnidadModal.innerHTML = `<option value="">Seleccione unidad</option>`;
+        unidades.forEach(unidad => {
+            selectUnidadModal.innerHTML += `<option value="${unidad[0]}">${unidad[1]}</option>`;
+        });
+
+        console.log("Unidades cargadas correctamente");
+    } catch (error) {
+        console.error("Error cargarUnidades:", error);
+    }
+}
+
 // ==============================
 // CARGAR PRODUCTOS
 // ==============================
@@ -112,22 +145,25 @@ async function cargarProductos() {
         const data = await res.json();
 
         console.log('Respuesta cruda del backend:', data);
-
+        console.log("👉 DATA RAW PRODUCTOS:", data);
+        data.forEach((p, i) => console.log(`Fila ${i}:`, p));
         // Si data es [ [4, 'pera', 100, ...] ], hacemos:
 
         // Si quieres que cada producto sea un objeto con propiedades más claras:
-        productos = data.map(p => ({
-            id_producto: p[0],
-            nombre: p[1],
-            stock_minimo: p[2],
-            unidad_medida: p[3],
-            descripcion: p[4],
-            // otros campos si quieres
-            id_categoria: p[5],
-            id_subcategoria: p[6],
-            categoria: p[7],
-            subcategoria: p[8]
-        }));
+        productos = data.map(p => {
+    return {
+        id_producto: p[0],
+        nombre: p[1],
+        stock_minimo: p[2],
+        id_unidad: p[3], // ✅ esto es clave
+        descripcion: p[4],
+        id_categoria: p[5],
+        id_subcategoria: p[6],
+        categoria: p[7],
+        subcategoria: p[8],
+        unidad_medida: (unidades.find(u => u[0] == p[3])?.[1]) || "" // ✅ aquí obtenemos el nombre real
+    };
+});
         console.log('Productos procesados:', productos);
 
         const tabla = document.querySelector("#tablaProductos tbody");
@@ -209,10 +245,10 @@ formProducto.addEventListener('submit', async function (e) {
     const id_categoria = document.getElementById('categoriaSelect').value;
     const id_subcategoria = document.getElementById('subcategoriaSelect').value;
     const stock_minimo = document.getElementById('cantidadProducto').value;
-    const unidad_medida = document.querySelector('#formProducto select:nth-of-type(2)').value;
+    const id_unidad = document.querySelector('#formProducto select:nth-of-type(2)').value;
     const descripcion = document.getElementById('descripcionProducto').value.trim();
 
-    if (!nombre || !id_categoria || !id_subcategoria || !stock_minimo || !unidad_medida) {
+    if (!nombre || !id_categoria || !id_subcategoria || !stock_minimo || !id_unidad) {
         swal("Error", "Todos los campos son obligatorios", "error");
         return;
     }
@@ -226,7 +262,7 @@ formProducto.addEventListener('submit', async function (e) {
         const res = await fetch(API_PRODUCTOS, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre, id_categoria, id_subcategoria, stock_minimo, unidad_medida, descripcion })
+            body: JSON.stringify({ nombre, id_categoria, id_subcategoria, stock_minimo, id_unidad, descripcion })
         });
         const data = await res.json();
 
@@ -252,18 +288,19 @@ async function abrirModalEditarProducto(id) {
         //const prod = productos.find(p => p.id_producto == id);
         const producto = productos.find(p => p.id_producto === id);
 
-    if (!producto) {
-        console.error("Producto no encontrado:", id);
-        swal("Error", "No se pudo cargar el producto", "error");
+        if (!producto) {
+            console.error("Producto no encontrado:", id);
+            swal("Error", "No se pudo cargar el producto", "error");
 
-        return;
-    }
+            return;
+        }
 
         document.getElementById('idProductoModal').value = producto.id_producto;
         document.getElementById('nombreProductoModal').value = producto.nombre;
         document.getElementById('nombreStockModal').value = producto.stock_minimo;
         document.getElementById('descripcionProductoModal').value = producto.descripcion;
         document.getElementById('categoriaProductoModal').value = producto.id_categoria;
+        document.getElementById('selectUnidadModal').value = producto.id_unidad;
 
 
         const event = new Event('change');
@@ -276,6 +313,9 @@ async function abrirModalEditarProducto(id) {
         editandoProducto = Array.from(tablaProductos.rows).find(
             row => row.children[0].textContent == id
         );
+
+        await cargarUnidades(); // Asegura que las unidades estén cargadas
+        document.getElementById('selectUnidadModal').value = producto.id_unidad;
 
         const modal = new bootstrap.Modal(document.getElementById('modalActualizarProducto'));
         modal.show();
@@ -298,9 +338,9 @@ document.getElementById('formActualizarProducto').addEventListener('submit', asy
     const id_subcategoria = document.getElementById('subcategoriaProductoModal').value;
     const stock_minimo = document.getElementById('nombreStockModal').value;
     const descripcion = document.getElementById('descripcionProductoModal').value.trim();
-    const unidad_medida = document.querySelector('#formActualizarProducto select').value;
+    const id_unidad = document.querySelector('#formActualizarProducto select').value;
 
-    if (!nombre || !id_categoria || !id_subcategoria || !stock_minimo || !unidad_medida) {
+    if (!nombre || !id_categoria || !id_subcategoria || !stock_minimo || !id_unidad) {
         swal("Error", "Todos los campos son obligatorios", "error");
         return;
     }
@@ -314,20 +354,23 @@ document.getElementById('formActualizarProducto').addEventListener('submit', asy
         const res = await fetch(`${API_PRODUCTOS}/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre, id_categoria, id_subcategoria, stock_minimo, unidad_medida, descripcion })
+            body: JSON.stringify({ nombre, id_categoria, id_subcategoria, stock_minimo, id_unidad, descripcion })
         });
         const data = await res.json();
+        console.log("🔎 RESPUESTA BACKEND PUT:", data);
+const unidad = unidades.find(u => u[0] == data.producto.id_unidad)?.[1] || "Sin unidad";
 
-        if (res.ok && data.success) {
+        if (res.ok ) {
             editandoProducto.querySelector('.col-nombre').textContent = data.producto.nombre;
             editandoProducto.querySelector('.col-stock').textContent = data.producto.stock_minimo;
-            editandoProducto.querySelector('.col-unidad').textContent = data.producto.unidad_medida;
+            editandoProducto.querySelector('.col-unidad').textContent = unidad;
             editandoProducto.querySelector('.col-descripcion').textContent = data.producto.descripcion;
 
             const index = productos.findIndex(p => p.id_producto == id);
-            productos[index] = data.producto;
+            productos[index] = { ...data.producto, unidad_medida: unidad };
 
             swal("Éxito", "Producto actualizado correctamente", "success");
+            cargarProductos();
         } else {
             swal("Error", data.message || "No se pudo actualizar el producto", "error");
         }
@@ -364,6 +407,7 @@ async function eliminarProducto(id) {
             productos = productos.filter(p => p.id_producto != id);
 
             swal("Éxito", "Producto eliminado correctamente", "success");
+            cargarProductos();
         } else {
             swal("Error", data.message || "No se pudo eliminar el producto", "error");
         }
@@ -378,5 +422,6 @@ async function eliminarProducto(id) {
 // ==============================
 document.addEventListener('DOMContentLoaded', () => {
     cargarCategoriasYSubcategorias();
-    cargarProductos();
+    cargarUnidades();   // 👈 SE ESPERA
+    cargarProductos();  // 👈 AHORA SÍ UNIDADES ESTÁ LISTO
 });
