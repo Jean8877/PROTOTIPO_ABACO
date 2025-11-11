@@ -72,99 +72,54 @@
         </table>
       </div>
     </div>
+
     <div class="modal fade" id="modalActualizarTipoGasto" tabindex="-1" aria-labelledby="modalActualizarTipoGastoLabel"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header bg-success text-white">
-            <h5 class="modal-title" id="modalActualizarTipoGastoLabel">Actualizar Tipo de gasto</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-              aria-label="Cerrar"></button>
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalActualizarTipoGastoLabel">Actualizar Tipo de Gasto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+          aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formActualizarTipoGasto">
+          <div class="mb-3">
+            <label class="form-label">ID</label>
+            <input type="text" id="idTipoGastoModal" class="form-control" readonly>
           </div>
-          <div class="modal-body">
-            <form id="formActualizartipodonante">
-              <div class="mb-3">
-                <label for="idTipoDonanteModal" class="form-label">ID</label>
-                <input type="text" id="idTipoDonanteModal" class="form-control" readonly>
-              </div>
 
-              <div class="mb-3">
-                <label for="nombreTipoDonanteModal" class="form-label">Nombre del tipo de gasto</label>
-                <input type="text" id="nombreTipoDonanteModal" class="form-control" required>
-              </div>
-
-              <div>
-                <label for="descripcionTipoDonanteModal" class="form-label">Descripción del tipo de gasto</label>
-                <input type="text" id="descripcionTipoDonanteModal" class="form-control" required>
-              </div>
-
-              <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-success">Actualizar</button>
-              </div>
-            </form>
+          <div class="mb-3">
+            <label class="form-label">Nombre del tipo de gasto</label>
+            <input type="text" id="nombreTipoGastoModal" class="form-control" required>
           </div>
-        </div>
+
+          <div class="mb-3">
+            <label class="form-label">Descripción del tipo de gasto</label>
+            <input type="text" id="descripcionTipoGastoModal" class="form-control" required>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success">Actualizar</button>
+          </div>
+
+        </form>
       </div>
     </div>
+  </div>
+</div>
 
-    <script>
-      const formGasto = document.getElementById('formGasto');
-      const tablaGastos = document.getElementById('tablaGastos').querySelector('tbody');
-      let editandoGasto = null;
-      let idGasto = 1;
 
-      formGasto.addEventListener('submit', function (e) {
-        e.preventDefault();
 
-        const nombre = document.getElementById('nombreGasto').value.trim();
-        const descripcion = document.getElementById('descripcionGasto').value.trim();
-
-        if (!nombre || !descripcion) return;
-
-        if (editandoGasto) {
-          editandoGasto.querySelector('.col-nombre').textContent = nombre;
-          editandoGasto.querySelector('.col-descripcion').textContent = descripcion;
-          editandoGasto = null;
-        } else {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-          <td class="col-id">${String(idGasto).padStart(3, '0')}</td>
-          <td class="col-nombre">${nombre}</td>
-          <td class="col-descripcion">${descripcion}</td>
-          <td>
-            <button onclick="editarGasto(this)">Editar</button>
-            <button onclick="eliminarGasto(this)">Eliminar</button>
-          </td>
-        `;
-          tablaGastos.appendChild(row);
-          idGasto++;
-        }
-
-        formGasto.reset();
-      });
-
-      function eliminarGasto(btn) {
-        const row = btn.closest('tr');
-        row.remove();
-      }
-
-      function editarGasto(btn) {
-        const row = btn.closest('tr');
-        const nombre = row.querySelector('.col-nombre').textContent;
-        const descripcion = row.querySelector('.col-descripcion').textContent;
-
-        document.getElementById('nombreGasto').value = nombre;
-        document.getElementById('descripcionGasto').value = descripcion;
-
-        editandoGasto = row;
-      }
-    </script>
+    
     <script>
       resaltar()
     </script>
+    <script src="/static/js/tipo_gasto.js"></script>
     <script src="/static/js/notificacion.js"></script>
     <script src="/static/js/resaltar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

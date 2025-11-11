@@ -20,7 +20,7 @@ async function tipo_donante() {
                 <td>${tipo.estado}</td>
                 <td>${new Date(tipo.fecha_registro).toLocaleString()}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary me-2" onclick="abrirModalActualizar(${tipo.id_tipo}, '${tipo.nombre}', '${tipo.descripcion}', '${tipo.estado}')">
+                    <button class="btn btn-sm btn-success me-2" onclick="abrirModalActualizar(${tipo.id_tipo}, '${tipo.nombre}', '${tipo.descripcion}', '${tipo.estado}')">
                         <i class="bi bi-pencil-fill"></i>
                     </button>
                     <button class="btn btn-sm btn-danger" onclick="eliminarTipo(${tipo.id_tipo})">

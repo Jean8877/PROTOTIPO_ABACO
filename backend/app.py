@@ -20,6 +20,9 @@ from routes.categoria import categorias_bp
 from routes.subcategoria import subcategorias_bp
 from routes.productos import productos_bp
 from routes.unidades import unidades_bp
+from routes.bodegas import bodegas_bp
+from routes.tipos_gasto import tipos_gasto_bp
+from routes.gastos import gastos_bp
 
 from routes.tipo_documento import tipo_documento_bp
 
@@ -51,6 +54,10 @@ app.register_blueprint(categorias_bp, url_prefix='/api/categorias')
 app.register_blueprint(subcategorias_bp, url_prefix='/api/subcategorias')
 app.register_blueprint(productos_bp, url_prefix='/api/productos')
 app.register_blueprint(unidades_bp)
+app.register_blueprint(bodegas_bp)
+app.register_blueprint(tipos_gasto_bp)
+app.register_blueprint(gastos_bp, url_prefix='/api/gastos')
+
 
 
 @app.route('/static/<path:filename>')

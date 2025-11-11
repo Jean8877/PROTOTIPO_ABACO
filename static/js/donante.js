@@ -96,7 +96,7 @@ async function cargarDonantes() {
         <td>${donante.correo || ''}</td>
         <td>${donante.direccion || ''}</td>
         <td>
-            <button class="btn btn-sm btn-primary me-2" onclick="abrirModalEditarDonante(${donante.id_donante})">
+            <button class="btn btn-sm btn-success me-2" onclick="abrirModalEditarDonante(${donante.id_donante})">
                 <i class="bi bi-pencil-fill"></i>
             </button>
             <button class="btn btn-sm btn-danger" onclick="eliminarDonante(${donante.id_donante})">
