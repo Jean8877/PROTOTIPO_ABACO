@@ -27,7 +27,7 @@ def listar_productos():
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
         cursor.execute("""
-            SELECT p.id_producto, p.nombre, p.stock_minimo, p.unidad_medida, p.descripcion,
+            SELECT p.id_producto, p.nombre, p.stock_minimo, p.id_unidad, p.descripcion,
                    p.id_categoria, p.id_subcategoria, c.nombre AS categoria, s.nombre AS subcategoria
             FROM productos p
             JOIN categorias c ON p.id_categoria = c.id_categoria
@@ -54,7 +54,7 @@ def obtener_producto(id_producto):
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute("""
-            SELECT p.id_producto, p.nombre, p.stock_minimo, p.unidad_medida, p.descripcion,
+            SELECT p.id_producto, p.nombre, p.stock_minimo, p.id_unidad, p.descripcion,
                    p.id_categoria, p.id_subcategoria, c.nombre AS categoria, s.nombre AS subcategoria
             FROM productos p
             JOIN categorias c ON p.id_categoria = c.id_categoria
@@ -79,26 +79,31 @@ def obtener_producto(id_producto):
 def crear_producto():
     if 'usuario' not in session:
         return jsonify({'success': False, 'message': 'Sesión expirada'}), 401
-    print("\n========== DEBUG CREAR PRODUCTO ==========")
-    data = request.get_json(silent=True)
 
-    print("DATA RECIBIDA:", data)
-    print("==========================================\n")
     data = request.get_json()
     nombre = data.get('nombre')
     stock_minimo = data.get('stock_minimo')
-    unidad_medida = data.get('unidad_medida')
+    id_unidad = data.get('id_unidad')
     descripcion = data.get('descripcion', None)
     id_categoria = data.get('id_categoria')
     id_subcategoria = data.get('id_subcategoria')
 
-    if not nombre or not id_categoria or not id_subcategoria or not unidad_medida or stock_minimo is None:
+    # ✅ Convertir correctamente los valores
+    try:
+        stock_minimo = int(stock_minimo)
+        id_unidad = int(id_unidad)
+        id_categoria = int(id_categoria)
+        id_subcategoria = int(id_subcategoria)
+    except:
+        return jsonify({'success': False, 'message': 'Los valores numéricos no son válidos'}), 400
+
+    if not nombre or not id_categoria or not id_subcategoria or not id_unidad or stock_minimo is None:
         return jsonify({'success': False, 'message': 'Todos los campos son obligatorios'}), 400
 
     conn = get_db_connection()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
-        # Validar nombres similares en la misma subcategoría
+        # Verificar similaridad de nombre
         cursor.execute("SELECT nombre FROM productos WHERE id_subcategoria=%s", (id_subcategoria,))
         nombres_existentes = [row['nombre'] for row in cursor.fetchall()]
         for nombre_existente in nombres_existentes:
@@ -108,16 +113,18 @@ def crear_producto():
                     'message': f'Ya existe un producto muy similar en esta subcategoría: "{nombre_existente}"'
                 }), 400
 
+        # ✅ Aquí ya los valores son enteros y no causan errores
         cursor.execute("""
-            INSERT INTO productos (id_categoria, id_subcategoria, nombre, stock_minimo, unidad_medida, descripcion)
+            INSERT INTO productos (id_categoria, id_subcategoria, nombre, stock_minimo, id_unidad, descripcion)
             VALUES (%s, %s, %s, %s, %s, %s)
-        """, (id_categoria, id_subcategoria, nombre, stock_minimo, unidad_medida, descripcion))
+        """, (id_categoria, id_subcategoria, nombre, stock_minimo, id_unidad, descripcion))
         conn.commit()
-        nuevo_id = cursor.lastrowid
 
+        nuevo_id = cursor.lastrowid
         cursor.execute("SELECT * FROM productos WHERE id_producto=%s", (nuevo_id,))
         producto = cursor.fetchone()
         return jsonify({'success': True, 'producto': producto}), 201
+
     except Exception as e:
         conn.rollback()
         print("Error crear_producto:", e)
@@ -126,6 +133,8 @@ def crear_producto():
         cursor.close()
         conn.close()
 
+
+
 # ==============================
 # ACTUALIZAR PRODUCTO
 # ==============================
@@ -133,44 +142,36 @@ def crear_producto():
 def actualizar_producto(id_producto):
     if 'usuario' not in session:
         return jsonify({'success': False, 'message': 'Sesión expirada'}), 401
+
     data = request.get_json()
     nombre = data.get('nombre')
     stock_minimo = data.get('stock_minimo')
-    unidad_medida = data.get('unidad_medida')
+    id_unidad = data.get('id_unidad')
     descripcion = data.get('descripcion', '')
     id_categoria = data.get('id_categoria')
     id_subcategoria = data.get('id_subcategoria')
 
-    if not nombre or not id_categoria or not id_subcategoria or not unidad_medida or stock_minimo is None:
+    if not nombre or not id_categoria or not id_subcategoria or not id_unidad or stock_minimo is None:
         return jsonify({'success': False, 'message': 'Todos los campos son obligatorios'}), 400
 
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
     try:
         cursor.execute("SELECT * FROM productos WHERE id_producto=%s", (id_producto,))
         if not cursor.fetchone():
             return jsonify({'success': False, 'message': 'Producto no encontrado'}), 404
 
-        # Validar nombres similares en la misma subcategoría (excepto el propio producto)
-        cursor.execute("SELECT nombre FROM productos WHERE id_subcategoria=%s AND id_producto != %s", (id_subcategoria, id_producto))
-        nombres_existentes = [row['nombre'] for row in cursor.fetchall()]
-        for nombre_existente in nombres_existentes:
-            if es_similar(nombre, nombre_existente):
-                return jsonify({
-                    'success': False,
-                    'message': f'Ya existe otro producto muy similar en esta subcategoría: "{nombre_existente}"'
-                }), 400
-
         cursor.execute("""
             UPDATE productos
-            SET id_categoria=%s, id_subcategoria=%s, nombre=%s, stock_minimo=%s, unidad_medida=%s, descripcion=%s
+            SET id_categoria=%s, id_subcategoria=%s, nombre=%s, stock_minimo=%s, id_unidad=%s, descripcion=%s
             WHERE id_producto=%s
-        """, (id_categoria, id_subcategoria, nombre, stock_minimo, unidad_medida, descripcion, id_producto))
+        """, (id_categoria, id_subcategoria, nombre, stock_minimo, id_unidad, descripcion, id_producto))
         conn.commit()
 
         cursor.execute("SELECT * FROM productos WHERE id_producto=%s", (id_producto,))
         producto = cursor.fetchone()
         return jsonify({'success': True, 'producto': producto})
+
     except Exception as e:
         conn.rollback()
         print("Error actualizar_producto:", e)

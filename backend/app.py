@@ -19,6 +19,7 @@ from routes.donante import donantes_bp
 from routes.categoria import categorias_bp
 from routes.subcategoria import subcategorias_bp
 from routes.productos import productos_bp
+from routes.unidades import unidades_bp
 
 from routes.tipo_documento import tipo_documento_bp
 
@@ -49,6 +50,7 @@ app.register_blueprint(tipo_documento_bp, url_prefix='/api/tipo_documento')
 app.register_blueprint(categorias_bp, url_prefix='/api/categorias')
 app.register_blueprint(subcategorias_bp, url_prefix='/api/subcategorias')
 app.register_blueprint(productos_bp, url_prefix='/api/productos')
+app.register_blueprint(unidades_bp)
 
 
 @app.route('/static/<path:filename>')
@@ -159,3 +161,4 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    #app.run(host='127.0.0.1', port=5000, ssl_context='adhoc', debug=True)
