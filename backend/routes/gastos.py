@@ -5,6 +5,23 @@ from db import get_db_connection
 gastos_bp = Blueprint("gastos_bp", __name__, url_prefix="/api/gastos")
 
 # ==============================
+# LISTAR TIPOS DE GASTO
+# ==============================
+@gastos_bp.route("/tipos", methods=["GET"])
+def listar_tipos_gasto():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id_tipo_gasto, nombre FROM tipos_gasto ORDER BY nombre")
+        tipos = cursor.fetchall()
+        return jsonify(tipos)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+# ==============================
 # LISTAR TODOS LOS GASTOS
 # ==============================
 @gastos_bp.route("/", methods=["GET"])

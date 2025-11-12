@@ -1,12 +1,11 @@
 // gastos.js
-
 const formGasto = document.getElementById("formGasto");
 const tablaGastos = document.querySelector("#tablaGastos tbody");
-
 const formActualizarGasto = document.getElementById("formActualizarGasto");
 const modalActualizarGasto = new bootstrap.Modal(document.getElementById("modalActualizarGasto"));
 
-let tiposGasto = [];
+const API_TIPOS_GASTO = "/api/gastos/tipos";
+const API_GASTOS = "/api/gastos";
 
 // ==============================
 // CARGAR DATOS AL INICIAR
@@ -17,49 +16,39 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==============================
-// CARGAR TIPOS DE GASTO
+// CARGAR TIPOS DE GASTO EN SELECTS
 // ==============================
-// Llenar selects con tipos de gasto
 async function cargarTiposGasto() {
     try {
-        const res = await fetch("/api/tipos_gasto");
+        const res = await fetch("/api/gastos/tipos");
+        if (!res.ok) throw new Error("No se pudieron cargar los tipos de gasto");
         const tipos = await res.json();
 
         const selectNuevo = document.getElementById("id_tipo_gasto");
         const selectModal = document.getElementById("id_tipo_gasto_modal");
 
-        // Limpiar selects
         selectNuevo.innerHTML = '<option value="">Seleccione tipo de gasto</option>';
         selectModal.innerHTML = '<option value="">Seleccione tipo de gasto</option>';
 
         tipos.forEach(t => {
-            const option1 = document.createElement("option");
-            option1.value = t.id_tipo_gasto;
-            option1.textContent = t.nombre;
-            selectNuevo.appendChild(option1);
-
-            const option2 = document.createElement("option");
-            option2.value = t.id_tipo_gasto;
-            option2.textContent = t.nombre;
-            selectModal.appendChild(option2);
+            selectNuevo.innerHTML += `<option value="${t.id_tipo_gasto}">${t.nombre}</option>`;
+            selectModal.innerHTML += `<option value="${t.id_tipo_gasto}">${t.nombre}</option>`;
         });
 
-    } catch (error) {
-        console.error("Error cargando tipos de gasto:", error);
+    } catch (err) {
+        console.error(err);
+        swal("Error", "No se pudieron cargar los tipos de gasto", "error");
     }
 }
 
-// Ejecutar al cargar la página
-document.addEventListener("DOMContentLoaded", () => {
-    cargarTiposGasto();
-});
 
 // ==============================
 // LISTAR GASTOS
 // ==============================
 async function listarGastos() {
     try {
-        const res = await fetch("/api/gastos");
+        const res = await fetch(API_GASTOS);
+        if (!res.ok) throw new Error("No se pudieron cargar los gastos");
         const gastos = await res.json();
 
         tablaGastos.innerHTML = "";
@@ -83,11 +72,16 @@ async function listarGastos() {
                 </tr>
             `;
         });
-
     } catch (error) {
-        console.error("Error listando gastos:", error);
+        console.error(error);
+        swal("Error", "No se pudieron cargar los gastos", "error");
     }
 }
+fetch("/api/gastos/tipos")
+  .then(r => r.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
 
 // ==============================
 // CREAR GASTO
@@ -103,25 +97,21 @@ formGasto.addEventListener("submit", async (e) => {
     };
 
     try {
-        const res = await fetch("/api/gastos", {
+        const res = await fetch(API_GASTOS, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
         });
 
         const result = await res.json();
-
-        if (!res.ok) {
-            return swal("Error", result.message || "No se pudo registrar el gasto", "error");
-        }
+        if (!res.ok) throw new Error(result.message || "Error creando gasto");
 
         swal("Gasto registrado", "", "success");
         formGasto.reset();
         listarGastos();
-
     } catch (error) {
-        console.error("Error creando gasto:", error);
-        swal("Error", "Error creando gasto", "error");
+        console.error(error);
+        swal("Error", error.message, "error");
     }
 });
 
@@ -130,12 +120,10 @@ formGasto.addEventListener("submit", async (e) => {
 // ==============================
 async function abrirModalActualizarGasto(id_gasto) {
     try {
-        const res = await fetch(`/api/gastos/${id_gasto}`);
+        const res = await fetch(`${API_GASTOS}/${id_gasto}`);
         const gasto = await res.json();
 
-        if (!res.ok) {
-            return swal("Error", gasto.message || "No se encontró el gasto", "error");
-        }
+        if (!res.ok) throw new Error(gasto.message || "No se encontró el gasto");
 
         document.getElementById("id_gasto_modal").value = gasto.id_gasto;
         document.getElementById("id_tipo_gasto_modal").value = gasto.id_tipo_gasto;
@@ -144,9 +132,9 @@ async function abrirModalActualizarGasto(id_gasto) {
         document.getElementById("fecha_modal").value = gasto.fecha;
 
         modalActualizarGasto.show();
-
     } catch (error) {
-        console.error("Error abriendo modal:", error);
+        console.error(error);
+        swal("Error", error.message || "No se pudo abrir el gasto", "error");
     }
 }
 
@@ -165,25 +153,21 @@ formActualizarGasto.addEventListener("submit", async (e) => {
     };
 
     try {
-        const res = await fetch(`/api/gastos/${id_gasto}`, {
+        const res = await fetch(`${API_GASTOS}/${id_gasto}`, {
             method: "PUT",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
         });
 
         const result = await res.json();
-
-        if (!res.ok) {
-            return swal("Error", result.message || "No se pudo actualizar el gasto", "error");
-        }
+        if (!res.ok) throw new Error(result.message || "Error actualizando gasto");
 
         swal("Actualizado correctamente", "", "success");
         modalActualizarGasto.hide();
         listarGastos();
-
     } catch (error) {
-        console.error("Error actualizando gasto:", error);
-        swal("Error", "Error actualizando gasto", "error");
+        console.error(error);
+        swal("Error", error.message, "error");
     }
 });
 
@@ -202,18 +186,14 @@ async function eliminarGasto(id_gasto) {
     if (!confirmacion) return;
 
     try {
-        const res = await fetch(`/api/gastos/${id_gasto}`, { method: "DELETE" });
+        const res = await fetch(`${API_GASTOS}/${id_gasto}`, { method: "DELETE" });
         const result = await res.json();
-
-        if (!res.ok) {
-            return swal("Error", result.message || "No se pudo eliminar el gasto", "error");
-        }
+        if (!res.ok) throw new Error(result.message || "Error eliminando gasto");
 
         swal("Eliminado", "", "success");
         listarGastos();
-
     } catch (error) {
-        console.error("Error eliminando gasto:", error);
-        swal("Error", "Error eliminando gasto", "error");
+        console.error(error);
+        swal("Error", error.message, "error");
     }
 }

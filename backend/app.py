@@ -67,7 +67,7 @@ def static_files(filename):
 
 app.secret_key = 'clave-segura'  #  Necesario para manejar sesiones
 
-app.permanent_session_lifetime = timedelta(minutes=5)  # Duración de la sesión
+app.permanent_session_lifetime = timedelta(minutes=10)  # Duración de la sesión
 # ==============================
 # 2️ RUTA PRINCIPAL - LOGIN
 # ==============================

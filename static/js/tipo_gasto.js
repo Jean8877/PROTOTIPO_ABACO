@@ -1,12 +1,12 @@
 const formGasto = document.getElementById("formGasto");
 const tablaGastos = document.querySelector("#tablaGastos tbody");
-
+const API_TIPOS_GASTO = '/api/tipos_gasto';
 // Cargar lista al iniciar
 document.addEventListener("DOMContentLoaded", cargarTiposGasto);
 
 // LISTAR
 async function cargarTiposGasto() {
-    const res = await fetch("/api/tipos_gasto");
+    const res = await fetch(API_TIPOS_GASTO);
     const datos = await res.json();
     tablaGastos.innerHTML = "";
 
@@ -57,7 +57,7 @@ formGasto.addEventListener("submit", async (e) => {
 
 // ABRIR MODAL EDITAR
 async function abrirModalActualizar(id) {
-    const res = await fetch("/api/tipos_gasto");
+    const res = await fetch(`${API_TIPOS_GASTO}/${id}`);
     const datos = await res.json();
     const gasto = datos.find(g => g.id_tipo_gasto == id);
 
@@ -114,7 +114,7 @@ async function eliminarTipoGasto(id) {
 
     if (!confirmacion) return;
 
-    await fetch(`/api/tipos_gasto/${id}`, { method: "DELETE" });
+    await fetch(`${API_TIPOS_GASTO}/${id}`, { method: "DELETE" });
     swal("Eliminado", "", "success");
     cargarTiposGasto();
 }
