@@ -852,26 +852,26 @@ async function eliminar_categoria(codigo) {
     showCancelButton: true,
     confirmButtonText: "Sí, eliminar",
     cancelButtonText: "Cancelar",
-  });
+});
 
-  if (!confirmar.isConfirmed) return;
+    if (!confirmar.isConfirmed) return;
 
-  try {
+    try {
     const res = await fetch(`${URL_BASE}/eliminar_categoria_producto/${codigo}`, {
-      method: "DELETE",
+        method: "DELETE",
     });
     const data = await res.json();
 
     if (res.ok && data.mensaje === "Eliminado correctamente") {
-      Swal.fire("Eliminada", "Categoría eliminada correctamente.", "success");
-      categoria_producto();
+        Swal.fire("Eliminada", "Categoría eliminada correctamente.", "success");
+        categoria_producto();
     } else {
-      Swal.fire("Error", data.mensaje || "No se pudo eliminar.", "error");
+    Swal.fire("Error", data.mensaje || "No se pudo eliminar.", "error");
     }
-  } catch (error) {
+} catch (error) {
     console.error(error);
     Swal.fire("Error", "Error al eliminar la categoría.", "error");
-  }
+}
 }
 
 // ==========================================================================
