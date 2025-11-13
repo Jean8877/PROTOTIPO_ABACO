@@ -2,13 +2,16 @@
 <html lang="es">
 
 <head>
-  <script src="app.js"></script>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión Categorías</title>
   <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
   <style>
     body,
     html {
@@ -194,7 +197,35 @@
     </div>
   </div>
   
-  <script>categoria_producto();</script>
-</body>
+  
+  <!-- Modal Editar Producto -->
+<div class="modal fade" id="editar_categoria" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar categoría</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="id_editar_categoria">
+        <div class="mb-3">
+          <label for="categoria_editar" class="form-label">Descripción</label>
+          <input type="text" class="form-control" id="categoria_editar">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="actualizar_categoria()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/frontend/app.js"></script>
+    <script>categoria_producto();</script>
+
+      
+    </body>
 
 </html>

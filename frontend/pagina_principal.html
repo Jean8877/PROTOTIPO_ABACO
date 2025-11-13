@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <script src="app.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Registrar Productos</title>
@@ -9,6 +10,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <!-- Librerías para búsqueda en el select -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <style>
         body,
@@ -99,7 +104,7 @@
         <h5 class="mb-0">Sistema de Inventario y Donaciones, <strong>DIOCESIS</strong></h5>
         <div>
             <i class="bi bi-person-circle"></i>
-            <span class="me-3"> <strong>Karina</strong> </span>
+            <span class="me-3"> <strong></strong> </span>
             <i class="bi bi-bell-fill me-3" style="cursor: pointer;" onclick="swal('Notificaciones')"></i>
         </div>
     </header>
@@ -132,46 +137,36 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <!-- Formulario Producto -->
-                        <form id="formProducto">
+                        <form id="formProducto" onsubmit="event.defaualt(); agregar_donacion();">
                             <h5 class="mb-3">Donación de Productos</h5>
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="nombre" class="form-label">Nombre del Donante</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="nombre"
-                                            placeholder="Ej: Jean Carlos">
-                                        <button class="btn btn-outline-secondary" type="button" id="buscarDonante">
-                                            <i class="bi bi-search"></i>
-                                        </button>
+                                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                        <input type="text" class="form-control" id="nombre" placeholder="Nombre del Donante">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="nombre" class="form-label">Nombre del producto</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="nombre" placeholder="Ej: Arroz">
-                                        <button class="btn btn-outline-secondary" type="button" id="BTN_buscarProducto">
-                                            <i class="bi bi-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="id_usuario" class="form-label">ID de Usuario</label>
-                                    <input type="text" class="form-control" id="id_usuario" placeholder="Ej: 12345">
-                                </div>
+                                
                                 <div class="col-md-6">
                                     <label for="codigo_barras" class="form-label">Código de barras</label>
-                                    <input type="text" class="form-control" id="codigo_barras"
-                                        placeholder="Ej: 123456789012">
+                                    <input type="text" class="form-control" id="codigo_barras"  placeholder="">
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="categoria" class="form-label">Categoría</label>
-                                    <select id="categoria" class="form-select">
-                                        <option selected disabled>Seleccione...</option>
+                                    <label for="nombre_producto" class="form-label">Nombre del producto</label>
+                                    <input type="text" class="form-control" id="nombre_producto" placeholder="">
+
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="categoria" class="form-label">Categoría</label> 
+                                    <select id="categoria" class="form-select" disabled>
+                                    <option selected disabled>Seleccione...</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="subcategoria" class="form-label">Subcategoría</label>
-                                    <select id="subcategoria" class="form-select">
+                                    <select id="subcategoria" class="form-select" disabled>
                                         <option selected disabled>Seleccione...</option>
                                     </select>
                                 </div>
@@ -180,12 +175,12 @@
                                     <input type="number" class="form-control" id="cantidad" min="0">
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="peso" class="form-label">Peso unitario (Kg)</label>
+                                    <label for="peso" class="form-label">Peso unitario</label>
                                     <input type="number" class="form-control" id="peso" step="0.01">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="unidad_medida" class="form-label">Unidad de medida</label>
-                                    <select id="unidad_medida" class="form-select">
+                                    <select id="unidad_medida" class="form-select" disabled>
                                         <option selected disabled>Seleccione...</option>
                                     </select>
                                 </div>
@@ -246,61 +241,34 @@
                 </div>
             </div>
         </div>
+        
+<script>
+        const btnProducto = document.getElementById("btnProducto");
+            const btnMonetaria = document.getElementById("btnMonetaria");
+            const formProducto = document.getElementById("formProducto");
+            const formMonetaria = document.getElementById("formMonetaria");
 
-        <script>
-            // Toggle de formularios
-            const btnProducto = document.getElementById('btnProducto');
-            const btnMonetaria = document.getElementById('btnMonetaria');
-            const formProducto = document.getElementById('formProducto');
-            const formMonetaria = document.getElementById('formMonetaria');
-
-            btnProducto.addEventListener('click', () => {
-                btnProducto.classList.add('btn-success', 'active');
-                btnProducto.classList.remove('btn-outline-success');
-                btnMonetaria.classList.remove('btn-success', 'active');
-                btnMonetaria.classList.add('btn-outline-success');
-                formProducto.classList.remove('d-none');
-                formMonetaria.classList.add('d-none');
+            btnProducto.addEventListener("click", () => {
+                btnProducto.classList.add("btn-success", "active");
+                btnProducto.classList.remove("btn-outline-success");
+                btnMonetaria.classList.remove("btn-success", "active");
+                btnMonetaria.classList.add("btn-outline-success");
+                formProducto.classList.remove("d-none");
+                formMonetaria.classList.add("d-none");
             });
 
-            btnMonetaria.addEventListener('click', () => {
-                btnMonetaria.classList.add('btn-success', 'active');
-                btnMonetaria.classList.remove('btn-outline-success');
-                btnProducto.classList.remove('btn-success', 'active');
-                btnProducto.classList.add('btn-outline-success');
-                formMonetaria.classList.remove('d-none');
-                formProducto.classList.add('d-none');
-            });
-
-            formProducto.addEventListener('submit', function (e) {
-                e.preventDefault();
-                //validacion
-                const nombre = document.getElementById('nombre').value.trim();
-                if (!nombre) {
-                    swal("Error", "Por favor, completa todos los campos.", "error");
-                    return;
-                }
-                //guardar producto
-                swal("Éxito", "Producto guardado correctamente.", "success");
-                formProducto.reset();
-            });
-            formMonetaria.addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                const monto = document.getElementById('monto').value.trim();
-                const metodo = document.getElementById('metodoPago').value;
-
-                if (!monto || monto <= 0 || !metodo) {
-                    swal("Error", "Por favor ingresa un monto válido y selecciona un método de pago.", "error");
-                    return;
-                }
-
-                swal("Éxito", "Donación monetaria guardada correctamente.", "success");
-                formMonetaria.reset();
+            btnMonetaria.addEventListener("click", () => {
+                btnMonetaria.classList.add("btn-success", "active");
+                btnMonetaria.classList.remove("btn-outline-success");
+                btnProducto.classList.remove("btn-success", "active");
+                btnProducto.classList.add("btn-outline-success");
+                formMonetaria.classList.remove("d-none");
+                formProducto.classList.add("d-none");
             });
 
 
-        </script>
+</script>
+
 </body>
 
 </html>

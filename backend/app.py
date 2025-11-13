@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS # para permitir el acceso a la API desde el frontend
 import pymysql
 from datetime import date
+import mysql.connector
+
 
 import pymysql.cursors
 
@@ -2464,7 +2466,7 @@ def categoria_producto_individual(codigo):
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
-        cur.execute("SELECT * FROM categoria_producto WHERE id_categoria_producto = %s", (codigo,))
+        cur.execute("SELECT * FROM categoria_producto WHERE codigo = %s", (codigo,))
         datos= cur.fetchall()
         cur.close()
         conn.close()
@@ -4529,7 +4531,6 @@ def obtener_subcategorias_por_categoria(categoria_id):
     except Exception as ex:
         print("Error al obtener subcategorías por categoría:", ex)
         return jsonify({"mensaje": f"Error interno del servidor: {str(ex)}"}), 500
-
 # ============================================================
 # =============  RUTA PARA ELIMINAR PRODUCTO  ================
 # ============================================================
@@ -4549,19 +4550,40 @@ def eliminar_producto(codigo):
     responses:
       200:
         description: producto eliminado
+      404:
+        description: producto no encontrado
+      409:
+        description: no se puede eliminar por restricción de clave foránea
     """
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("DELETE FROM producto WHERE id_producto = %s", (codigo,))
         conn.commit()
+
+        # Si no eliminó nada
+        if cur.rowcount == 0:
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'El producto no existe'}), 404
+
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado correctamente'}), 200
+
     except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
-    
+        print("❌ Error al eliminar producto:", ex)
+        if conn:
+            conn.rollback()
+            conn.close()
+
+        # Manejar errores específicos
+        if "1451" in str(ex):  # restricción de clave foránea
+            return jsonify({
+                'mensaje': 'No se puede eliminar el producto porque está asociado a otras tablas'
+            }), 409
+        else:
+            return jsonify({'mensaje': 'Error al eliminar el producto'}), 500
 
 # ============================================================
 # ==============  DETALLE_DONACION_PRODUCTO   ================
@@ -4570,126 +4592,29 @@ def eliminar_producto(codigo):
 @app.route("/detalle_donacion_producto", methods=['GET'])
 def detalle_donacion_producto():
     """
-    Consulta de lista de detalle_donacion_producto
+    consulta de detalle_donacion_producto
     ---
     tags:
       - detalle_donacion_producto
     responses:
       200:
-        description: lista de detalle_donacion_producto
+        description: lista de detalle de donación de productos
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
-        cur= conn.cursor()
-        cur.execute("SELECT * FROM detalle_donacion_producto")
-        datos= cur.fetchall()
+        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
+        cur = conn.cursor() # cursor para ejecutar consultas
+        cur.execute("SELECT * FROM detalle_donacion_producto") 
+        datos = cur.fetchall()
         cur.close()
         conn.close()
         if datos:
-            return jsonify({'detalle_donacion_producto': datos, 'mensaje': 'Lista De detalle_donacion_producto'})
+            return jsonify({'detalle_donacion_producto': datos, 'mensaje': 'Lista De Detalle De Donación De Productos'})
         else:
-            return jsonify({'mensaje': 'detalle_donacion_producto no encontrado'})
+            return jsonify({'mensaje': 'Detalle de donación de productos no encontrado'})
+
     except Exception as ex:
-        print(ex)
-        return jsonify({'Mensaje': 'Error'})
-
-# Ruta para registrar un nuevo detalle_donacion_producto
-@app.route("/registro_detalle_donacion_producto", methods=['POST'])
-def registro_detalle_donacion_producto():
-    """
-    Registrar un nuevo detalle_donacion_producto
-    ---
-    tags:
-      - detalle_donacion_producto
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id_donacion:
-                type: string
-              id_producto:
-                type: string
-              cantidad:
-                type: string
-    responses:
-      200:
-        description: Producto registrado
-    """
-    try:
-        data = request.get_json()
-        id_donacion = data['id_donacion']
-        id_producto = data['id_producto']
-        cantidad = data['cantidad']
-
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("""
-                    INSERT INTO detalle_donacion_producto (id_donacion, id_producto, cantidad) 
-                    VALUES (%s, %s, %s)""", (id_donacion, id_producto, cantidad))
-        conn.commit()  
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
-
-# ============================================================
-# ============= RUTA DETALLE_DONACION_PRODUCTO  ==============
-# ============================================================
-
-@app.route("/detalle_donacion_producto/<codigo>", methods=["PUT"])
-def actualizar_detalle_donacion_producto(codigo):
-    """
-    Actualizar un detalle_donacion_producto existente
-    ---
-    tags:
-      - detalle_donacion_producto
-    parameters:
-      - name: id
-        in: path
-        required: true
-        type: integer
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id_donacion:
-                type: string
-              id_producto:
-                type: string
-              cantidad:
-                type: string
-    responses:
-      200:
-        description: Producto actualizado
-    """
-    try:
-        data = request.get_json()
-        id_donacion = data['id_donacion']
-        id_producto = data['id_producto']
-        cantidad = data['cantidad']
-        
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
-        cur = conn.cursor()
-        cur.execute("""
-                    UPDATE detalle_donacion_producto SET id_donacion= %s, id_producto= %s, cantidad= %s WHERE ID= %s""", 
-                    (id_donacion, id_producto, cantidad,  codigo))
-        conn.commit()
-        cur.close()
-        conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
-    except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
-
-
+        print(ex) # imprime el error
+        return jsonify ({'mensaje': 'Error'})
 
 # ============================================================
 # ========= RUTA ELIMINAR DETALLE_DONACION_PRODUCTO  =========
@@ -4700,12 +4625,12 @@ def eliminar_detalle_donacion_producto(codigo):
     Eliminar detalle_donacion_producto por ID
     ---
     tags:
-      - detalle_donacion_producto
+      - detalle_donacion_producto 
     parameters:
       - name: codigo
         in: path
         required: true
-        type: integer
+        type: integer 
     responses:
       200:
         description: detalle_donacion_producto eliminado
@@ -4713,16 +4638,15 @@ def eliminar_detalle_donacion_producto(codigo):
     try:
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("DELETE FROM detalle_donacion_producto WHERE ID = %s", (codigo,))
+        cur.execute("DELETE FROM detalle_donacion_producto WHERE id_detalle = %s", (codigo,))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado'})
+        return jsonify({'mensaje': 'Eliminado Exitosamente'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
 
 
 if __name__ == '__main__':
-  
     app.run(debug=True)

@@ -172,8 +172,8 @@
       <h1>Registrar Nueva Subcategoría</h1>
 
       <form id="formSubcategoria" onsubmit="event.preventDefault(); agregar_subcategoria();">
-        <label for="categoria_select">Categoría:</label>
-        <select id="categoria" required></select>
+        <label for="categoria">Categoría:</label>
+        <select id="categoria" required aria-label="Seleccionar categoría"></select>
 
         <label for="nombreSubcategoria">Nombre Subcategoría:</label>
         <input type="text" id="nombreSubcategoria" required>

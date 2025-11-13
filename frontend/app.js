@@ -434,7 +434,7 @@ async function cargarSubcategoriasEditar() {
 }
 
 // ==========================================================================
-// =====================   GUARDAR CAMBIOS   ===============================
+// ==================  GUARDAR CAMBIOS PRODUCTO =============================
 // ==========================================================================
 async function guardar_cambios() {
   const id = document.getElementById("id_editar").value;
@@ -468,7 +468,7 @@ async function guardar_cambios() {
     subcategoria_producto: parseInt(subcategoria) || null,
     nombre,
     stock_minimo: parseInt(stock_minimo) || 0,
-    unidad_de_medida: parseInt(unidad_de_medida), // ✅ importante
+    unidad_de_medida: parseInt(unidad_de_medida),
     descripcion,
     estado: parseInt(estado) || null,
   };
@@ -516,14 +516,14 @@ async function guardar_cambios() {
 }
 
 // ==========================================================================
-// =======================   ABRIR MODAL EDITAR   ===========================
+// =======================   ABRIR MODAL EDITAR PRODUCTO   ===========================
 // ==========================================================================
 async function abrirModalEditar(codigo) {
   try {
     await cargarCategoriasEditar();
     await cargarSubcategoriasEditar();
     await cargarUnidadesEditar();
-    await cargarEstadosEditar();
+    
 
     const response = await fetch(`${URL_BASE}/producto/${codigo}`);
     const data = await response.json();
@@ -542,11 +542,10 @@ async function abrirModalEditar(codigo) {
       producto.subcategoria_producto;
     document.getElementById("nombre_editar").value = producto.nombre;
     document.getElementById("descripcion_editar").value = producto.descripcion;
-    document.getElementById("stock_minimo_editar").value =
-      producto.stock_minimo;
-    document.getElementById("unidad_medida_editar").value =
-      producto.unidad_de_medida || "";
+    document.getElementById("stock_minimo_editar").value = producto.stock_minimo;
+    document.getElementById("unidad_medida_editar").value = producto.unidad_de_medida || "";
 
+        await llamar_estado(producto.estado);
     const modal = new bootstrap.Modal(
       document.getElementById("modalEditarProducto")
     );
@@ -603,9 +602,6 @@ async function cargarUnidadesEditar() {
 }
 
 
-
-
-
 // ==========================================================================
 // ======================== DELETE,  PRODUCTO  ==============================
 // ==========================================================================
@@ -622,28 +618,36 @@ async function eliminar_producto(codigo) {
 
     if (!confirmacion.isConfirmed) return;
 
-    const promesa = await fetch(`${URL_BASE}/eliminar_producto/${codigo}`, {
+    const respuesta = await fetch(`${URL_BASE}/eliminar_producto/${codigo}`, {
       method: "DELETE",
     });
 
-    const response = await promesa.json();
-    console.log("Producto eliminado:", response);
+    const data = await respuesta.json();
+    console.log("Producto eliminado:", data);
 
-    await Swal.fire({
-      icon: "success",
-      title: "Eliminado",
-      text: "El producto fue eliminado correctamente.",
-      timer: 1500,
-      showConfirmButton: false,
-    });
-
-    producto(); // recarga la tabla
+    // Verifica el código HTTP para decidir el tipo de mensaje
+    if (respuesta.ok) {
+      await Swal.fire({
+        icon: "success",
+        title: "Eliminado",
+        text: data.mensaje || "El producto fue eliminado correctamente.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      producto();
+    } else {
+      await Swal.fire({
+        icon: "error",
+        title: "No se pudo eliminar",
+        text: data.mensaje || "El producto está asociado a otras tablas.",
+      });
+    }
   } catch (error) {
-    console.error(error);
+    console.error("Error al eliminar producto:", error);
     Swal.fire({
       icon: "error",
       title: "Error",
-      text: "Ocurrió un problema al eliminar el producto.",
+      text: "Ocurrió un problema al eliminar el producto.", 
     });
   }
 }
@@ -661,7 +665,7 @@ async function eliminar_producto(codigo) {
             <td>${i.descripcion}</td>
             <td>
                 <button type="button" onclick="eliminar_categoria(${i.codigo})">Eliminar</button>
-                <button type="button" onclick="abrirModalActualizarCategoria(${i.codigo}, '${i.descripcion}')">Actualizar</button>
+                <button type="button" onclick="editar_categoria(${i.codigo})">Actualizar</button>
             </td>
             </tr>
             `;
@@ -705,7 +709,41 @@ async function agregar_categoria() {
         console.error(error)
     }
 }
+// ==========================================================================
+// ================= ACTIUALIZAR CATEGORIA PRODUCTO =========================
+// ==========================================================================
 
+async function actualizar_categoria(codigo) {
+  try {
+    const descripcion = document.getElementById("categoria_editar").value;
+
+    const categoria = {
+      descripcion: descripcion,
+    };
+
+    const promesa = await fetch(`${URL_BASE}/categoria_producto/${codigo}`, {
+      method: "PUT",
+      body: JSON.stringify(categoria),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+
+    const response = await promesa.json();
+    console.log(response);
+    if (response.Mensaje == "Categoría Actualizada") {
+      Swal.fire({
+        title: "Mensaje",
+        text: `${response.Mensaje}`,
+        icon: "success",
+      });
+    }
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}
 // ==========================================================================
 // =================== DELETE, CATEGORIA PRODUCTO============================
 // ==========================================================================
@@ -723,6 +761,40 @@ async function eliminar_categoria(codigo) {
         console.error(error)
     }
 }
+
+// ==========================================================================
+// =======================   ABRIR MODAL EDITAR CATEGORIA  ==================
+// ==========================================================================
+async function editar_categoria(codigo) {
+  try {
+    // Cargar datos de la categoría por ID
+    const response = await fetch(`${URL_BASE}/categoria_producto/${codigo}`);
+    const data = await response.json();
+
+    if (!response.ok || !data.categoria_producto || data.categoria_producto.length === 0) {
+      alert("Error: no se encontró la categoría.");
+      return;
+    }
+
+    const categoria_producto = data.categoria_producto[0]; // ✅ corregido
+
+    // Asignar valores en el modal
+    document.getElementById("id_editar_categoria").value = categoria_producto.id_categoria_producto;
+    document.getElementById("categoria_editar").value = categoria_producto.descripcion;
+
+    // Abrir el modal
+    const modal = new bootstrap.Modal(document.getElementById("editar_categoria"));
+    modal.show();
+
+  } catch (error) {
+    console.error("Error al abrir el modal de edición:", error);
+    alert("No se pudo abrir el modal de edición.");
+  }
+}
+
+
+
+
 
 // ==========================================================================
 // ================= GET, SUBCATEGORIA PRODUCTO ============================
@@ -852,6 +924,35 @@ async function llamar_subcategoria_por_categoria(categoria_id) {
         console.error("Error al cargar subcategorías:", error);
     }
 }
+
+// ==========================================================================
+// ======================== GUARDAR CAMBIOS CATEGORIA ===================
+// ==========================================================================
+async function guardar_cambios_categoria() {
+  const codigo = document.getElementById("id_editar_categoria").value;
+  const categoria = document.getElementById("categoria_editar").value;
+
+  console.log("ID:", codigo);
+  console.log("Categoría:", categoria);
+
+
+  const response = await fetch(`${URL_BASE}/categoria_producto/${codigo}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ categoria_producto: categoria }),
+  });
+
+  const data = await response.json();
+  console.log("Respuesta:", data);
+
+  if (response.ok) {
+    alert("Categoría actualizada correctamente.");
+    // Aquí podrías cerrar el modal o refrescar la tabla
+  } else {
+    alert("Error al actualizar la categoría.");
+  }
+}
+
 // ==========================================================================
 // ============== CARGAR TODAS LAS SUBCATEGORÍAS (para el modal) ============
 // ==========================================================================
@@ -975,29 +1076,41 @@ async function eliminar_bodega(codigo) {
     // =======================================================================
     // ====================== LLAMAR ESTADO =================================
     // =======================================================================
-    async function llamar_estado() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/estado`, { method: "GET" });
-        const response = await promesa.json();
-        window.listaEstados = response.estado; // guardar para uso futuro
 
-        const selectIds = ["estado", "estado_editar"]; // puede llenar ambos si existen
-        selectIds.forEach((id) => {
-        const select = document.getElementById(id);
-        if (select) {
-            select.innerHTML = "";
-            response.estado.forEach((estado) => {
-            const option = document.createElement("option");
-            option.value = estado.id_estado;
-            option.text = `${estado.nombre} - ${estado.descripcion}`;
-            select.appendChild(option);
-            });
-        }
+async function llamar_estado(estadoSeleccionado = null) {
+  try {
+    const promesa = await fetch(`${URL_BASE}/estado`, { method: "GET" });
+    const response = await promesa.json();
+    window.listaEstados = response.estado; // Guardamos para uso futuro
+
+    const selectIds = ["estado", "estado_editar"]; // llenamos ambos si existen
+    selectIds.forEach((id) => {
+      const select = document.getElementById(id);
+      if (select) {
+        // Crear opción inicial deshabilitada
+        select.innerHTML = `
+          <option value="" disabled ${!estadoSeleccionado ? "selected" : ""}>
+            Seleccione un estado
+          </option>
+        `;
+
+        // Agregar las opciones de estados
+        response.estado.forEach((estado) => {
+          const option = document.createElement("option");
+          option.value = estado.id_estado;
+          option.text = estado.nombre;
+          if (estadoSeleccionado && estado.id_estado === estadoSeleccionado) {
+            option.selected = true;
+          }
+          select.appendChild(option);
         });
-    } catch (error) {
-        console.error("Error al cargar el estado", error);
-    }
-    }
+      }
+    });
+  } catch (error) {
+    console.error("Error al cargar el estado", error);
+  }
+}
+
 
 // ==========================================================================
 // ====================== GET, TIPO DONANTE =================================
@@ -1582,7 +1695,6 @@ async function acta_vencimiento() {
 // ==========================================================================
 // ===================  GET, TIPO_ENTREGA  =================================
 // ==========================================================================
-
 function mostrar_tipo_entrega(tipo_entrega) {
     let info ="";
     tipo_entrega.tipo_entrega.forEach(i => {
@@ -1598,7 +1710,6 @@ function mostrar_tipo_entrega(tipo_entrega) {
     });
     document.getElementById("tbodytipo_entrega").innerHTML = info;
 }
-
 async function obtener_tipo_entrega() {
     try{
         const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
@@ -1609,7 +1720,6 @@ async function obtener_tipo_entrega() {
         console.error(error)
     }
 }
-
 // ==========================================================================
 // ====================== LLAMAR TIPO_ENTREGA ==============================
 // ==========================================================================
@@ -1630,12 +1740,9 @@ async function llamar_tipo_entrega() {
         console.error("Error al cargar el tipo de entrega", error)
     }
 }
-
 // ==========================================================================
 // =================  GET, CERTIFICADO DONANTE ==============================
 // ==========================================================================
-
-
 function mostrarcertificado_donante(certificado_donante) {
     let info ="";
     certificado_donante.certificado_donante.forEach(i => {
@@ -1654,7 +1761,6 @@ function mostrarcertificado_donante(certificado_donante) {
     });
     document.getElementById("tbodycertificado_donante").innerHTML = info;
 }
-
 async function certificado_donante() {
     try{
         const promesa = await fetch(`${URL_BASE}/certificado_donante`, {method: 'GET'});
@@ -1680,7 +1786,6 @@ function mostrartipo_documento(tipo_documento) {
     });
     document.getElementById("tbodytipo_documento").innerHTML = info;
 }
-
 async function tipo_documento() {
     try{
         const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
@@ -1691,7 +1796,6 @@ async function tipo_documento() {
         console.error(error)
     }
 }
-
 // =======================================================================
 // ====================== LLAMAR TIPO_DOCUMENTO ==========================
 // =======================================================================
@@ -1715,8 +1819,6 @@ async function llamar_tipo_documento() {
 // ==========================================================================
 // ======================   GET, USUARIO   =================================
 // ==========================================================================
-
-
 function mostrar_usuario(usuario) {
     let info="";
     usuario.usuario.forEach(i => {
@@ -1751,7 +1853,6 @@ async function usuario() {
         console.error(error)
     }
 }
-
 // ==========================================================================
 // ====================   POST, AGREGAR USUARIO   ===========================
 // ==========================================================================
@@ -1801,7 +1902,6 @@ async function agregar_usuario() {
 // ==========================================================================
 // ====================== DELETE, USUARIO ==================================
 // ==========================================================================
-
 async function eliminar_usuario(codigo) {
     try {
         fetch(`${URL_BASE}/eliminar_usuarios/${codigo}`, {method: 'DELETE'})
@@ -1815,7 +1915,6 @@ async function eliminar_usuario(codigo) {
         console.error(error);
     }
 }
-
 // ==========================================================================
 // ====================    GET, DONACION       ==============================
 // ==========================================================================
@@ -1845,8 +1944,6 @@ async function donacion() {
         console.error(error)
     }
 }
-
-
 // ==========================================================================
 // =================== GET, DONACION MONETARIA ==============================
 // ==========================================================================
@@ -1878,12 +1975,9 @@ async function donacion_monetaria() {
         console.error(error)
     }
 }
-
-
 // ==========================================================================
 // =================== GET, FECHA VENCIMIENTO ==============================
 // ==========================================================================
-
 function mostrar_vencimiento(vencimiento) {
     let info ="";
     vencimiento.fecha_vencimiento.forEach(i => {
@@ -1900,7 +1994,6 @@ function mostrar_vencimiento(vencimiento) {
     });
     document.getElementById("tbodyfecha_vencimiento").innerHTML = info;
 }
-
 async function fecha_vencimiento() {
     try{
         const promesa = await fetch(`${URL_BASE}/fecha_vencimiento`, {method : 'GET'});
@@ -1911,13 +2004,9 @@ async function fecha_vencimiento() {
         console.error(error)
     }
 }
-
-
-
 // ==========================================================================
 // =================== MOSTRAR CONTRASEÑA ===================================
 // ==========================================================================
-
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("contrasena");
     const toggle = document.getElementById("togglePassword");
@@ -1932,12 +2021,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-
-
 // ==========================================================================
 // =================== GET, TIPO_USUARIO ===================================
 // ==========================================================================
-
 function mostrar_tipo_usuario(tipo_usuario) {
     let info ="";
     tipo_usuario.forEach(i => {
@@ -1950,7 +2036,6 @@ function mostrar_tipo_usuario(tipo_usuario) {
     });
     document.getElementById("tbodytipo_usuario").innerHTML = info;
 }
-
 async function tipo_usuario() {
     try{
         const promesa = await fetch(`${URL_BASE}/tipo_usuario`, {method : 'GET'});
@@ -1960,7 +2045,6 @@ async function tipo_usuario() {
         console.error(error);
     }
 }
-
 // =======================================================================
 // ====================== LLAMAR TIPO USUARIO ============================
 // =======================================================================
@@ -1981,12 +2065,9 @@ async function llamar_tipo_usuario() {
         console.error("Error al cargar el tipo de usuario", error)
     }
 }
-
-
 // ==========================================================================
 // ===================  GET, TIPO_DONACION  =================================
 // ==========================================================================
-
 function mostrar_tipo_donacion(tipo_donacion) {
     let info ="";
     tipo_donacion.tipo_donacion.forEach(i => {
@@ -2001,7 +2082,6 @@ function mostrar_tipo_donacion(tipo_donacion) {
     });
     document.getElementById("tbodytipo_entrega").innerHTML = info;
 }
-
 async function obtener_tipo_entrega() {
     try{
         const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
@@ -2012,7 +2092,6 @@ async function obtener_tipo_entrega() {
         console.error(error)
     }
 }
-
 // ==========================================================================
 // ===================== LLAMAR TIPO_DONACION  ===========================
 // ==========================================================================
@@ -2080,24 +2159,41 @@ async function llamar_bodega() {
     }
 }
 
+// ============================================================
+// ========== GET, DONACIÓN DE PRODUCTOS ===========
+// ============================================================
 
-// ==========================================================================
-// ========================= LLAMAR PRODUCTO  =================================
-// ==========================================================================
-async function llamar_producto() {
+function mostrar_donacion(donacion) {
+    let info = "";
+    donacion.forEach((i) => {
+    info += `
+        <tr>
+            <td>${i.id}</td>
+            <td>${i.id_donacion}</td>
+            <td>${i.id_producto}</td>
+            <td>${i.donante}</td>
+            <td>${i.fecha}</td>
+            <td>${i.observaciones}</td>
+            <td>${i.usuario}</td>
+            <td>${i.tipo_donacion}</td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm" onclick="eliminar_donacion(${i.id_donacion})"> <i class="bi bi-trash-fill"></i> Eliminar </button>
+            </td>
+        </tr>
+        `;
+    });
+    document.getElementById("tbodydonacion").innerHTML = info;
+}
+
+async function donacion() {
     try {
-        const promesa = await fetch(`${URL_BASE}/producto`, { method: 'GET' });
-        const response = await promesa.json();
-
-        const select = document.getElementById("id_producto");
-        select.innerHTML = "<option value=''>Seleccione un producto</option>";
-        response.producto.forEach(tipo => {
-            const option = document.createElement("option");
-            option.value = tipo.id_producto;
-            option.text = `${tipo.nombre}`;
-            select.appendChild(option);
+        const promesa = await fetch(`${URL_BASE}/detalle_donacion_producto`, {
+          method: "GET",
         });
+        const response = await promesa.json();
+        console.log(response);
+        mostrar_donacion(response);
     } catch (error) {
-        console.error("Error al cargar los productos:", error);
+        console.error("Error al obtener donaciones:", error);
     }
 }
