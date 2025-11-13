@@ -2550,7 +2550,7 @@ def actualizar_categoria_producto(codigo):
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
-                    UPDATE categoria_producto SET descripcion= %s WHERE id_categoria_producto= %s
+                    UPDATE categoria_producto SET descripcion= %s WHERE codigo= %s
                     """, (descripcion,codigo))
         conn.commit()
         cur.close()
@@ -2588,9 +2588,23 @@ def eliminar_categoria_producto(codigo):
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Eliminado correctamente'})
+    
     except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error al eliminar categoria_producto'})
+        error_str = str(ex)
+        print("Error al eliminar:", error_str)
+
+        # Mensajes específicos según el error MySQL
+        if "foreign key constraint fails" in error_str:
+            mensaje = "No se puede eliminar la categoría porque está asociada a una o más subcategorías o productos."
+        elif "Unknown column" in error_str:
+            mensaje = "No se pudo eliminar la categoría: error interno en la base de datos."
+        elif "doesn't exist" in error_str:
+            mensaje = "La categoría no existe o ya fue eliminada."
+        else:
+            mensaje = "Ocurrió un error inesperado al eliminar la categoría."
+
+        return jsonify({'mensaje': mensaje}), 400
+
 
 # ============================================================
 # ============= RUTA SUBCATEGORIA  ===========
