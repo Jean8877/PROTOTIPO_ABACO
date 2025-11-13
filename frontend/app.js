@@ -664,15 +664,14 @@ async function eliminar_producto(codigo) {
             <td>${i.codigo}</td>
             <td>${i.descripcion}</td>
             <td>
-                <button type="button" onclick="eliminar_categoria(${i.codigo})">Eliminar</button>
-                <button type="button" onclick="editar_categoria(${i.codigo})">Actualizar</button>
+            <button type="button" onclick="editar_categoria(${i.codigo})">Actualizar</button>
+            <button type="button" onclick="eliminar_categoria(${i.codigo})">Eliminar</button>
             </td>
             </tr>
             `;
         });
         document.getElementById("tbodycategoria_producto").innerHTML = info;
     }
-    
     async function categoria_producto() {        
         try{
             const promesa = await fetch(`${URL_BASE}/categoria_producto`, {method: 'GET'});
@@ -684,83 +683,38 @@ async function eliminar_producto(codigo) {
         }
     }
 // ==========================================================================
-// =================== POST, CATEGORIA PRODUCTO==============================
-// ==========================================================================
-
-// ==========================================================================
-// =================== POST, CATEGORIA PRODUCTO==============================
+// =================== POST, CATEGORIA PRODUCTO =============================
 // ==========================================================================
 
 async function agregar_categoria() {
-  try {
-    const nombre_categoria = document.getElementById("nombreCategoria").value.trim();
+    const descripcion = document.getElementById("nombreCategoria").value.trim();
 
-    if (!nombre_categoria) {
-      Swal.fire({
-        title: "Campo vacío",
-        text: "Por favor ingresa una descripción para la categoría.",
-        icon: "warning",
-        confirmButtonText: "Entendido",
-      });
-      return;
-    }
-
-    const categoria = {
-      descripcion: nombre_categoria
-    };
-
-    const promesa = await fetch(`${URL_BASE}/registro_categoria_producto`, {
-      method: "POST",
-      body: JSON.stringify(categoria),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
-
-    const response = await promesa.json();
-    console.log(response);
-
-    // 🔍 Validar distintos tipos de respuesta del backend
-    if (promesa.ok && (response.Mensaje === "Registro Exitoso" || response.mensaje === "Registro Exitoso")) {
-      Swal.fire({
-        title: "¡Categoría registrada!",
-        text: "La categoría se agregó correctamente.",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      document.getElementById("nombreCategoria").value = "";
-      categoria_producto();
-
-    } else if (response.Mensaje === "La categoría ya existe" || response.error === "Duplicado") {
-      Swal.fire({
-        title: "Categoría existente",
-        text: "Esta categoría ya está registrada en el sistema.",
-        icon: "warning",
-        confirmButtonText: "Entendido",
-      });
-
-    } else {
-      Swal.fire({
-        title: "Error",
-        text: response.Mensaje || "Categoria existente.",
-        icon: "error",
-        confirmButtonText: "Cerrar",
-      });
-    }
-
-  } catch (error) {
-    console.error(error);
-    Swal.fire({
-      title: "Error inesperado",
-      text: "Ocurrió un problema al registrar la categoría.",
-      icon: "error",
-      confirmButtonText: "Cerrar",
-    });
-  }
+    if (!descripcion) {
+    Swal.fire("Campo vacío", "Por favor ingresa una descripción.", "warning");
+    return;
 }
 
+    try {
+    const res = await fetch(`${URL_BASE}/registro_categoria_producto`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ descripcion }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.mensaje === "Registro Exitoso") {
+      Swal.fire("¡Éxito!", "Categoría registrada correctamente.", "success");
+      document.getElementById("nombreCategoria").value = "";
+      categoria_producto();
+    } else {
+      Swal.fire("Atención", data.mensaje || "Error desconocido", "warning");
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error", "No se pudo registrar la categoría.", "error");
+  }
+}
 // ==========================================================================
 // ================= ACTIUALIZAR CATEGORIA PRODUCTO =========================
 // ==========================================================================
@@ -787,10 +741,10 @@ async function actualizar_categoria(codigo) {
     const response = await promesa.json();
     console.log(response);
 
-    if (response.Mensaje == "Categoría Actualizada") {
+    if (response.mensaje == "Categoría Actualizada") {
       Swal.fire({
         title: "Mensaje",
-        text: `${response.Mensaje}`,
+        text: `${response.mensaje}`,
         icon: "success",
       });
     }
@@ -800,7 +754,6 @@ async function actualizar_categoria(codigo) {
     console.error(error);
   }
 }
-
 
 // ==========================================================================
 // =======================   ABRIR MODAL EDITAR CATEGORIA  ==================
@@ -889,66 +842,37 @@ async function guardar_cambios_categoria() {
 }
 
 // ==========================================================================
-// =================== DELETE, CATEGORIA PRODUCTO (Mejorado) ================
+// =================== DELETE, CATEGORIA PRODUCTO  ==========================
 // ==========================================================================
 async function eliminar_categoria(codigo) {
+  const confirmar = await Swal.fire({
+    title: "¿Eliminar categoría?",
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  });
+
+  if (!confirmar.isConfirmed) return;
+
   try {
-    // Confirmación antes de eliminar
-    const confirmacion = await Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción eliminará la categoría permanentemente.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
-
-    // Si el usuario cancela, no hace nada
-    if (!confirmacion.isConfirmed) return;
-
-    // Petición DELETE
-    const promesa = await fetch(`${URL_BASE}/eliminar_categoria_producto/${codigo}`, {
+    const res = await fetch(`${URL_BASE}/eliminar_categoria_producto/${codigo}`, {
       method: "DELETE",
     });
+    const data = await res.json();
 
-    const response = await promesa.json();
-    console.log("Respuesta al eliminar:", response);
-
-    // Evaluar mensaje devuelto por el backend
-    if (response.mensaje === "Eliminado correctamente") {
-      Swal.fire({
-        title: "¡Eliminada!",
-        text: "La categoría fue eliminada correctamente.",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      // Refrescar la tabla después de un pequeño retraso
-      setTimeout(() => categoria_producto(), 1500);
+    if (res.ok && data.mensaje === "Eliminado correctamente") {
+      Swal.fire("Eliminada", "Categoría eliminada correctamente.", "success");
+      categoria_producto();
     } else {
-      Swal.fire({
-        title: "No se pudo eliminar",
-        text: response.mensaje,
-        icon: "error",
-        confirmButtonText: "Cerrar",
-      });
+      Swal.fire("Error", data.mensaje || "No se pudo eliminar.", "error");
     }
-
-    return response;
   } catch (error) {
-    console.error("Error al eliminar categoría:", error);
-    Swal.fire({
-      title: "Error inesperado",
-      text: "Ocurrió un problema al intentar eliminar la categoría.",
-      icon: "error",
-      confirmButtonText: "Cerrar",
-    });
+    console.error(error);
+    Swal.fire("Error", "Error al eliminar la categoría.", "error");
   }
 }
-
 
 // ==========================================================================
 // ================= GET, SUBCATEGORIA PRODUCTO ============================

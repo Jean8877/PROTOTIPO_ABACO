@@ -198,34 +198,30 @@
   </div>
   
   
-  <!-- Modal Editar Producto -->
+<!-- Modal Editar -->
 <div class="modal fade" id="editar_categoria" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Editar categoría</h5>
+        <h5 class="modal-title">Editar Categoría</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="id_editar_categoria">
-        <div class="mb-3">
-          <label for="categoria_editar" class="form-label">Nombre de la categoría</label>
-          <input type="text" class="form-control" id="categoria_editar">
-        </div>
+        <label for="categoria_editar">Descripción</label>
+        <input type="text" id="categoria_editar" class="form-control">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" onclick="guardar_cambios_categoria()">Guardar cambios</button>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardar_cambios_categoria()">Guardar cambios</button>
       </div>
     </div>
   </div>
 </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/frontend/app.js"></script>
-    <script>categoria_producto();</script>
-
-      
-    </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/frontend/app.js"></script>
+<script>categoria_producto();</script>
+</body>
 
 </html>

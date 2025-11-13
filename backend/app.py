@@ -2424,7 +2424,7 @@ def eliminar_certificado_donante(codigo):
 # =============  RUTA CATEGORIA PRODUCTO  ===========
 # ============================================================
 @app.route("/categoria_producto", methods=['GET'])
-def categoria_producto():
+def obtener_categorias():
     """
     Consulta de lista de categorias de producto
     ---
@@ -2435,25 +2435,26 @@ def categoria_producto():
         description: lista de categorias de producto
     """
     try:
-        conn= conectar('localhost','root','Es1084734914','proyecto')
-        cur= conn.cursor()
-        cur.execute("SELECT * FROM categoria_producto")
-        datos= cur.fetchall()
-        cur.close()
-        conn.close()
-        if datos:
-            return jsonify({'categoria_producto': datos, 'mensaje': 'Lista De categoria_producto'})
-        else:
-            return jsonify({'mensaje': 'categoria_producto no encontrado'})
+      conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+      cur = conn.cursor()
+      cur.execute("SELECT * FROM categoria_producto")
+      datos = cur.fetchall()
+      cur.close()
+      conn.close()
+
+      if datos:
+          return jsonify({'mensaje': 'Lista obtenida', 'categoria_producto': datos})
+      else:
+          return jsonify({'mensaje': 'No se encontraron categorías'})
     except Exception as ex:
         print(ex)
-        return jsonify ({'Mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error interno del servidor'}), 500
 
 # ============================================================
-# =============  RUTA CATEGORIA PRODUCTO POR ID ===========
+# =============  RUTA CATEGORIA PRODUCTO POR ID ==============
 # ============================================================
 @app.route("/categoria_producto/<int:codigo>", methods=['GET'])
-def categoria_producto_individual(codigo):
+def obtener_categoria_por_id(codigo):
     """
     Consulta de lista de categorias de producto
     ---
@@ -2470,19 +2471,20 @@ def categoria_producto_individual(codigo):
         datos= cur.fetchall()
         cur.close()
         conn.close()
+        
         if datos:
-            return jsonify({'categoria_producto': datos, 'mensaje': 'Lista De categoria_producto'})
+          return jsonify({'mensaje': 'Categoría encontrada', 'categoria_producto': datos})
         else:
-            return jsonify({'mensaje': 'categoria_producto no encontrado'})
+            return jsonify({'mensaje': 'Categoría no encontrada'})
     except Exception as ex:
         print(ex)
-        return jsonify ({'Mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error interno del servidor'}), 500
 
 # ============================================================
 # ============= RUTA REGISTRO CATEGORIA PRODUCTO ===========
 # ============================================================
 @app.route("/registro_categoria_producto", methods=['POST'])
-def registro_categoria_producto():
+def registro_categoria():
     """
     Registrar un nuevo categoria_producto
     ---
@@ -2503,19 +2505,30 @@ def registro_categoria_producto():
     """
     try:
         data = request.get_json()
-        descripcion = data['descripcion']
+        descripcion = data.get('descripcion')
+        if not descripcion:
+            return jsonify({'mensaje': 'La categoria es obligatoria'}), 400
+        
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
+        
+        cur.execute("SELECT * FROM categoria_producto WHERE descripcion = %s", (descripcion,))
+        if cur.fetchone():
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'La categoría ya existe'}), 400
+        
         cur.execute("""
                     INSERT INTO categoria_producto (descripcion)
                     VALUES (%s)""", (descripcion,))
         conn.commit() 
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+        
+        return jsonify({'mensaje': 'Registro Exitoso'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al registrar la categoría'}), 500
 
 # ============================================================
 # =============  RUTA ACTUALIZAR CATEGORIA PRODUCTO  =========
@@ -2546,19 +2559,28 @@ def actualizar_categoria_producto(codigo):
     """
     try:
         data = request.get_json()
-        descripcion = data['descripcion']
+        descripcion = data.get('descripcion')
+        if not descripcion:
+            return jsonify({'mensaje': 'La categoria es obligatoria'}), 400
+        
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
                     UPDATE categoria_producto SET descripcion= %s WHERE codigo= %s
                     """, (descripcion,codigo))
         conn.commit()
+        
+        if cur.rowcount == 0:
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'Categoría no encontrada'}), 404
+        
         cur.close()
         conn.close()
         return jsonify({'mensaje': 'Registro Actualizado'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error al actualizar categoria_producto'})
+        return jsonify({'mensaje': 'Error al actualizar categoria'}), 500
 
 
 # ============================================================
@@ -2585,15 +2607,18 @@ def eliminar_categoria_producto(codigo):
         cur = conn.cursor()
         cur.execute("DELETE FROM categoria_producto WHERE codigo = %s", (codigo,))
         conn.commit()
+        eliminado = cur.rowcount
         cur.close()
         conn.close()
+        
+        if eliminado == 0:
+            return jsonify({'mensaje': 'La categoría no existe o ya fue eliminada.'}), 404
+        
         return jsonify({'mensaje': 'Eliminado correctamente'})
     
     except Exception as ex:
         error_str = str(ex)
         print("Error al eliminar:", error_str)
-
-        # Mensajes específicos según el error MySQL
         if "foreign key constraint fails" in error_str:
             mensaje = "No se puede eliminar la categoría porque está asociada a una o más subcategorías o productos."
         elif "Unknown column" in error_str:
