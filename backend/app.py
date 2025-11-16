@@ -2041,6 +2041,7 @@ def donacion_monetaria_individual(codigo):
     except Exception as ex:
         print(ex) # imprime el error
         return jsonify ({'mensaje': 'Error'})
+      
 # ============================================================
 # ============= REGISTRO DONACION MONETARIA =================
 # ============================================================
@@ -2632,7 +2633,7 @@ def eliminar_categoria_producto(codigo):
 
 
 # ============================================================
-# ============= RUTA SUBCATEGORIA  ===========
+# ================== RUTA SUBCATEGORIA  ======================
 # ============================================================
 
 @app.route("/subcategoria_producto", methods=['GET'])
@@ -2690,10 +2691,11 @@ def subcategoria_producto_por_id(codigo):
     except Exception as ex:
         print(ex)
         return jsonify ({'Mensaje': 'Error '})
-# ============================================================
-# ============= RUTA REGISTRO SUBCATEGORIA  ===========
-# ============================================================
       
+# ============================================================
+# ============= RUTA REGISTRO SUBCATEGORIA ===================
+# ============================================================
+
 @app.route("/registro_subcategoria_producto", methods=['POST'])
 def registro_subcategoria_producto():
     """
@@ -2718,20 +2720,56 @@ def registro_subcategoria_producto():
     """
     try:
         data = request.get_json()
-        descripcion = data['descripcion']
-        categoria_producto = data['categoria_producto']
+
+        # ===== VALIDACIÓN DE CAMPOS =====
+        descripcion = str(data.get('descripcion', '')).strip()
+        categoria_producto = data.get('categoria_producto')
+
+        if not descripcion:
+            return jsonify({'mensaje': 'La descripción no puede estar vacía'}), 400
+        
+        if not categoria_producto:
+            return jsonify({'mensaje': 'Debe seleccionar una categoría válida'}), 400
+
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
+
+        # ===== VALIDAR SI LA CATEGORÍA EXISTE =====
+        cur.execute("SELECT codigo FROM categoria_producto WHERE codigo = %s", (categoria_producto,))
+        existe_categoria = cur.fetchone()
+
+        if not existe_categoria:
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'La categoría seleccionada no existe'}), 400
+
+        # ===== VALIDAR DUPLICADOS (MISMA DESCRIPCIÓN EN MISMA CATEGORÍA) =====
         cur.execute("""
-                    INSERT INTO subcategoria_producto (descripcion, categoria_producto)
-                    VALUES (%s, %s)""", (descripcion, categoria_producto))
-        conn.commit()  
+            SELECT codigo FROM subcategoria_producto 
+            WHERE descripcion = %s AND categoria_producto = %s
+        """, (descripcion, categoria_producto))
+        duplicado = cur.fetchone()
+
+        if duplicado:
+            cur.close()
+            conn.close()
+            return jsonify({'mensaje': 'La subcategoría ya existe en esta categoría'}), 409
+
+        # ===== REALIZAR INSERT =====
+        cur.execute("""
+            INSERT INTO subcategoria_producto (descripcion, categoria_producto)
+            VALUES (%s, %s)
+        """, (descripcion, categoria_producto))
+
+        conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+
+        return jsonify({'mensaje': 'Registro agregado exitosamente'}), 201
+
     except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
+        print("ERROR REGISTRO SUBCATEGORÍA:", ex)
+        return jsonify({'mensaje': 'Error interno en el servidor'}), 500
 
 # ============================================================
 # =============  RUTA ACTUALIZAR SUBCATEGORIA ===========
@@ -2765,16 +2803,18 @@ def actualizar_subcategoria_producto(codigo):
     try:
         data = request.get_json()
         descripcion = data['descripcion']
-        categoria_producto = data['categoria_producto']
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
-                    UPDATE subcategoria_producto SET descripcion= %s, categoria_producto= %s WHERE id_subcategoria= %s""", 
-                    (descripcion,categoria_producto,codigo))
+                    UPDATE subcategoria_producto
+                    SET descripcion= %s
+                    WHERE codigo= %s
+                    """, (descripcion,codigo))
+        
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado Exitosamente'})
+        return jsonify({'mensaje': 'Subcategoría Actualizada'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
@@ -2878,50 +2918,34 @@ def fecha_vencimiento_por_id(codigo):
 # ============================================================
 # ============= RUTA REGISTRO FECHA VENCIMIENTO  ===========
 # ============================================================
-
 @app.route("/registro_fecha_vencimiento", methods=['POST'])
 def registro_fecha_vencimiento():
-    """
-    Registrar un nuevo fecha_vencimiento
-    ---
-    tags:
-      - fecha_vencimiento
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id_donacion:
-                type: string
-              id_producto:
-                type: string
-              cantidad:
-                type: string
-    responses:
-      200:
-        description: fecha_vencimiento registrado
-    """
     try:
         data = request.get_json()
-        id_donacion = data['id_donacion']
+
         id_producto = data['id_producto']
+        id_donacion = data['id_donacion']
         fecha = data['fecha']
         cantidad = data['cantidad']
-        id_acta = data['id_acta']
-        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        codigo_lote = data.get('codigo_lote', None)
+
+        conn = conectar('localhost','root','Es1084734914','proyecto')
         cur = conn.cursor()
+
         cur.execute("""
-                    INSERT INTO fecha_vencimiento (id_donacion, id_producto, cantidad, fecha, id_acta)
-                    VALUES (%s, %s, %s, %s, %s)""", (id_donacion, id_producto, cantidad, fecha, id_acta))
-        conn.commit()  # Para confirmar la inserción de la información
+            INSERT INTO fecha_vencimiento
+            (id_producto, id_donacion, fecha, cantidad, codigo_lote)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (id_producto, id_donacion, fecha, cantidad, codigo_lote))
+
+        conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+
+        return jsonify({'mensaje': 'Fecha de vencimiento registrada'})
     except Exception as ex:
         print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': 'Error al registrar vencimiento'})
 
 
 # ============================================================
@@ -4627,64 +4651,117 @@ def eliminar_producto(codigo):
 # ============================================================
 # ==============  DETALLE_DONACION_PRODUCTO   ================
 # ============================================================
-
 @app.route("/detalle_donacion_producto", methods=['GET'])
 def detalle_donacion_producto():
     """
-    consulta de detalle_donacion_producto
+    Obtener lista de detalle_donacion_producto con nombres
     ---
-    tags:
+    tags: 
       - detalle_donacion_producto
     responses:
       200:
-        description: lista de detalle de donación de productos
+        description: Lista de detalle_donacion_producto
     """
     try:
-        conn = conectar('localhost','root','Es1084734914','proyecto') # se conecta a la base de datos
-        cur = conn.cursor() # cursor para ejecutar consultas
-        cur.execute("SELECT * FROM detalle_donacion_producto") 
+        conn = conectar('localhost','root','Es1084734914','proyecto')
+        cur = conn.cursor(pymysql.cursors.DictCursor)  # Retorna resultados como diccionarios
+
+        # Query con JOIN para mostrar nombres en lugar de IDs
+        cur.execute("""
+            SELECT 
+                ddp.id,
+                dn.nombre AS donante,
+                p.nombre AS producto,
+                ddp.cantidad,
+                ddp.peso_unitario,
+                u.nombre AS unidad_medida, 
+                d.fecha AS fecha_donacion,
+                d.observaciones
+            FROM detalle_donacion_producto ddp
+            JOIN donacion d ON ddp.id_donacion = d.id_donacion
+            JOIN donante dn ON d.donante = dn.id_donante
+            JOIN producto p ON ddp.id_producto = p.id_producto
+            JOIN unidad_de_medida u ON ddp.unidad_medida = u.codigo
+        """)
+
         datos = cur.fetchall()
         cur.close()
         conn.close()
+
         if datos:
-            return jsonify({'detalle_donacion_producto': datos, 'mensaje': 'Lista De Detalle De Donación De Productos'})
+            return jsonify({
+                'detalle_donacion_producto': datos,
+                'mensaje': f'{len(datos)} registros encontrados'
+            }), 200
         else:
-            return jsonify({'mensaje': 'Detalle de donación de productos no encontrado'})
+            return jsonify({'detalle_donacion_producto': [], 'mensaje': 'No se encontraron registros'}), 200
 
     except Exception as ex:
-        print(ex) # imprime el error
-        return jsonify ({'mensaje': 'Error'})
+        print(ex)
+        return jsonify({'mensaje': f'Error al obtener registros: {str(ex)}'}), 500
+
 
 # ============================================================
-# ========= RUTA ELIMINAR DETALLE_DONACION_PRODUCTO  =========
+# ==============  AGREGAR DETALLE_DONACION_PRODUCTO =========
 # ============================================================
-@app.route("/eliminar_detalle_donacion_producto/<int:codigo>", methods=['DELETE'])
-def eliminar_detalle_donacion_producto(codigo):
+@app.route("/detalle_donacion_producto", methods=['POST'])
+def agregar_detalle_donacion_producto():
     """
-    Eliminar detalle_donacion_producto por ID
+    Registrar un nuevo detalle_donacion_producto
     ---
     tags:
-      - detalle_donacion_producto 
-    parameters:
-      - name: codigo
-        in: path
-        required: true
-        type: integer 
+      - detalle_donacion_producto
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id_donacion:
+                type: integer
+              id_producto:
+                type: integer
+              cantidad:
+                type: number
+              peso_unitario:
+                type: number
+              unidad_medida:
+                type: integer
     responses:
       200:
-        description: detalle_donacion_producto eliminado
+        description: detalle_donacion_producto registrada
     """
     try:
+        data = request.get_json()
+
+        # Validación básica
+        required_fields = ['id_donacion', 'id_producto', 'cantidad', 'peso_unitario', 'unidad_medida']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'mensaje': f'Falta el campo {field}'}), 400
+
+        id_donacion = int(data['id_donacion'])
+        id_producto = int(data['id_producto'])
+        cantidad = float(data['cantidad'])
+        peso_unitario = float(data['peso_unitario'])
+        unidad_medida = int(data['unidad_medida'])
+
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
-        cur.execute("DELETE FROM detalle_donacion_producto WHERE id_detalle = %s", (codigo,))
+        cur.execute("""
+            INSERT INTO detalle_donacion_producto 
+            (id_donacion, id_producto, cantidad, peso_unitario, unidad_medida)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (id_donacion, id_producto, cantidad, peso_unitario, unidad_medida))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Eliminado Exitosamente'})
+
+        return jsonify({'mensaje': 'detalle_donacion_producto agregada'}), 201
+
     except Exception as ex:
-        print(ex)
-        return jsonify({'mensaje': 'Error'})
+        return jsonify({'mensaje': f'Error: {str(ex)}'}), 500
 
 
 if __name__ == '__main__':

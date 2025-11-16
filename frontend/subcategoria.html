@@ -2,14 +2,14 @@
 <html lang="es">
 
 <head>
-  <script src="app.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión de Subcategorías</title>
   <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <style>
     body,
     html {
@@ -175,8 +175,8 @@
         <label for="categoria">Categoría:</label>
         <select id="categoria" required aria-label="Seleccionar categoría"></select>
 
-        <label for="nombreSubcategoria">Nombre Subcategoría:</label>
-        <input type="text" id="nombreSubcategoria" required>
+        <label for="subcategoria">Nombre Subcategoría:</label>
+        <input type="text" id="subcategoria" required title="Nombre de la subcategoría" placeholder="Ingrese nombre de la subcategoría" aria-label="Nombre de la subcategoría">
 
         <button type="submit">Guardar</button>
       </form>
@@ -196,9 +196,31 @@
     </div>
   </div>
 
-  <script>
-    subcategoria_producto();
-  </script>
+<!-- Modal Editar -->
+<div class="modal fade" id="editar_subcategoria" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Subcategoría</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="id_editar_subcategoria">
+        <label for="subcategoria_editar">Descripción</label>
+        <input type="text" id="subcategoria_editar" class="form-control">
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" onclick="guardar_cambios_subcategoria()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/frontend/app.js"></script>
+  <script>subcategoria_producto(); </script>
 </body>
 
 </html>

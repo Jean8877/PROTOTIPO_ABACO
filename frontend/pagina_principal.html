@@ -137,7 +137,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <!-- Formulario Producto -->
-                        <form id="formProducto" onsubmit="event.defaualt(); agregar_donacion();">
+                        <form id="formProducto" onsubmit="event.preventDefault(); agregar_donacion();">
                             <h5 class="mb-3">Donación de Productos</h5>
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -151,11 +151,6 @@
                                 <div class="col-md-6">
                                     <label for="codigo_barras" class="form-label">Código de barras</label>
                                     <input type="text" class="form-control" id="codigo_barras"  placeholder="">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="nombre_producto" class="form-label">Nombre del producto</label>
-                                    <input type="text" class="form-control" id="nombre_producto" placeholder="">
-
                                 </div>
                                 
                                 <div class="col-md-6">

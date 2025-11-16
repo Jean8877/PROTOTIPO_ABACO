@@ -172,17 +172,16 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Donante </th>
-                                            <th>Fecha</th>
-                                            <th>Observaciones</th>
-                                            <th>Usuario</th>
-                                            <th>Tipo de Donación</th>
-                                            <th>Acciones</th>
+                                            <th>Donacion </th>
+                                            <th>Producto donado</th>
+                                            <th>Cantidad</th>
+                                            <th>Peso unitario</th>
+                                            <th>Unidad de medida</th>
+                                            <th>Acciones para</th>
                                         </tr>
-                                    
+
                                     </thead>
-                                    <tbody id="tbodydonacion"></tbody>
-                                    <script> donacion();</script>
+                                    <tbody id="tbodydetalles"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -201,7 +200,7 @@
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tbodydonacion_monetaria">
                                         <tr>
                                             <td colspan="5">No hay donaciones monetarias registradas.</td>
                                         </tr>
@@ -232,14 +231,16 @@
             btnMonetaria.classList.toggle('btn-success', !mostrarProductos);
             btnMonetaria.classList.toggle('btn-outline-success', mostrarProductos);
             btnMonetaria.classList.toggle('active', !mostrarProductos);
-
+            
             tablaProducto.classList.toggle('d-none', !mostrarProductos);
             tablaMonetaria.classList.toggle('d-none', mostrarProductos);
         }
-
+        
         btnProducto.addEventListener('click', () => mostrarTabla('producto'));
         btnMonetaria.addEventListener('click', () => mostrarTabla('monetaria'));
         </script>
+        
+<script>cargar_detalle_donacion_producto();</script>
 </body>
 
 </html>

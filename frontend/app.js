@@ -887,6 +887,7 @@ function mostrar_subcategoria(subcategoria) {
             <td>${i.descripcion}</td>
             <td>${i.categoria_producto}</td>
             <td>
+            <button type="button" onclick="editar_subcategoria(${i.codigo})">Actualizar</button>
             <button type="button" onclick="eliminar_subcategoria_producto(${i.codigo})">Eliminar</button>
             </td>
         </tr>
@@ -907,34 +908,180 @@ function mostrar_subcategoria(subcategoria) {
     }
 
 // ==========================================================================
-// =================== POST, SUBCATEGORIA PRODUCTO===========================
+// ================== POST, SUBCATEGORIA PRODUCTO ===========================
 // ==========================================================================
 
 async function agregar_subcategoria() {
     try {
-        const nombre_subcategoria = document.getElementById("nombreSubcategoria").value;
-    
-        const subcategoria = {
-            "descripcion": nombre_subcategoria,
-            "categoria_producto": document.getElementById("categoria").value
+        const descripcion = document.getElementById("subcategoria").value.trim();
+        const categoria = document.getElementById("categoria").value;
+
+        // ------------------ Validaciones en frontend ------------------
+        if (!categoria) {
+            Swal.fire({
+                icon: "warning",
+                title: "Categoría requerida",
+                text: "Debe seleccionar una categoría antes de registrar la subcategoría."
+            });
+            return;
         }
 
-    const promesa = await fetch(`${URL_BASE}/registro_subcategoria_producto`, {
-        method: 'POST',
-        body : JSON.stringify(subcategoria),
-        headers: {
-            "Content-type" : "application/json"
+        if (!descripcion) {
+            Swal.fire({
+                icon: "warning",
+                title: "Campo vacío",
+                text: "La descripción de la subcategoría no puede estar vacía."
+            });
+            return;
         }
-    })
-    const response = await promesa.json()
-    subcategoria_producto();
-        document.getElementById("nombreSubcategoria").value = "";
-    console.log(response)
-    
+
+        const subcategoria = {
+            descripcion: descripcion,
+            categoria_producto: categoria
+        };
+
+        // ------------------ PETICIÓN AL BACKEND ------------------
+        const promesa = await fetch(`${URL_BASE}/registro_subcategoria_producto`, {
+            method: 'POST',
+            body: JSON.stringify(subcategoria),
+            headers: { "Content-type": "application/json" }
+        });
+
+        const response = await promesa.json();
+
+        // ------------------ Manejo de códigos de estado ------------------
+
+        // ❗ SUBCATEGORÍA DUPLICADA
+        if (promesa.status === 409) {
+            Swal.fire({
+                icon: "warning",
+                title: "Duplicado",
+                text: response.mensaje
+            });
+            return;
+        }
+
+        // ❗ CATEGORÍA NO EXISTE
+        if (promesa.status === 404) {
+            Swal.fire({
+                icon: "error",
+                title: "Categoría no encontrada",
+                text: response.mensaje
+            });
+            return;
+        }
+
+        // ❗ DATOS INCORRECTOS
+        if (promesa.status === 400) {
+            Swal.fire({
+                icon: "error",
+                title: "Datos inválidos",
+                text: response.mensaje
+            });
+            return;
+        }
+
+        // ❗ CUALQUIER OTRO ERROR
+        if (!promesa.ok) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: response.mensaje || "No se pudo registrar la subcategoría."
+            });
+            return;
+        }
+
+        // ------------------ Éxito ------------------
+        Swal.fire({
+            icon: "success",
+            title: "Registrado",
+            text: response.mensaje,
+            timer: 1500,
+            showConfirmButton: false
+        });
+
+        // Recargar tabla
+        subcategoria_producto();
+
+        // Limpiar campo
+        document.getElementById("subcategoria").value = "";
+
     } catch (error) {
-        console.error(error)
+        console.error("Error en agregar_subcategoria:", error);
+
+        Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: "Ocurrió un error al registrar la subcategoría."
+        });
     }
 }
+
+// ==========================================================================
+// =================== PUT, SUBCATEGORIA PRODUCTO ===========================
+// ==========================================================================
+async function actualizar_subcategoria(codigo) {
+    try {
+        const descripcion = document.getElementById("subcategoria_editar").value;
+
+        const subcategoria = {
+            descripcion: descripcion,
+        }
+        const promesa = await fetch(`${URL_BASE}/actualizar_subcategoria_producto/${codigo}`, {
+            method: 'PUT',
+            body: JSON.stringify(subcategoria),
+            headers: {
+                "Content-type": "application/json",
+            }
+        });
+
+        const response = await promesa.json();
+        console.log(response);
+        if (response.mensaje == "Subcategoría Actualizada") {
+            Swal.fire({
+                title: "Mensaje",
+                text: `${response.mensaje}`,
+                icon: "success",
+            });
+        }
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// ==========================================================================
+// ======================  ABRIR MODAL EDITAR SUBCATEGORIA  =================
+// ==========================================================================
+async function editar_subcategoria(codigo) {
+    try {
+    // Cargar datos de la subcategoría por ID
+    const response = await fetch(`${URL_BASE}/subcategoria_producto/${codigo}`);
+    const data = await response.json();
+
+    if (!response.ok || !data.subcategoria_producto || data.subcategoria_producto.length === 0) {
+        alert("Error: no se encontró la subcategoría.");
+        return;
+    }
+
+    const subcategoria_producto = data.subcategoria_producto[0];
+
+    // Asignar valores en el modal
+    document.getElementById("id_editar_subcategoria").value = subcategoria_producto.codigo;
+    document.getElementById("subcategoria_editar").value = subcategoria_producto.descripcion;
+    // Abrir el modal
+
+    const modalsubcategoria = new bootstrap.Modal(
+      document.getElementById("editar_subcategoria")
+    );
+
+    modalsubcategoria.show();
+} catch (error) {
+    console.error("Error al abrir el modal de edición:", error);
+    alert("No se pudo abrir el modal de edición.");
+}
+}
+
 // ==========================================================================
 // =========== LLAMAR CATEGORÍA Y SUBCATEGORÍA (DEPENDIENTE) ===============
 // ==========================================================================
@@ -1003,7 +1150,6 @@ async function llamar_subcategoria_por_categoria(categoria_id) {
     }
 }
 
-
 // ==========================================================================
 // ============== CARGAR TODAS LAS SUBCATEGORÍAS (para el modal) ============
 // ==========================================================================
@@ -1015,6 +1161,62 @@ async function llamar_todas_subcategorias() {
   } catch (error) {
     console.error("Error al cargar todas las subcategorías:", error);
   }
+}
+
+// ==========================================================================
+// ======================== GUARDAR CAMBIOS SUBCATEGORIA =======================
+// ==========================================================================
+async function guardar_cambios_subcategoria() {
+  const codigo = document.getElementById("id_editar_subcategoria").value;
+  const descripcion = document.getElementById("subcategoria_editar").value.trim();
+  if (!descripcion) {
+    Swal.fire({
+      title: "Campo vacío",
+      text: "Por favor ingresa una descripción para la subcategoría.",
+      icon: "warning",
+      confirmButtonText: "Entendido",
+    });
+    return;
+  }
+
+  try {
+    // Llamar a la función de actualización
+    const response = await actualizar_subcategoria(codigo);
+
+    if (response.mensaje === "Subcategoría Actualizada") {
+      Swal.fire({
+        title: "¡Subcategoría actualizada!",
+        text: "Los cambios se guardaron correctamente.",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        // Cerrar el modal
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("editar_subcategoria")
+        );
+        modal.hide();
+
+        subcategoria_producto();
+      });
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo actualizar la subcategoría.",
+        icon: "error",
+        confirmButtonText: "Intentar de nuevo",
+      });
+    }
+} catch (error) {
+    console.error(error);
+    Swal.fire({
+    title: "Error inesperado",
+    text: "Ocurrió un problema al actualizar la subcategoría.",
+    icon: "error",
+    confirmButtonText: "Cerrar",
+    });
+}
 }
 
 // ==========================================================================
@@ -1452,8 +1654,6 @@ async function tipo_gasto() {
     }
 }
 
-
-
 // ==========================================================================
 // =========================  GET, GASTOS   =================================
 // ==========================================================================
@@ -1791,37 +1991,7 @@ async function llamar_tipo_entrega() {
         console.error("Error al cargar el tipo de entrega", error)
     }
 }
-// ==========================================================================
-// =================  GET, CERTIFICADO DONANTE ==============================
-// ==========================================================================
-function mostrarcertificado_donante(certificado_donante) {
-    let info ="";
-    certificado_donante.certificado_donante.forEach(i => {
-        info +=`
-        <tr>
-            <td>${i.id_certificado}</td>
-            <td>${i.fecha}</td>
-            <td>${i.valor_donado}</td>
-            <td>${i.firma_representante}</td>
-            <td>${i.id_donante}</td>
-            <td>${i.tipo_certificado}</td>
-            <td>${i.id_donacion}</td>
-            <td>${i.id_donacion_monetaria}</td>
-        </tr>
-        `;
-    });
-    document.getElementById("tbodycertificado_donante").innerHTML = info;
-}
-async function certificado_donante() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/certificado_donante`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrarcertificado_donante(response)
-    }catch(error){
-        console.error(error)
-    }
-}
+
 // ==========================================================================
 // ======================   GET, TIPO_DOCUMENTO   ===========================
 // ==========================================================================
@@ -1966,35 +2136,7 @@ async function eliminar_usuario(codigo) {
         console.error(error);
     }
 }
-// ==========================================================================
-// ====================    GET, DONACION       ==============================
-// ==========================================================================
-function mostrar_donacion(donacion) {
-    let info="";
-    donacion.donacion.forEach(i => {
-        info +=`
-        <tr>
-            <td>${i.id_donacion}</td>
-            <td>${i.donante}</td>
-            <td>${i.fecha}</td>
-            <td>${i.observaciones}</td>
-            <td>${i.usuario}</td>
-            <td>${i.tipo_donacion}</td>
-        </tr>
-        `
-    });
-    document.getElementById("tbodydonacion").innerHTML = info;
-}
-async function donacion() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/donacion`, {method : 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_donacion(response)
-    }catch(error){
-        console.error(error)
-    }
-}
+
 // ==========================================================================
 // =================== GET, DONACION MONETARIA ==============================
 // ==========================================================================
@@ -2098,7 +2240,7 @@ async function tipo_usuario() {
 }
 // =======================================================================
 // ====================== LLAMAR TIPO USUARIO ============================
-// =======================================================================
+// =======================================================================a
 async function llamar_tipo_usuario() {
     try {
         const promesa = await fetch(`${URL_BASE}/tipo_usuario`, {method: 'GET'});
@@ -2116,33 +2258,8 @@ async function llamar_tipo_usuario() {
         console.error("Error al cargar el tipo de usuario", error)
     }
 }
-// ==========================================================================
-// ===================  GET, TIPO_DONACION  =================================
-// ==========================================================================
-function mostrar_tipo_donacion(tipo_donacion) {
-    let info ="";
-    tipo_donacion.tipo_donacion.forEach(i => {
-        info +=`
-        <tr>
-            <td>${i.codigo}</td>
-            <td>${i.descripcion}</td>
-            <td></td>
-            
-        </tr>
-        `;
-    });
-    document.getElementById("tbodytipo_entrega").innerHTML = info;
-}
-async function obtener_tipo_entrega() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_tipo_entrega(response)
-    }catch(error){
-        console.error(error)
-    }
-}
+
+
 // ==========================================================================
 // ===================== LLAMAR TIPO_DONACION  ===========================
 // ==========================================================================
@@ -2210,41 +2327,46 @@ async function llamar_bodega() {
     }
 }
 
-// ============================================================
-// ========== GET, DONACIÓN DE PRODUCTOS ===========
-// ============================================================
+// =========================================================================
+// ======================= GET, DONACION DE PRODUCTO =======================
+// =========================================================================
 
-function mostrar_donacion(donacion) {
-    let info = "";
-    donacion.forEach((i) => {
-    info += `
-        <tr>
-            <td>${i.id}</td>
-            <td>${i.id_donacion}</td>
-            <td>${i.id_producto}</td>
-            <td>${i.donante}</td>
-            <td>${i.fecha}</td>
-            <td>${i.observaciones}</td>
-            <td>${i.usuario}</td>
-            <td>${i.tipo_donacion}</td>
-            <td>
-                <button type="button" class="btn btn-danger btn-sm" onclick="eliminar_donacion(${i.id_donacion})"> <i class="bi bi-trash-fill"></i> Eliminar </button>
-            </td>
-        </tr>
-        `;
-    });
-    document.getElementById("tbodydonacion").innerHTML = info;
-}
-
-async function donacion() {
+async function cargar_detalle_donacion_producto() {
     try {
-        const promesa = await fetch(`${URL_BASE}/detalle_donacion_producto`, {
-          method: "GET",
-        });
+        const promesa = await fetch(`${URL_BASE}/detalle_donacion_producto`, { method: 'GET' });
         const response = await promesa.json();
         console.log(response);
-        mostrar_donacion(response);
+
+        if (response.detalle_donacion_producto && response.detalle_donacion_producto.length > 0) {
+            mostrar_detalle_donacion_producto(response);
+        } else {
+            document.getElementById("tbodydetalles").innerHTML = `
+                <tr>
+                    <td colspan="6">No hay donaciones de productos registradas.</td>
+                </tr>`;
+        }
+
     } catch (error) {
-        console.error("Error al obtener donaciones:", error);
+        console.error("Error al cargar detalles de donación de producto:", error);
+        document.getElementById("tbodydetalles").innerHTML = `
+            <tr>
+                <td colspan="6">Error al cargar datos.</td>
+            </tr>`;
     }
+}
+
+function mostrar_detalle_donacion_producto(detalles) {
+    let info = "";
+    detalles.detalle_donacion_producto.forEach(i => {
+        info += `
+        <tr>
+            <td>${i.id}</td>
+            <td>${i.donante}</td>
+            <td>${i.producto}</td>
+            <td>${i.cantidad}</td>
+            <td>${i.peso_unitario}</td>
+            <td>${i.unidad_medida}</td>
+        </tr>`;
+    });
+    document.getElementById("tbodydetalles").innerHTML = info;
 }
