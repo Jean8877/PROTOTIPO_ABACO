@@ -14,6 +14,9 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
 
     <style>
         body,
@@ -149,41 +152,32 @@
                                 </div>
                                 
                                 <div class="col-md-6">
+                                    <label for="producto" class="form-label">Producto</label>
+                                    <input type="text" id="producto" class="form-control" placeholder="Buscar producto...">
+                                </div>
+
+                                
+                                <div class="col-md-6">
                                     <label for="codigo_barras" class="form-label">Código de barras</label>
                                     <input type="text" class="form-control" id="codigo_barras"  placeholder="">
                                 </div>
                                 
-                                <div class="col-md-6">
-                                    <label for="categoria" class="form-label">Categoría</label> 
-                                    <select id="categoria" class="form-select" disabled>
-                                    <option selected disabled>Seleccione...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="subcategoria" class="form-label">Subcategoría</label>
-                                    <select id="subcategoria" class="form-select" disabled>
-                                        <option selected disabled>Seleccione...</option>
-                                    </select>
-                                </div>
                                 <div class="col-md-3">
                                     <label for="cantidad" class="form-label">Cantidad</label>
                                     <input type="number" class="form-control" id="cantidad" min="0">
+                                
                                 </div>
+                                
                                 <div class="col-md-3">
                                     <label for="peso" class="form-label">Peso unitario</label>
                                     <input type="number" class="form-control" id="peso" step="0.01">
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="unidad_medida" class="form-label">Unidad de medida</label>
-                                    <select id="unidad_medida" class="form-select" disabled>
-                                        <option selected disabled>Seleccione...</option>
-                                    </select>
-                                </div>
-
+                                
                                 <div class="col-md-6">
                                     <label for="vencimiento" class="form-label">Fecha de vencimiento</label>
                                     <input type="date" class="form-control" id="vencimiento">
                                 </div>
+                                
                                 <div class="col-12">
                                     <label for="descripcion" class="form-label">Descripción</label>
                                     <textarea class="form-control" id="descripcion" rows="3"
@@ -261,6 +255,34 @@
                 formProducto.classList.add("d-none");
             });
 
+            $(function () {
+
+                    $("#producto").autocomplete({
+                        minLength: 1, // comienza a buscar desde la primera letra
+                        source: function (request, response) {
+                            $.ajax({
+                                url: URL_BASE + "/producto/buscar",
+                                type: "GET",
+                                data: { termino: request.term },
+                                success: function (data) {
+                                    response(
+                                        data.producto.map(i => ({
+                                            label: i.nombre,
+                                            value: i.nombre,
+                                            id: i.id_producto
+                                        }))
+                                    );
+                                }
+                            });
+                        },
+                        select: function (event, ui) {
+                            // ui.item.id = ID del producto seleccionado
+                            // ui.item.value = Nombre del producto
+                            console.log("Producto seleccionado ID:", ui.item.id);
+                        }
+                    });
+
+                });
 
 </script>
 

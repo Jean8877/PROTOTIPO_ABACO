@@ -142,102 +142,25 @@
                                     <thead class="table-success">
                                         <tr>
                                             <th>ID</th>
-                                            <th>Producto</th>
-                                            <th>Cantidad</th>
-                                            <th>Donante</th>
-                                            <th>Fecha Ingreso</th>
+                                            <th>Nombre</th>
+                                            <th>Categoria</th>
+                                            <th>Subcategoria</th>
+                                            <th>descripcion</th>
+                                            <th>Stock Mínimo</th>
+                                            <th>Unidad de Medida</th>
+                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Arroz</td>
-                                            <td>50 Kg</td>
-                                            <td>Juan Pérez</td>
-                                            <td>2025-09-17</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-warning me-1 btn-edit"><i
-                                                        class="bi bi-pencil-square"></i></button>
-                                                <button class="btn btn-sm btn-danger btn-delete"><i
-                                                        class="bi bi-trash-fill"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Leche</td>
-                                            <td>30 L</td>
-                                            <td>María López</td>
-                                            <td>2025-09-15</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-warning me-1 btn-edit"><i
-                                                        class="bi bi-pencil-square"></i></button>
-                                                <button class="btn btn-sm btn-danger btn-delete"><i
-                                                        class="bi bi-trash-fill"></i></button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
                                 </table>
+                                <tbody id="tbodyproducto"></tbody>
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Script -->
-    <script>
-
-
-        // Funcionalidad Eliminar
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.btn-delete')) {
-                const row = e.target.closest('tr');
-                swal({
-                    title: "¿Eliminar donación?",
-                    text: "Esta acción no se puede deshacer.",
-                    icon: "warning",
-                    buttons: ["Cancelar", "Eliminar"],
-                    dangerMode: true,
-                }).then((willDelete) => {
-                    if (willDelete) {
-                        row.remove();
-                        swal("Donación eliminada", { icon: "success" });
-                    }
-                });
-            }
-        });
-
-        // Funcionalidad Editar
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('.btn-edit')) {
-                const row = e.target.closest('tr');
-                const celdas = row.querySelectorAll('td');
-                const valores = Array.from(celdas).map(td => td.innerText);
-
-                swal({
-                    title: "Editar donación",
-                    content: {
-                        element: "input",
-                        attributes: {
-                            value: valores[1] + " - " + valores[2],
-                            placeholder: "Producto o monto",
-                        },
-                    },
-                    buttons: ["Cancelar", "Guardar"]
-                }).then((nuevoValor) => {
-                    if (nuevoValor) {
-                        celdas[1].innerText = nuevoValor; // reemplaza columna 2 (Producto/Donante)
-                        swal("Actualizado correctamente", { icon: "success" });
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 
 </html>

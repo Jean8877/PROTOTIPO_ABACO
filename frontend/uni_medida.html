@@ -2,13 +2,14 @@
 <html lang="es">
 
 <head>
-    <script src="app.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gestión Unidad de medida</title>
+    <title>Gestión Unidad de Medida</title>
+
     <link rel="shortcut icon" href="../imagenes/imagen.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         body,
@@ -40,7 +41,6 @@
         .main-layout {
             display: flex;
             height: calc(100vh - 60px);
-            /* Resta el alto del header */
         }
 
         /* SIDEBAR */
@@ -51,9 +51,7 @@
             transition: width 0.3s;
             overflow-x: hidden;
             display: flex;
-            /* <--- Agregado */
             flex-direction: column;
-            /* <--- Agregado */
         }
 
         .sidebar:hover {
@@ -93,10 +91,8 @@
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
-            background-color: #f5f5f5;
         }
 
-        /* Gestión Categorías */
         form,
         table {
             background-color: #fff;
@@ -154,8 +150,6 @@
         <div>
             <i class="bi bi-person-circle"></i>
             <span class="me-3"><strong></strong></span>
-            </a>
-
         </div>
     </header>
 
@@ -164,7 +158,7 @@
 
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>inicio</span></a>
+            <a href="menu_central.html"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a>
             <a href="#"><i class="bi bi-box-seam"></i> <span>Inventario</span></a>
             <a href="#"><i class="bi bi-heart-fill"></i> <span>Donaciones</span></a>
             <a href="#"><i class="bi bi-people-fill"></i> <span>Voluntarios</span></a>
@@ -174,17 +168,20 @@
 
         <!-- CONTENIDO -->
         <div class="content">
-<form id="formUnidadMedida" onsubmit="event.preventDefault(); agregar_unidad_de_medida()">
-    <h1>Registrar Nueva Unidad de Medida</h1>
-    <label for="te"></label>
-    <input type="text" id="unidad_de_medida" placeholder="Ejemplo: Paquetes, kilo, Litro, etc" required>
-    <br>
-    <button type="submit" class="btn btn-success"> Guardar Unidad de Medida
-    </button>
-</form>
 
-            <h2>Lista de unidad de medida</h2>
-            <table id="tablaUnidad_de_medida">
+            <form id="formUnidadMedida" onsubmit="event.preventDefault(); agregar_unidad_de_medida()">
+                <h1>Registrar Nueva Unidad de Medida</h1>
+
+                <input type="text" id="unidad_de_medida" placeholder="Ejemplo: Paquetes, Kilo, Litro..." required>
+
+                <button type="submit" class="btn btn-success">
+                    Guardar Unidad de Medida
+                </button>
+            </form>
+
+            <h2>Lista de Unidad de Medida</h2>
+
+            <table>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -192,11 +189,45 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
+
                 <tbody id="tbodyunidad_de_medida"></tbody>
             </table>
         </div>
     </div>
-    <script>unidad_de_medida();</script>
+
+    <!-- MODAL EDITAR -->
+    <div class="modal fade" id="editar_unidad_de_medida" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Unidad de Medida</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="id_editar_unidad_de_medida">
+                    <label for="unidad_de_medida_editar">Descripción</label>
+                    <input type="text" id="unidad_de_medida_editar" class="form-control">
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" onclick="guardar_cambios_unidad_de_medida()">Guardar
+                        cambios</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/frontend/app.js"></script>
+    <script>
+        unidad_de_medida();
+    </script>
+
 </body>
 
 </html>

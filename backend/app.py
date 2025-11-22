@@ -3446,7 +3446,7 @@ def unidad_de_medida_por_id(codigo):
     try:
         conn= conectar('localhost','root','Es1084734914','proyecto')
         cur= conn.cursor()
-        cur.execute("SELECT * FROM unidad_de_medida WHERE id_unidad_de_medida = %s", (codigo,))
+        cur.execute("SELECT * FROM unidad_de_medida WHERE codigo = %s", (codigo,))
         datos= cur.fetchall()
         cur.close()
         conn.close()
@@ -3490,7 +3490,7 @@ def registro_unidad_de_medida():
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro agregado'})
+        return jsonify({'mensaje': 'Unidad de medida Actualizada'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
@@ -3525,12 +3525,12 @@ def actualizar_unidad_de_medida(codigo):
         conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
         cur = conn.cursor()
         cur.execute("""
-                    UPDATE unidad_de_medida SET nombre= %s WHERE id_unidad_de_medida= %s""", 
+                    UPDATE unidad_de_medida SET nombre= %s WHERE codigo= %s""", 
                     (nombre, codigo))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({'mensaje': 'Registro Actualizado'})
+        return jsonify({'mensaje': 'Unidad de medida Actualizada'})
     except Exception as ex:
         print(ex)
         return jsonify({'mensaje': 'Error'})
@@ -4664,9 +4664,7 @@ def detalle_donacion_producto():
     """
     try:
         conn = conectar('localhost','root','Es1084734914','proyecto')
-        cur = conn.cursor(pymysql.cursors.DictCursor)  # Retorna resultados como diccionarios
-
-        # Query con JOIN para mostrar nombres en lugar de IDs
+        cur = conn.cursor(pymysql.cursors.DictCursor)
         cur.execute("""
             SELECT 
                 ddp.id,
@@ -4762,6 +4760,82 @@ def agregar_detalle_donacion_producto():
 
     except Exception as ex:
         return jsonify({'mensaje': f'Error: {str(ex)}'}), 500
+
+# ======================================================================================
+# ==============================  CONSULTAS  ===========================================
+# ======================================================================================
+@app.route("/consultas", methods=["GET"])
+def consulta():
+    try:
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT 
+                p.id_producto,
+                p.nombre AS producto,
+                cp.descripcion AS categoria,
+                sp.descripcion AS subcategoria,
+                p.cantidad,
+                p.stock,
+                p.stock_maximo,
+                p.stock_minimo
+            FROM producto p
+            INNER JOIN categoria_producto cp ON p.categoria_producto = cp.codigo
+            INNER JOIN subcategoria_producto sp ON p.subcategoria_producto = sp.codigo;
+        """)
+
+        filas = cur.fetchall()
+        columnas = [col[0] for col in cur.description]
+
+        datos = [dict(zip(columnas, fila)) for fila in filas]
+
+        cur.close()
+        conn.close()
+
+        if datos:
+            return jsonify({'consulta': datos, 'mensaje': 'consultas encontradas'})
+        else:
+            return jsonify({'mensaje': 'consultas no encontradas'})
+
+    except Exception as ex:
+        print(ex)
+        return jsonify({'mensaje': f'error: {ex}'})
+
+# =======================================================================================
+@app.route("/producto/buscar", methods=["GET"])
+def producto_buscar():
+    try:
+        termino = request.args.get("termino", "")
+
+        conn = conectar('localhost', 'root', 'Es1084734914', 'proyecto')
+        cursor = conn.cursor()
+
+        query = """
+            SELECT id_producto, nombre
+            FROM producto
+            WHERE nombre LIKE %s
+            LIMIT 10
+        """
+
+        cursor.execute(query, ("%" + termino + "%",))
+        filas = cursor.fetchall()
+
+        resultados = []
+        for fila in filas:
+            resultados.append({
+                "id_producto": fila["id_producto"],
+                "nombre": fila["nombre"]
+            })
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"producto": resultados})
+
+    except Exception as e:
+        print("ERROR BUSCAR PRODUCTO:", e)
+        return jsonify({"producto": []})
 
 
 if __name__ == '__main__':

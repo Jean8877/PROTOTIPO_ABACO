@@ -1,71 +1,79 @@
 const URL_BASE = "http://127.0.0.1:5000";
 
-
 // ==========================================================================
 // =================== LOGIN USUARIO ========================================
 // ==========================================================================
 const formLogin = document.getElementById("loginForm");
 
-if (formLogin) { // solo si existe en el HTML
-    formLogin.addEventListener("submit", async (e) => {
-        e.preventDefault(); // evita recargar la página
+if (formLogin) {
+  // solo si existe en el HTML
+  formLogin.addEventListener("submit", async (e) => {
+    e.preventDefault(); // evita recargar la página
 
-        const correo = document.getElementById("username").value;
-        const contrasena = document.getElementById("password").value;
+    const correo = document.getElementById("username").value;
+    const contrasena = document.getElementById("password").value;
 
-        try {
-            const response = await fetch(`${URL_BASE}/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    correo: correo,
-                    contrasena: contrasena,
-                }),
-            });
+    try {
+      const response = await fetch(`${URL_BASE}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          correo: correo,
+          contrasena: contrasena,
+        }),
+      });
 
-            const data = await response.json();
-            console.log("Login response:", data);
+      const data = await response.json();
+      console.log("Login response:", data);
 
-            if (response.ok) {
-                // ✅ Login correcto → mostrar modal moderno
-                const modal = new bootstrap.Modal(document.getElementById("loginSuccessModal"));
-                document.getElementById("loginSuccessMessage").textContent = `Bienvenido, ${data.usuario.nombre_completo}`;
-                modal.show();
+      if (response.ok) {
+        // ✅ Login correcto → mostrar modal moderno
+        const modal = new bootstrap.Modal(
+          document.getElementById("loginSuccessModal")
+        );
+        document.getElementById(
+          "loginSuccessMessage"
+        ).textContent = `Bienvenido, ${data.usuario.nombre_completo}`;
+        modal.show();
 
-                // guardar token en localStorage si existe
-                if (data.token) {
-                    localStorage.setItem("token", data.token);
-                }
-
-                // 🔁 Redirigir automáticamente al menú central después de 2 segundos
-                setTimeout(() => {
-                    window.location.href = "menu_central.html"; // cambia la ruta si tu archivo se llama distinto
-                }, 2000);
-
-            } else {
-                // ❌ Error de login → mostrar modal de error
-                const modal = new bootstrap.Modal(document.getElementById("loginErrorModal"));
-                document.getElementById("loginErrorMessage").textContent = data.mensaje || "Error al iniciar sesión";
-                modal.show();
-            }
-
-        } catch (error) {
-            console.error("Error en login:", error);
-            const modal = new bootstrap.Modal(document.getElementById("loginErrorModal"));
-            document.getElementById("loginErrorMessage").textContent = "Error de conexión con el servidor.";
-            modal.show();
+        // guardar token en localStorage si existe
+        if (data.token) {
+          localStorage.setItem("token", data.token);
         }
-    });
+
+        // 🔁 Redirigir automáticamente al menú central después de 2 segundos
+        setTimeout(() => {
+          window.location.href = "menu_central.html"; // cambia la ruta si tu archivo se llama distinto
+        }, 2000);
+      } else {
+        // ❌ Error de login → mostrar modal de error
+        const modal = new bootstrap.Modal(
+          document.getElementById("loginErrorModal")
+        );
+        document.getElementById("loginErrorMessage").textContent =
+          data.mensaje || "Error al iniciar sesión";
+        modal.show();
+      }
+    } catch (error) {
+      console.error("Error en login:", error);
+      const modal = new bootstrap.Modal(
+        document.getElementById("loginErrorModal")
+      );
+      document.getElementById("loginErrorMessage").textContent =
+        "Error de conexión con el servidor.";
+      modal.show();
+    }
+  });
 }
 
 // ==========================================================================
 // ================= GET, MOVIMIENTO DE PRODUCTO   =========================
 // ==========================================================================
 
-function mostrar_movimiento(movimientos){
-    let info = "";
-    movimientos.movimiento_producto.forEach(i => {
-        info += `
+function mostrar_movimiento(movimientos) {
+  let info = "";
+  movimientos.movimiento_producto.forEach((i) => {
+    info += `
             <tr>
                 <td>${i.id}</td>
                 <td>${i.id_producto}</td>
@@ -81,23 +89,24 @@ function mostrar_movimiento(movimientos){
                 </td>
             </tr>
         `;
-    });
-    document.getElementById("tbodyMovimientos").innerHTML = info;
+  });
+  document.getElementById("tbodyMovimientos").innerHTML = info;
 }
 async function movimiento_producto() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/movimiento_producto`, {method : 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_movimiento(response)
-        llamar_tipo_donacion()
-        llamar_organizacion()
-        llamar_bodega()
-        llamar_producto()
-
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/movimiento_producto`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_movimiento(response);
+    llamar_tipo_donacion();
+    llamar_organizacion();
+    llamar_bodega();
+    llamar_producto();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
@@ -105,166 +114,291 @@ async function movimiento_producto() {
 // ==========================================================================
 
 async function agregar_movimiento() {
-    try {
-        const  id_producto = document.getElementById("id_producto").value;
-        const  tipoMovimiento = document.getElementById("tipoMovimiento").value;
-        const  cantidad = document.getElementById("Cantidad").value;
-        const  fechaMovimiento = document.getElementById("fechaMovimiento").value;
-        const  observacion = document.getElementById("observacion").value;
-        const  tipo_donacion = document.getElementById("tipo_donacion").value;
-        const  organizacion = document.getElementById("organizacion").value;
-        const  bodega = document.getElementById("bodega").value;
-        const  responsable = document.getElementById("responsable").value;
-        const nuevo_movimiento = {
-            id_producto,
-            tipoMovimiento,
-            cantidad,
-            fechaMovimiento,
-            observacion,
-            tipo_donacion,
-            organizacion,
-            bodega,
-            responsable
-        }
+  try {
+    const id_producto = document.getElementById("id_producto").value;
+    const tipoMovimiento = document.getElementById("tipoMovimiento").value;
+    const cantidad = document.getElementById("Cantidad").value;
+    const fechaMovimiento = document.getElementById("fechaMovimiento").value;
+    const observacion = document.getElementById("observacion").value;
+    const tipo_donacion = document.getElementById("tipo_donacion").value;
+    const organizacion = document.getElementById("organizacion").value;
+    const bodega = document.getElementById("bodega").value;
+    const responsable = document.getElementById("responsable").value;
+    const nuevo_movimiento = {
+      id_producto,
+      tipoMovimiento,
+      cantidad,
+      fechaMovimiento,
+      observacion,
+      tipo_donacion,
+      organizacion,
+      bodega,
+      responsable,
+    };
 
     const promesa = await fetch(`${URL_BASE}/registro_movimiento`, {
-        method: 'POST',
-        body : JSON.stringify(nuevo_movimiento),
-        headers: {
-            "Content-type" : "application/json"
-        }
-    })
-    const response = await promesa.json()
-    console.log(response)
-        document.getElementById("unidad_de_medida").value = "";
-        unidad_de_medida()
-    } catch (error) {
-        console.error(error)
-    }
+      method: "POST",
+      body: JSON.stringify(nuevo_movimiento),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+    const response = await promesa.json();
+    console.log(response);
+    document.getElementById("unidad_de_medida").value = "";
+    unidad_de_medida();
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // ===============  DELETE, MOVIMIENTO DE PRODUCTO   ========================
 // ==========================================================================
 
 async function eliminar_movimiento_producto(codigo) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/eliminar_movimiento_producto/${codigo}`, {method: 'DELETE',});
-        const response = await promesa.json()
-        console.log("Movimiento de producto eliminado:", response)
+  try {
+    const promesa = await fetch(
+      `${URL_BASE}/eliminar_movimiento_producto/${codigo}`,
+      { method: "DELETE" }
+    );
+    const response = await promesa.json();
+    console.log("Movimiento de producto eliminado:", response);
 
-        movimiento_producto();
-        return response
-
-    } catch (error) {
-        console.error(error)
-    }
+    movimiento_producto();
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
 // =================== GET, UNIDAD DE MEDIDA  ===============================
 // ==========================================================================
-    
-    function mostrar_uni_medida(medida) {
-        let info = "";
-        medida.unidad_de_medida.forEach(i => {
-            info +=`
+
+function mostrar_uni_medida(medida) {
+  let info = "";
+  medida.unidad_de_medida.forEach((i) => {
+    info += `
             <tr>
             <td>${i.codigo}</td>
             <td>${i.nombre}</td>
             <td>
+                <button type="button" onclick="editar_unidad_de_medida(${i.codigo})">Actualizar</button>
                 <button type="button" onclick="eliminar_unidad_de_medida(${i.codigo})">Eliminar</button>
             </td>
             </tr>
             `;
-        });
-        document.getElementById("tbodyunidad_de_medida").innerHTML = info;
-    }
-    async function unidad_de_medida() {
-        try {
-            const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, { method: 'GET' });
-            const response = await promesa.json();
-            console.log(response)
-            mostrar_uni_medida(response)
-        } catch (error) {
-            console.error(error)
-        }
-    }
+  });
+  document.getElementById("tbodyunidad_de_medida").innerHTML = info;
+}
+async function unidad_de_medida() {
+  try {
+    const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_uni_medida(response);
+  } catch (error) {
+    console.error(error);
+  }
+}
 // ==========================================================================
 // =================== POST, UNIDAD DE MEDIDA  ==============================
 // ==========================================================================
 
 async function agregar_unidad_de_medida() {
-    try {
-        const nombre_unidad_de_medida = document.getElementById("unidad_de_medida").value;
-        const nueva_unidad = {
-        "nombre": nombre_unidad_de_medida
+  const nombre = document.getElementById("unidad_de_medida").value.trim();
+
+  if (!nombre) {
+    Swal.fire("Campo vacío", "Debes ingresar un nombre válido.", "warning");
+    return;
+  }
+
+  try {
+    const nueva_unidad = { nombre };
+
+    const request = await fetch(`${URL_BASE}/registro_unidad_de_medida`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nueva_unidad),
+    });
+
+    const response = await request.json();
+    console.log(response);
+
+    document.getElementById("unidad_de_medida").value = "";
+    unidad_de_medida();
+
+    Swal.fire("Registrado", "Unidad de medida agregada correctamente.", "success");
+
+  } catch (error) {
+    console.error("Error al agregar unidad:", error);
+  }
+}
+
+
+// ==========================================================================
+// =================== ACTUALIZAR UNIDAD DE MEDIDA ==========================
+// ==========================================================================
+
+async function actualizar_unidad_de_medida(codigo) {
+  try {
+    const nombre = document.getElementById("unidad_de_medida_editar").value.trim();
+    const datos = { nombre };
+
+    const request = await fetch(`${URL_BASE}/actualizar_unidad_de_medida/${codigo}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos),
+    });
+
+    return await request.json();
+
+  } catch (error) {
+    console.error("Error al actualizar:", error);
+    throw error;
+  }
+}
+
+
+// ==========================================================================
+// =================== ABRIR MODAL EDITAR ===================================
+// ==========================================================================
+
+async function editar_unidad_de_medida(codigo) {
+  try {
+    const request = await fetch(`${URL_BASE}/unidad_de_medida/${codigo}`);
+    const data = await request.json();
+
+    if (!data.unidad_de_medida || data.unidad_de_medida.length === 0) {
+      Swal.fire("Error", "No se encontró la unidad de medida.", "error");
+      return;
     }
 
-    const promesa = await fetch(`${URL_BASE}/registro_unidad_de_medida`, {
-        method: 'POST',
-        body : JSON.stringify(nueva_unidad),
-        headers: {
-            "Content-type" : "application/json"
-        }
-    })
-    const response = await promesa.json()
-    console.log(response)
-        document.getElementById("unidad_de_medida").value = "";
+    const unidad = data.unidad_de_medida[0];
+
+    document.getElementById("id_editar_unidad_de_medida").value = unidad.codigo;
+    document.getElementById("unidad_de_medida_editar").value = unidad.nombre;
+
+    const modal = new bootstrap.Modal(document.getElementById("editar_unidad_de_medida"));
+    modal.show();
+
+  } catch (error) {
+    console.error("Error al abrir modal:", error);
+    Swal.fire("Error", "No se pudo abrir el modal.", "error");
+  }
+}
+
+
+// ==========================================================================
+// =================== GUARDAR CAMBIOS ======================================
+// ==========================================================================
+
+async function guardar_cambios_unidad_de_medida() {
+  const codigo = document.getElementById("id_editar_unidad_de_medida").value;
+  const nombre = document.getElementById("unidad_de_medida_editar").value.trim();
+
+  if (!nombre) {
+    Swal.fire("Campo vacío", "Por favor ingresa una descripción.", "warning");
+    return;
+  }
+
+  try {
+    const response = await actualizar_unidad_de_medida(codigo);
+
+    if (response.mensaje === "Unidad de medida Actualizada") {
+      Swal.fire({
+        title: "Actualizado",
+        text: "Los cambios se guardaron correctamente.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("editar_unidad_de_medida")
+        );
+        modal.hide();
+
         unidad_de_medida();
-    } catch (error) {
-        console.error(error)
+      });
+    } else {
+      Swal.fire("Error", "No se pudo actualizar.", "error");
     }
+
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error inesperado", "Ocurrió un problema.", "error");
+  }
+}
+
+
+// ==========================================================================
+// =================== DELETE, UNIDAD DE MEDIDA =============================
+// ==========================================================================
+
+async function eliminar_unidad_de_medida(codigo) {
+  Swal.fire({
+    title: "¿Eliminar?",
+    text: "Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const request = await fetch(`${URL_BASE}/eliminar_unidad_de_medida/${codigo}`, {
+          method: "DELETE",
+        });
+
+        const response = await request.json();
+        console.log("Unidad eliminada:", response);
+
+        unidad_de_medida();
+        Swal.fire("Eliminado", "La unidad de medida fue eliminada.", "success");
+
+      } catch (error) {
+        console.error("Error al eliminar:", error);
+        Swal.fire("Error", "No se pudo eliminar.", "error");
+      }
+    }
+  });
 }
 
 // ==========================================================================
 // ===================== LLAMAR UNIDAD DE MEDIDA  ===========================
 // ==========================================================================
 async function llamar_unidad_medida() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, { method: 'GET' });
-        const response = await promesa.json();
-        window.listaUnidades = response.unidad_de_medida;
+  try {
+    const promesa = await fetch(`${URL_BASE}/unidad_de_medida`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    window.listaUnidades = response.unidad_de_medida;
 
+    const select = document.getElementById("unidad_medida");
+    select.innerHTML =
+      "<option value=''>Seleccione una unidad de medida</option>";
 
-        const select = document.getElementById("unidad_medida");
-        select.innerHTML = "<option value=''>Seleccione una unidad de medida</option>";
-
-        response.unidad_de_medida.forEach(unidad => {
-            const option = document.createElement("option");
-            option.value = unidad.codigo;
-            option.text = unidad.nombre;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error al cargar categorías:", error);
-    }
-}
-
-// ==========================================================================
-// =================== DELETE, UNIDAD DE MEDIDA  ============================
-// ==========================================================================
-
-async function eliminar_unidad_de_medida(codigo) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/eliminar_unidad_de_medida/${codigo}`, {method: 'DELETE',});
-        const response = await promesa.json()
-        console.log("unidad de medida eliminada:", response)
-
-        unidad_de_medida();
-        return response
-
-    } catch (error) {
-        console.error(error)
-    }
+    response.unidad_de_medida.forEach((unidad) => {
+      const option = document.createElement("option");
+      option.value = unidad.codigo;
+      option.text = unidad.nombre;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar categorías:", error);
+  }
 }
 
 // ==========================================================================
 // ===================  GET, PRODUCTO   ==============================
 // ==========================================================================
 function mostrar_producto(producto) {
-    let info = "";
-    producto.producto.forEach(i => {
-        info +=`
+  let info = "";
+  producto.producto.forEach((i) => {
+    info += `
         <tr>
                 <td>${i.id_producto}</td>
                 <td>${i.nombre}</td>
@@ -280,24 +414,23 @@ function mostrar_producto(producto) {
                 </td>
                 </tr>
                 `;
-            });
-        document.getElementById("tbodyproducto").innerHTML = info;
-    }
-    
-    async function producto() {
-        try{
-            const promesa = await fetch(`${URL_BASE}/producto`, {method: 'GET'});
-            const response = await promesa.json();
-            console.log(response)
-            mostrar_producto(response)
-            llamar_categoria()
-            llamar_estado()
-            llamar_unidad_medida()
+  });
+  document.getElementById("tbodyproducto").innerHTML = info;
+}
 
-        }catch (error) {
-            console.error(error)
-        }
-    }
+async function producto() {
+  try {
+    const promesa = await fetch(`${URL_BASE}/producto`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_producto(response);
+    llamar_categoria();
+    llamar_estado();
+    llamar_unidad_medida();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 // ==========================================================================
 // ====================  POST, PRODUCTO  ====================================
@@ -310,17 +443,23 @@ async function agregar_producto(event) {
     const subcategoria_producto = document.getElementById("subcategoria").value;
     const nombre_producto = document.getElementById("nombre").value;
     const stock_minimo_producto = document.getElementById("stock_minimo").value;
-    const unidad_de_medida_producto = document.getElementById("unidad_medida").value;
+    const unidad_de_medida_producto =
+      document.getElementById("unidad_medida").value;
     const descripcionInput = document.getElementById("descripcion");
     const descripcion_producto = descripcionInput ? descripcionInput.value : "";
 
     // Validaciones simples antes de enviar
-    if (!categoria_producto || !subcategoria_producto || !nombre_producto || !unidad_de_medida_producto) {
+    if (
+      !categoria_producto ||
+      !subcategoria_producto ||
+      !nombre_producto ||
+      !unidad_de_medida_producto
+    ) {
       return Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
         text: "Por favor, complete todos los campos obligatorios.",
-        confirmButtonColor: "#198754"
+        confirmButtonColor: "#198754",
       });
     }
 
@@ -330,13 +469,13 @@ async function agregar_producto(event) {
       nombre: nombre_producto,
       stock_minimo: stock_minimo_producto,
       unidad_de_medida: unidad_de_medida_producto,
-      descripcion: descripcion_producto
+      descripcion: descripcion_producto,
     };
 
     const promesa = await fetch(`${URL_BASE}/registro_producto`, {
       method: "POST",
       body: JSON.stringify(nuevo_producto),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
 
     const response = await promesa.json();
@@ -349,7 +488,7 @@ async function agregar_producto(event) {
         title: "Producto registrado",
         text: response.mensaje || "El producto fue agregado correctamente.",
         showConfirmButton: false,
-        timer: 1500
+        timer: 1500,
       });
 
       // Limpiar el formulario
@@ -357,24 +496,22 @@ async function agregar_producto(event) {
 
       // Actualizar la tabla
       producto();
-
     } else {
       // Error desde el backend
       Swal.fire({
         icon: "error",
         title: "Error al registrar",
         text: response.mensaje || "No se pudo registrar el producto.",
-        confirmButtonColor: "#d33"
+        confirmButtonColor: "#d33",
       });
     }
-
   } catch (error) {
     console.error("Error al registrar producto:", error);
     Swal.fire({
       icon: "error",
       title: "Error inesperado",
       text: "Ocurrió un problema al registrar el producto.",
-      confirmButtonColor: "#d33"
+      confirmButtonColor: "#d33",
     });
   }
 }
@@ -404,11 +541,11 @@ async function cargarCategoriasEditar(categoriaActual = "") {
 
       select.appendChild(option);
     });
-
   } catch (error) {
     console.error("Error al cargar categorías:", error);
   }
 }
+
 
 // ==========================================================================
 // ================ CARGAR LA OPCION DE LA SUBCATEGORIA   ===================
@@ -432,6 +569,7 @@ async function cargarSubcategoriasEditar() {
     console.error("Error al cargar subcategorías:", error);
   }
 }
+
 
 // ==========================================================================
 // ==================  GUARDAR CAMBIOS PRODUCTO =============================
@@ -496,7 +634,6 @@ async function guardar_cambios() {
       iconColor: "#28a745",
     });
 
-
     // Cerrar el modal correctamente
     const modal = bootstrap.Modal.getInstance(
       document.getElementById("modalEditarProducto")
@@ -515,15 +652,15 @@ async function guardar_cambios() {
   }
 }
 
+
 // ==========================================================================
-// =======================   ABRIR MODAL EDITAR PRODUCTO   ===========================
+// ======================= ABRIR MODAL EDITAR PRODUCTO ======================
 // ==========================================================================
 async function abrirModalEditar(codigo) {
   try {
     await cargarCategoriasEditar();
     await cargarSubcategoriasEditar();
     await cargarUnidadesEditar();
-    
 
     const response = await fetch(`${URL_BASE}/producto/${codigo}`);
     const data = await response.json();
@@ -542,10 +679,12 @@ async function abrirModalEditar(codigo) {
       producto.subcategoria_producto;
     document.getElementById("nombre_editar").value = producto.nombre;
     document.getElementById("descripcion_editar").value = producto.descripcion;
-    document.getElementById("stock_minimo_editar").value = producto.stock_minimo;
-    document.getElementById("unidad_medida_editar").value = producto.unidad_de_medida || "";
+    document.getElementById("stock_minimo_editar").value =
+      producto.stock_minimo;
+    document.getElementById("unidad_medida_editar").value =
+      producto.unidad_de_medida || "";
 
-        await llamar_estado(producto.estado);
+    await llamar_estado(producto.estado);
     const modal = new bootstrap.Modal(
       document.getElementById("modalEditarProducto")
     );
@@ -555,6 +694,8 @@ async function abrirModalEditar(codigo) {
     alert("No se pudo abrir el modal de edición.");
   }
 }
+
+
 // ==========================================================================
 // ====================   CARGAR ESTADOS EDITAR   ===========================
 // ==========================================================================
@@ -579,8 +720,9 @@ async function cargarEstadosEditar() {
   }
 }
 
+
 // ==========================================================================
-// ==================   CARGAR UNIDADES DE MEDIDA   ========================
+// ==================== CARGAR UNIDADES DE MEDIDA ===========================
 // ==========================================================================
 async function cargarUnidadesEditar() {
   try {
@@ -600,6 +742,7 @@ async function cargarUnidadesEditar() {
     console.error("Error al cargar unidades de medida:", error);
   }
 }
+
 
 
 // ==========================================================================
@@ -647,7 +790,7 @@ async function eliminar_producto(codigo) {
     Swal.fire({
       icon: "error",
       title: "Error",
-      text: "Ocurrió un problema al eliminar el producto.", 
+      text: "Ocurrió un problema al eliminar el producto.",
     });
   }
 }
@@ -655,11 +798,10 @@ async function eliminar_producto(codigo) {
 // ==========================================================================
 // =================== GET, CATEGORIA PORDUCTO ==============================
 // ==========================================================================
-    
-    function mostrar_categoria(categoria) {
-        let info = "";
-        categoria.categoria_producto.forEach(i => {
-            info += `
+function mostrar_categoria(categoria) {
+  let info = "";
+  categoria.categoria_producto.forEach((i) => {
+    info += `
             <tr>
             <td>${i.codigo}</td>
             <td>${i.descripcion}</td>
@@ -669,32 +811,34 @@ async function eliminar_producto(codigo) {
             </td>
             </tr>
             `;
-        });
-        document.getElementById("tbodycategoria_producto").innerHTML = info;
-    }
-    async function categoria_producto() {        
-        try{
-            const promesa = await fetch(`${URL_BASE}/categoria_producto`, {method: 'GET'});
-            const response = await promesa.json();
-            console.log(response)
-            mostrar_categoria(response)
-        }catch(error){
-            console.error(error)
-        }
-    }
+  });
+  document.getElementById("tbodycategoria_producto").innerHTML = info;
+}
+async function categoria_producto() {
+  try {
+    const promesa = await fetch(`${URL_BASE}/categoria_producto`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_categoria(response);
+  } catch (error) {
+    console.error(error);
+  }
+}
 // ==========================================================================
 // =================== POST, CATEGORIA PRODUCTO =============================
 // ==========================================================================
 
 async function agregar_categoria() {
-    const descripcion = document.getElementById("nombreCategoria").value.trim();
+  const descripcion = document.getElementById("nombreCategoria").value.trim();
 
-    if (!descripcion) {
+  if (!descripcion) {
     Swal.fire("Campo vacío", "Por favor ingresa una descripción.", "warning");
     return;
-}
+  }
 
-    try {
+  try {
     const res = await fetch(`${URL_BASE}/registro_categoria_producto`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -720,53 +864,59 @@ async function agregar_categoria() {
 // ==========================================================================
 
 async function actualizar_categoria(codigo) {
-  try {
+try {
     const descripcion = document.getElementById("categoria_editar").value;
 
     const categoria = {
-      descripcion: descripcion,
+        descripcion: descripcion,
     };
 
     const promesa = await fetch(
-      `${URL_BASE}/actualizar_categoria_producto/${codigo}`,
-      {
+        `${URL_BASE}/actualizar_categoria_producto/${codigo}`,
+        {
         method: "PUT",
         body: JSON.stringify(categoria),
         headers: {
-          "Content-type": "application/json",
+            "Content-type": "application/json",
         },
-      }
+    }
     );
 
     const response = await promesa.json();
     console.log(response);
 
     if (response.mensaje == "Categoría Actualizada") {
-      Swal.fire({
+        Swal.fire({
         title: "Mensaje",
         text: `${response.mensaje}`,
         icon: "success",
-      });
+        confirmButtonText: "Aceptar",
+    });
     }
 
     return response;
-  } catch (error) {
+} catch (error) {
     console.error(error);
-  }
+    throw new Error("Error al actualizar la categoría");
+}
 }
 
 // ==========================================================================
 // =======================   ABRIR MODAL EDITAR CATEGORIA  ==================
 // ==========================================================================
 async function editar_categoria(codigo) {
-  try {
+try {
     // Cargar datos de la categoría por ID
     const response = await fetch(`${URL_BASE}/categoria_producto/${codigo}`);
     const data = await response.json();
 
-    if (!response.ok || !data.categoria_producto || data.categoria_producto.length === 0) {
-      alert("Error: no se encontró la categoría.");
-      return;
+    if (
+        !response.ok ||
+        !data.categoria_producto ||
+        data.categoria_producto.length === 0
+    ) {
+        alert("Error: no se encontró la categoría.");
+        return;
     }
 
     const categoria_producto = data.categoria_producto[0]; // ✅ corregido
@@ -776,69 +926,72 @@ async function editar_categoria(codigo) {
     document.getElementById("categoria_editar").value = categoria_producto.descripcion;
 
     // Abrir el modal
-    const modal = new bootstrap.Modal(document.getElementById("editar_categoria"));
+    const modal = new bootstrap.Modal(
+        document.getElementById("editar_categoria")
+    );
     modal.show();
-
-  } catch (error) {
+} catch (error) {
     console.error("Error al abrir el modal de edición:", error);
     alert("No se pudo abrir el modal de edición.");
-  }
+}
 }
 
 // ==========================================================================
 // ======================== GUARDAR CAMBIOS CATEGORIA =======================
 // ==========================================================================
 async function guardar_cambios_categoria() {
-  const codigo = document.getElementById("id_editar_categoria").value;
-  const descripcion = document.getElementById("categoria_editar").value.trim();
+    const codigo = document.getElementById("id_editar_categoria").value;
+    const descripcion = document.getElementById("categoria_editar").value.trim();
 
-  if (!descripcion) {
+    if (!descripcion) {
     Swal.fire({
-      title: "Campo vacío",
-      text: "Por favor ingresa una descripción para la categoría.",
-      icon: "warning",
-      confirmButtonText: "Entendido",
+        title: "Campo vacío",
+        text: "Por favor ingresa una descripción para la categoría.",
+        icon: "warning",
+        confirmButtonText: "Entendido",
     });
     return;
-  }
+}
 
-  try {
+    try {
     // Llamar a la función de actualización
     const response = await actualizar_categoria(codigo);
 
     if (response.mensaje === "Registro Actualizado") {
-      Swal.fire({
+        Swal.fire({
         title: "¡Categoría actualizada!",
         text: "Los cambios se guardaron correctamente.",
         icon: "success",
         confirmButtonText: "Aceptar",
         timer: 1500,
         showConfirmButton: false,
-      }).then(() => {
+    }).then(() => {
         // Cerrar el modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById("editar_categoria"));
+        const modal = bootstrap.Modal.getInstance(
+            document.getElementById("editar_categoria")
+        );
         modal.hide();
 
         // Refrescar la tabla sin recargar la página
         categoria_producto();
-      });
+    });
     } else {
-      Swal.fire({
+        Swal.fire({
         title: "Error",
         text: "No se pudo actualizar la categoría.",
         icon: "error",
         confirmButtonText: "Intentar de nuevo",
-      });
+    });
     }
-  } catch (error) {
+} catch (error) {
     console.error(error);
     Swal.fire({
-      title: "Error inesperado",
-      text: "Ocurrió un problema al actualizar la categoría.",
-      icon: "error",
-      confirmButtonText: "Cerrar",
+        title: "Error inesperado",
+        text: "Ocurrió un problema al actualizar la categoría.",
+        icon: "error",
+        confirmButtonText: "Cerrar",
     });
-  }
+}
 }
 
 // ==========================================================================
@@ -852,26 +1005,29 @@ async function eliminar_categoria(codigo) {
     showCancelButton: true,
     confirmButtonText: "Sí, eliminar",
     cancelButtonText: "Cancelar",
-});
+  });
 
-    if (!confirmar.isConfirmed) return;
+  if (!confirmar.isConfirmed) return;
 
-    try {
-    const res = await fetch(`${URL_BASE}/eliminar_categoria_producto/${codigo}`, {
+  try {
+    const res = await fetch(
+      `${URL_BASE}/eliminar_categoria_producto/${codigo}`,
+      {
         method: "DELETE",
-    });
+      }
+    );
     const data = await res.json();
 
     if (res.ok && data.mensaje === "Eliminado correctamente") {
-        Swal.fire("Eliminada", "Categoría eliminada correctamente.", "success");
-        categoria_producto();
+      Swal.fire("Eliminada", "Categoría eliminada correctamente.", "success");
+      categoria_producto();
     } else {
-    Swal.fire("Error", data.mensaje || "No se pudo eliminar.", "error");
+      Swal.fire("Error", data.mensaje || "No se pudo eliminar.", "error");
     }
-} catch (error) {
+  } catch (error) {
     console.error(error);
     Swal.fire("Error", "Error al eliminar la categoría.", "error");
-}
+  }
 }
 
 // ==========================================================================
@@ -879,9 +1035,9 @@ async function eliminar_categoria(codigo) {
 // ==========================================================================
 
 function mostrar_subcategoria(subcategoria) {
-    let info ="";
-    subcategoria.subcategoria_producto.forEach(i => {
-        info +=`
+  let info = "";
+  subcategoria.subcategoria_producto.forEach((i) => {
+    info += `
         <tr>
             <td>${i.codigo}</td>
             <td>${i.descripcion}</td>
@@ -892,183 +1048,193 @@ function mostrar_subcategoria(subcategoria) {
             </td>
         </tr>
         `;
-    });
-    document.getElementById("tbodysubcategoria_producto").innerHTML = info;
+  });
+  document.getElementById("tbodysubcategoria_producto").innerHTML = info;
 }
-    async function subcategoria_producto() {
-        try{
-            const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, {method: 'GET'});
-            const response = await promesa.json();
-            console.log(response)
-            mostrar_subcategoria(response)
-            llamar_categoria()
-        }catch(error){
-            console.error("Error al obtener subcategorías:", error)
-        }
-    }
+async function subcategoria_producto() {
+  try {
+    const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_subcategoria(response);
+    llamar_categoria();
+  } catch (error) {
+    console.error("Error al obtener subcategorías:", error);
+  }
+}
 
 // ==========================================================================
 // ================== POST, SUBCATEGORIA PRODUCTO ===========================
 // ==========================================================================
 
 async function agregar_subcategoria() {
-    try {
-        const descripcion = document.getElementById("subcategoria").value.trim();
-        const categoria = document.getElementById("categoria").value;
+  try {
+    const descripcion = document.getElementById("subcategoria").value.trim();
+    const categoria = document.getElementById("categoria").value;
 
-        // ------------------ Validaciones en frontend ------------------
-        if (!categoria) {
-            Swal.fire({
-                icon: "warning",
-                title: "Categoría requerida",
-                text: "Debe seleccionar una categoría antes de registrar la subcategoría."
-            });
-            return;
-        }
-
-        if (!descripcion) {
-            Swal.fire({
-                icon: "warning",
-                title: "Campo vacío",
-                text: "La descripción de la subcategoría no puede estar vacía."
-            });
-            return;
-        }
-
-        const subcategoria = {
-            descripcion: descripcion,
-            categoria_producto: categoria
-        };
-
-        // ------------------ PETICIÓN AL BACKEND ------------------
-        const promesa = await fetch(`${URL_BASE}/registro_subcategoria_producto`, {
-            method: 'POST',
-            body: JSON.stringify(subcategoria),
-            headers: { "Content-type": "application/json" }
-        });
-
-        const response = await promesa.json();
-
-        // ------------------ Manejo de códigos de estado ------------------
-
-        // ❗ SUBCATEGORÍA DUPLICADA
-        if (promesa.status === 409) {
-            Swal.fire({
-                icon: "warning",
-                title: "Duplicado",
-                text: response.mensaje
-            });
-            return;
-        }
-
-        // ❗ CATEGORÍA NO EXISTE
-        if (promesa.status === 404) {
-            Swal.fire({
-                icon: "error",
-                title: "Categoría no encontrada",
-                text: response.mensaje
-            });
-            return;
-        }
-
-        // ❗ DATOS INCORRECTOS
-        if (promesa.status === 400) {
-            Swal.fire({
-                icon: "error",
-                title: "Datos inválidos",
-                text: response.mensaje
-            });
-            return;
-        }
-
-        // ❗ CUALQUIER OTRO ERROR
-        if (!promesa.ok) {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: response.mensaje || "No se pudo registrar la subcategoría."
-            });
-            return;
-        }
-
-        // ------------------ Éxito ------------------
-        Swal.fire({
-            icon: "success",
-            title: "Registrado",
-            text: response.mensaje,
-            timer: 1500,
-            showConfirmButton: false
-        });
-
-        // Recargar tabla
-        subcategoria_producto();
-
-        // Limpiar campo
-        document.getElementById("subcategoria").value = "";
-
-    } catch (error) {
-        console.error("Error en agregar_subcategoria:", error);
-
-        Swal.fire({
-            icon: "error",
-            title: "Error inesperado",
-            text: "Ocurrió un error al registrar la subcategoría."
-        });
+    // ------------------ Validaciones en frontend ------------------
+    if (!categoria) {
+      Swal.fire({
+        icon: "warning",
+        title: "Categoría requerida",
+        text: "Debe seleccionar una categoría antes de registrar la subcategoría.",
+      });
+      return;
     }
+
+    if (!descripcion) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo vacío",
+        text: "La descripción de la subcategoría no puede estar vacía.",
+      });
+      return;
+    }
+
+    const subcategoria = {
+      descripcion: descripcion,
+      categoria_producto: categoria,
+    };
+
+    // ------------------ PETICIÓN AL BACKEND ------------------
+    const promesa = await fetch(`${URL_BASE}/registro_subcategoria_producto`, {
+      method: "POST",
+      body: JSON.stringify(subcategoria),
+      headers: { "Content-type": "application/json" },
+    });
+
+    const response = await promesa.json();
+
+    // ------------------ Manejo de códigos de estado ------------------
+
+    // ❗ SUBCATEGORÍA DUPLICADA
+    if (promesa.status === 409) {
+      Swal.fire({
+        icon: "warning",
+        title: "Duplicado",
+        text: response.mensaje,
+      });
+      return;
+    }
+
+    // ❗ CATEGORÍA NO EXISTE
+    if (promesa.status === 404) {
+      Swal.fire({
+        icon: "error",
+        title: "Categoría no encontrada",
+        text: response.mensaje,
+      });
+      return;
+    }
+
+    // ❗ DATOS INCORRECTOS
+    if (promesa.status === 400) {
+      Swal.fire({
+        icon: "error",
+        title: "Datos inválidos",
+        text: response.mensaje,
+      });
+      return;
+    }
+
+    // ❗ CUALQUIER OTRO ERROR
+    if (!promesa.ok) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: response.mensaje || "No se pudo registrar la subcategoría.",
+      });
+      return;
+    }
+
+    // ------------------ Éxito ------------------
+    Swal.fire({
+      icon: "success",
+      title: "Registrado",
+      text: response.mensaje,
+      timer: 1500,
+      showConfirmButton: false,
+    });
+
+    // Recargar tabla
+    subcategoria_producto();
+
+    // Limpiar campo
+    document.getElementById("subcategoria").value = "";
+  } catch (error) {
+    console.error("Error en agregar_subcategoria:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error inesperado",
+      text: "Ocurrió un error al registrar la subcategoría.",
+    });
+  }
 }
 
 // ==========================================================================
 // =================== PUT, SUBCATEGORIA PRODUCTO ===========================
 // ==========================================================================
 async function actualizar_subcategoria(codigo) {
-    try {
-        const descripcion = document.getElementById("subcategoria_editar").value;
+  try {
+    const descripcion = document.getElementById("subcategoria_editar").value;
 
-        const subcategoria = {
-            descripcion: descripcion,
-        }
-        const promesa = await fetch(`${URL_BASE}/actualizar_subcategoria_producto/${codigo}`, {
-            method: 'PUT',
-            body: JSON.stringify(subcategoria),
-            headers: {
-                "Content-type": "application/json",
-            }
-        });
+    const subcategoria = {
+      descripcion: descripcion,
+    };
+    const promesa = await fetch(
+      `${URL_BASE}/actualizar_subcategoria_producto/${codigo}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(subcategoria),
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+    );
 
-        const response = await promesa.json();
-        console.log(response);
-        if (response.mensaje == "Subcategoría Actualizada") {
-            Swal.fire({
-                title: "Mensaje",
-                text: `${response.mensaje}`,
-                icon: "success",
-            });
-        }
-        return response;
-    } catch (error) {
-        console.error(error);
+    const response = await promesa.json();
+    console.log(response);
+    if (response.mensaje == "Subcategoría Actualizada") {
+      Swal.fire({
+        title: "Mensaje",
+        text: `${response.mensaje}`,
+        icon: "success",
+      });
     }
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
 // ======================  ABRIR MODAL EDITAR SUBCATEGORIA  =================
 // ==========================================================================
 async function editar_subcategoria(codigo) {
-    try {
+  try {
     // Cargar datos de la subcategoría por ID
     const response = await fetch(`${URL_BASE}/subcategoria_producto/${codigo}`);
     const data = await response.json();
 
-    if (!response.ok || !data.subcategoria_producto || data.subcategoria_producto.length === 0) {
-        alert("Error: no se encontró la subcategoría.");
-        return;
+    if (
+      !response.ok ||
+      !data.subcategoria_producto ||
+      data.subcategoria_producto.length === 0
+    ) {
+      alert("Error: no se encontró la subcategoría.");
+      return;
     }
 
     const subcategoria_producto = data.subcategoria_producto[0];
 
     // Asignar valores en el modal
-    document.getElementById("id_editar_subcategoria").value = subcategoria_producto.codigo;
-    document.getElementById("subcategoria_editar").value = subcategoria_producto.descripcion;
+    document.getElementById("id_editar_subcategoria").value =
+      subcategoria_producto.codigo;
+    document.getElementById("subcategoria_editar").value =
+      subcategoria_producto.descripcion;
     // Abrir el modal
 
     const modalsubcategoria = new bootstrap.Modal(
@@ -1076,78 +1242,80 @@ async function editar_subcategoria(codigo) {
     );
 
     modalsubcategoria.show();
-} catch (error) {
+  } catch (error) {
     console.error("Error al abrir el modal de edición:", error);
     alert("No se pudo abrir el modal de edición.");
-}
+  }
 }
 
 // ==========================================================================
 // =========== LLAMAR CATEGORÍA Y SUBCATEGORÍA (DEPENDIENTE) ===============
 // ==========================================================================
-
-// Cargar categorías en el select principal
 async function llamar_categoria() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/categoria_producto`, { method: 'GET' });
-        const response = await promesa.json();
+  try {
+    const promesa = await fetch(`${URL_BASE}/categoria_producto`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
 
-        const selectCategoria = document.getElementById("categoria");
-        selectCategoria.innerHTML = "<option value=''>Seleccione una categoría</option>";
+    const selectCategoria = document.getElementById("categoria");
+    selectCategoria.innerHTML =
+      "<option value=''>Seleccione una categoría</option>";
 
-        window.listaCategorias = response.categoria_producto || [];
+    window.listaCategorias = response.categoria_producto || [];
 
-        window.listaCategorias.forEach(categoria => {
-            const option = document.createElement("option");
-            option.value = categoria.codigo;
-            option.textContent = categoria.descripcion;
-            selectCategoria.appendChild(option);
-        });
+    window.listaCategorias.forEach((categoria) => {
+      const option = document.createElement("option");
+      option.value = categoria.codigo;
+      option.textContent = categoria.descripcion;
+      selectCategoria.appendChild(option);
+    });
 
-        selectCategoria.addEventListener("change", async function () {
-            const categoriaSeleccionada = this.value;
-            if (categoriaSeleccionada) {
-                await llamar_subcategoria_por_categoria(categoriaSeleccionada);
-            } else {
-                limpiar_subcategorias();
-            }
-        });
-
-    } catch (error) {
-        console.error("Error al cargar categorías:", error);
-    }
+    selectCategoria.addEventListener("change", async function () {
+      const categoriaSeleccionada = this.value;
+      if (categoriaSeleccionada) {
+        await llamar_subcategoria_por_categoria(categoriaSeleccionada);
+      } else {
+        limpiar_subcategorias();
+      }
+    });
+  } catch (error) {
+    console.error("Error al cargar categorías:", error);
+  }
 }
 
 function limpiar_subcategorias() {
-    const selectSub = document.getElementById("subcategoria");
-    selectSub.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
+  const selectSub = document.getElementById("subcategoria");
+  selectSub.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
 }
 
 async function llamar_subcategoria_por_categoria(categoria_id) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/subcategoria/${categoria_id}`, { method: 'GET' });
-        const response = await promesa.json();
+  try {
+    const promesa = await fetch(`${URL_BASE}/subcategoria/${categoria_id}`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
 
-        const selectSub = document.getElementById("subcategoria");
-        selectSub.innerHTML = "<option value=''>Seleccione una subcategoría</option>";
+    const selectSub = document.getElementById("subcategoria");
+    selectSub.innerHTML =
+      "<option value=''>Seleccione una subcategoría</option>";
 
-        // Verificar estructura del JSON
-        const subcategorias = response.subcategoria_producto || response;
+    // Verificar estructura del JSON
+    const subcategorias = response.subcategoria_producto || response;
 
-        // Guardar globalmente para el modal de visualización
-        window.listaSubcategorias = subcategorias;
+    // Guardar globalmente para el modal de visualización
+    window.listaSubcategorias = subcategorias;
 
-        // Llenar select con las subcategorías
-        subcategorias.forEach(sub => {
-            const option = document.createElement("option");
-            option.value = sub.codigo;
-            option.textContent = sub.descripcion;
-            selectSub.appendChild(option);
-        });
-
-    } catch (error) {
-        console.error("Error al cargar subcategorías:", error);
-    }
+    // Llenar select con las subcategorías
+    subcategorias.forEach((sub) => {
+      const option = document.createElement("option");
+      option.value = sub.codigo;
+      option.textContent = sub.descripcion;
+      selectSub.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar subcategorías:", error);
+  }
 }
 
 // ==========================================================================
@@ -1155,7 +1323,9 @@ async function llamar_subcategoria_por_categoria(categoria_id) {
 // ==========================================================================
 async function llamar_todas_subcategorias() {
   try {
-    const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, { method: 'GET' });
+    const promesa = await fetch(`${URL_BASE}/subcategoria_producto`, {
+      method: "GET",
+    });
     const response = await promesa.json();
     window.listaSubcategorias = response.subcategoria_producto || [];
   } catch (error) {
@@ -1164,7 +1334,7 @@ async function llamar_todas_subcategorias() {
 }
 
 // ==========================================================================
-// ======================== GUARDAR CAMBIOS SUBCATEGORIA =======================
+// ======================== GUARDAR CAMBIOS SUBCATEGORIA ====================
 // ==========================================================================
 async function guardar_cambios_subcategoria() {
   const codigo = document.getElementById("id_editar_subcategoria").value;
@@ -1208,15 +1378,15 @@ async function guardar_cambios_subcategoria() {
         confirmButtonText: "Intentar de nuevo",
       });
     }
-} catch (error) {
+  } catch (error) {
     console.error(error);
     Swal.fire({
-    title: "Error inesperado",
-    text: "Ocurrió un problema al actualizar la subcategoría.",
-    icon: "error",
-    confirmButtonText: "Cerrar",
+      title: "Error inesperado",
+      text: "Ocurrió un problema al actualizar la subcategoría.",
+      icon: "error",
+      confirmButtonText: "Cerrar",
     });
-}
+  }
 }
 
 // ==========================================================================
@@ -1224,26 +1394,29 @@ async function guardar_cambios_subcategoria() {
 // ==========================================================================
 
 async function eliminar_subcategoria_producto(codigo) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/eliminar_subcategoria_producto/${codigo}`, {method: 'DELETE',});
-        const response = await promesa.json();
-        console.log("Subcategoría eliminada:", response)
-        
-        subcategoria_producto();
-        return response;
-    } catch (error) {
-        console.error("Error al eliminar subcategoría:", error);
-    }
+  try {
+    const promesa = await fetch(
+      `${URL_BASE}/eliminar_subcategoria_producto/${codigo}`,
+      { method: "DELETE" }
+    );
+    const response = await promesa.json();
+    console.log("Subcategoría eliminada:", response);
+
+    subcategoria_producto();
+    return response;
+  } catch (error) {
+    console.error("Error al eliminar subcategoría:", error);
+  }
 }
 
 // ==========================================================================
 // ======================== GET, BODEGA   ===================================
 // ==========================================================================
 
-function mostrarbodega(bodega){
-    let info ="";
-    bodega.bodega.forEach(i => {
-        info +=`
+function mostrarbodega(bodega) {
+  let info = "";
+  bodega.bodega.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_bodega}</td>
             <td>${i.nombre_bodega}</td>
@@ -1251,90 +1424,223 @@ function mostrarbodega(bodega){
             <td>${i.capacidad}</td>
             <td>${i.estado}</td>
             <td>
+                <button type="button" onclick="editar_bodega(${i.id_bodega})">Actualizar</button>
                 <button type="button" onclick="eliminar_bodega(${i.id_bodega})">Eliminar</button>
-            </td>
+                </td>
             </tr>
         `;
-    });
-    document.getElementById("tbodybodega").innerHTML = info;
+  });
+  document.getElementById("tbodybodega").innerHTML = info;
 }
 
 async function bodega() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/bodega`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrarbodega(response)
-        llamar_estado();
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/bodega`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrarbodega(response);
+    llamar_estado();
+  } catch (error) {
+    console.error(error);
+  }
 }
+// ==========================================================================
+// =======================   ABRIR MODAL EDITAR BODEGA  =====================
+// ==========================================================================
+async function editar_bodega(codigo) {
+  try {
+    // Cargar datos de la bodega por ID
+    const response = await fetch(`${URL_BASE}/bodega/${codigo}`);
+    const data = await response.json();
 
+    if (!response.ok || !data.bodega || data.bodega.length === 0) {
+      alert("Error: no se encontró la bodega.");
+      return;
+    }
+
+    const bodega = data.bodega[0]; // ✅ corregido
+    // Asignar valores en el modal
+    document.getElementById("id_editar_bodega").value = bodega.id_bodega;
+    document.getElementById("bodega_editar").value = bodega.nombre_bodega;
+    document.getElementById("ubicacion_editar").value = bodega.ubicacion;
+    document.getElementById("capacidad_editar").value = bodega.capacidad;
+    document.getElementById("estado_editar").value = bodega.estado;
+    await llamar_estado(bodega.estado);
+    // Abrir el modal
+    const modal = new bootstrap.Modal(document.getElementById("editar_bodega"));
+    modal.show();
+  } catch (error) {
+    console.error("Error al abrir el modal de edición:", error);
+    alert("No se pudo abrir el modal de edición.");
+  }
+}
+// ==========================================================================
+// ======================== GUARDAR CAMBIOS BODEGA ==========================
+// ==========================================================================
+async function guardar_cambios_bodega() {
+  const codigo = document.getElementById("id_editar_bodega").value;
+  const nombre_bodega = document.getElementById("bodega_editar").value.trim();
+  const ubicacion = document.getElementById("ubicacion_editar").value;
+  const capacidad = document.getElementById("capacidad_editar").value;
+  const estado = document.getElementById("estado_editar").value;
+
+  if (!nombre_bodega) {
+    Swal.fire({
+      title: "Campo vacío",
+      text: "Por favor ingresa un nombre para la bodega.",
+      icon: "warning",
+      confirmButtonText: "Entendido",
+    });
+    return;
+  }
+
+  try {
+    // Llamar a la función de actualización
+    const response = await actualizar_bodega(codigo);
+
+    if (response.mensaje === "Registro Actualizado") {
+      Swal.fire({
+        title: "¡Bodega actualizada!",
+        text: "Los cambios se guardaron correctamente.",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        // Cerrar el modal
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("editar_bodega")
+        );
+        modal.hide();
+
+        // Refrescar la tabla sin recargar la página
+        bodega();
+      });
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo actualizar la bodega.",
+        icon: "error",
+        confirmButtonText: "Intentar de nuevo",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      title: "Error inesperado",
+      text: "Ocurrió un problema al actualizar la bodega.",
+      icon: "error",
+      confirmButtonText: "Cerrar",
+    });
+  }
+}
 // ==========================================================================
 // ====================== POST, AGREGAR BODEGA =================================
 // ==========================================================================
 
 async function agregar_bodega() {
-    try {
-        const nombre_bodega = document.getElementById("bodega").value;
-        const direccion_bodega = document.getElementById("direccion").value;
-        const capacidad_bodega = document.getElementById("capacidad").value;
-        const estado_bodega = document.getElementById("estado").value;
+  try {
+    const nombre_bodega = document.getElementById("bodega").value;
+    const direccion_bodega = document.getElementById("direccion").value;
+    const capacidad_bodega = document.getElementById("capacidad").value;
+    const estado_bodega = document.getElementById("estado").value;
 
-        const nueva_bodega = {
-            "capacidad": capacidad_bodega,
-            "estado": estado_bodega,
-            "nombre_bodega": nombre_bodega,
-            "ubicacion": direccion_bodega
-        }
+    const nueva_bodega = {
+      capacidad: capacidad_bodega,
+      estado: estado_bodega,
+      nombre_bodega: nombre_bodega,
+      ubicacion: direccion_bodega,
+    };
 
-        const promesa = await fetch(`${URL_BASE}/registro_bodega`, {
-            method: 'POST',
-            body : JSON.stringify(nueva_bodega),
-            headers: {
-                "Content-type" : "application/json"
-            }
-        })
-        
-        const response = await promesa.json()
-        console.log(response)
+    const promesa = await fetch(`${URL_BASE}/registro_bodega`, {
+      method: "POST",
+      body: JSON.stringify(nueva_bodega),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
 
-        document.getElementById("bodega").value = "";
-        document.getElementById("direccion").value = "";
-        document.getElementById("capacidad").value = "";
-        document.getElementById("estado").value = "";
+    const response = await promesa.json();
+    console.log(response);
 
-        bodega();
-    } catch (error) {
-        console.error(error)
-    }
+    document.getElementById("bodega").value = "";
+    document.getElementById("direccion").value = "";
+    document.getElementById("capacidad").value = "";
+    document.getElementById("estado").value = "";
+
+    bodega();
+  } catch (error) {
+    console.error(error);
+  }
 }
+// ==========================================================================
+// =========================== ACTIUALIZAR BODEGA ===========================
+// ==========================================================================
 
+async function actualizar_bodega(codigo) {
+try {
+    const descripcion = document.getElementById("bodega_editar").value;
+    const ubicacion = document.getElementById("ubicacion_editar").value;
+    const capacidad = document.getElementById("capacidad_editar").value;
+    const estado = document.getElementById("estado_editar").value;
+
+    const bodega = {
+        nombre_bodega: descripcion,
+        ubicacion: ubicacion,
+        capacidad: capacidad,
+        estado: estado,
+    };
+
+    const promesa = await fetch(`${URL_BASE}/actualizar_bodega/${codigo}`, {
+        method: "PUT",
+        body: JSON.stringify(bodega),
+        headers: {
+        "Content-type": "application/json",
+    },
+    });
+
+    const response = await promesa.json();
+    console.log(response);
+
+    if (response.mensaje == "Registro Actualizado") {
+    Swal.fire({
+        title: "Mensaje",
+        text: `${response.mensaje}`,
+        icon: "success",
+    });
+    }
+    return response;
+} catch (error) {
+    console.error(error);
+    throw new Error("Error al actualizar la bodega");
+}
+}
 // ==========================================================================
 // ====================== DELETE, BODEGA  =================================
 // ==========================================================================
 async function eliminar_bodega(codigo) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/eliminar_bodega/${codigo}`, {method: 'DELETE',});
-    const response = await promesa.json()
-    console.log("Bodega eliminada", response)
+  try {
+    const promesa = await fetch(`${URL_BASE}/eliminar_bodega/${codigo}`, {
+      method: "DELETE",
+    });
+    const response = await promesa.json();
+    console.log("Bodega eliminada", response);
     bodega();
     return response;
-    } catch ( error) {
-        console.error("Error al eliminar bodega:", error);
-    }
+  } catch (error) {
+    console.error("Error al eliminar bodega:", error);
+  }
 }
 
-    // =======================================================================
-    // ====================== LLAMAR ESTADO =================================
-    // =======================================================================
+// =======================================================================
+// ====================== LLAMAR ESTADO =================================
+// =======================================================================
 
 async function llamar_estado(estadoSeleccionado = null) {
   try {
     const promesa = await fetch(`${URL_BASE}/estado`, { method: "GET" });
     const response = await promesa.json();
-    window.listaEstados = response.estado; // Guardamos para uso futuro
+    window.listaEstados = response.estado;
 
     const selectIds = ["estado", "estado_editar"]; // llenamos ambos si existen
     selectIds.forEach((id) => {
@@ -1364,15 +1670,14 @@ async function llamar_estado(estadoSeleccionado = null) {
   }
 }
 
-
 // ==========================================================================
 // ====================== GET, TIPO DONANTE =================================
 // ==========================================================================
 
 function mostrartipo_donante(tipo_donante) {
-    let info ="";
-    tipo_donante.tipo_donante.forEach(i => {
-        info +=`
+  let info = "";
+  tipo_donante.tipo_donante.forEach((i) => {
+    info += `
         <tr>
             <td>${i.ID}</td>
             <td>${i.descripcion}</td>
@@ -1382,19 +1687,19 @@ function mostrartipo_donante(tipo_donante) {
         </tr>
 
         `;
-    });
-    document.getElementById("tbodytipo_donante").innerHTML = info;
+  });
+  document.getElementById("tbodytipo_donante").innerHTML = info;
 }
 
 async function tipo_donante() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_donante`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrartipo_donante(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_donante`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrartipo_donante(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
@@ -1402,9 +1707,9 @@ async function tipo_donante() {
 // ==========================================================================
 
 function mostrartipo_documento(tipo_documento) {
-    let info ="";
-    tipo_documento.tipo_documento.forEach(i => {
-        info +=`
+  let info = "";
+  tipo_documento.tipo_documento.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_tipo_documento}</td>
             <td>${i.descripcion}</td>
@@ -1415,61 +1720,65 @@ function mostrartipo_documento(tipo_documento) {
         </tr>
 
         `;
-    });
-    document.getElementById("tbodytipo_documento").innerHTML = info;
+  });
+  document.getElementById("tbodytipo_documento").innerHTML = info;
 }
 
 async function tipo_documento() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_tipo_documento(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_documento`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_tipo_documento(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 // =======================================================================
 // ===================== LLAMAR TIPO_DOCUMENTO ===========================
 // =======================================================================
 async function llamar_tipo_documento() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
-        const response = await promesa.json()
+try {
+    const promesa = await fetch(`${URL_BASE}/tipo_documento`, {
+        method: "GET",
+    });
+    const response = await promesa.json();
 
-        const select = document.getElementById("tipo_documento");
-        select.innerHTML = "";
-        response.tipo_documento.forEach(tipo =>  {
-            const option = document.createElement("option")
-            option.value = tipo.id_tipo_documento;
-            option.text = `${tipo.id_tipo_documento} - ${tipo.descripcion}`;
-            option.text = `${tipo.abreviatura} - ${tipo.descripcion}`;
-            select.appendChild(option)
-        })
-    } catch (error) {
-        console.error("Error al cargar el tipo de documento", error)
-    }
+    const select = document.getElementById("tipo_documento");
+    select.innerHTML = "";
+    response.tipo_documento.forEach((tipo) => {
+        const option = document.createElement("option");
+        option.value = tipo.id_tipo_documento;
+        option.text = `${tipo.id_tipo_documento} - ${tipo.descripcion}`;
+        option.text = `${tipo.abreviatura} - ${tipo.descripcion}`;
+        select.appendChild(option);
+    });
+} catch (error) {
+    console.error("Error al cargar el tipo de documento", error);
+}
 }
 
 // =======================================================================
 // ===================== LLAMAR TIPO_DONANTE =============================
 // =======================================================================
 async function llamar_tipo_donante() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/tipo_donante`, {method: 'GET'});
-        const response = await promesa.json()
+try {
+    const promesa = await fetch(`${URL_BASE}/tipo_donante`, { method: "GET" });
+    const response = await promesa.json();
 
-        const select = document.getElementById("tipo_donante");
-        select.innerHTML = "";
-        response.tipo_donante.forEach(tipo =>  {
-            const option = document.createElement("option")
-            option.value = tipo.ID;
-            option.text = tipo.descripcion;
-            select.appendChild(option)
-        })
-    } catch (error) {
-        console.error("Error al cargar el tipo de donante", error)
-    }
+    const select = document.getElementById("tipo_donante");
+    select.innerHTML = "";
+    response.tipo_donante.forEach((tipo) => {
+        const option = document.createElement("option");
+        option.value = tipo.ID;
+        option.text = tipo.descripcion;
+        select.appendChild(option);
+    });
+} catch (error) {
+    console.error("Error al cargar el tipo de donante", error);
+}
 }
 
 // ==========================================================================
@@ -1477,27 +1786,25 @@ async function llamar_tipo_donante() {
 // ==========================================================================
 
 async function agregar_tipo_donante() {
-    try {
-        const descripcion = document.getElementById("descripcion").value;
+try {
+    const descripcion = document.getElementById("descripcion").value;
 
-        const nuevo_tipo_donante = {
-            "descripcion": descripcion
-        };
+    const nuevo_tipo_donante = {
+        descripcion: descripcion,
+    };
 
-        const promesa = await fetch(`${URL_BASE}/registro_tipo_donante`, {
-            method: 'POST',
-            body: JSON.stringify(nuevo_tipo_donante),
-            headers: {
-                "Content-type": "application/json"
-            },
-        })
-        const response = await promesa.json();
-        console.log(response);
-        document.getElementById("descripcion").value = "";
-        tipo_donante();
-    } catch (error) {
-        
-    }
+    const promesa = await fetch(`${URL_BASE}/registro_tipo_donante`, {
+        method: "POST",
+        body: JSON.stringify(nuevo_tipo_donante),
+        headers: {
+        "Content-type": "application/json",
+    },
+    });
+    const response = await promesa.json();
+    console.log(response);
+    document.getElementById("descripcion").value = "";
+    tipo_donante();
+} catch (error) {}
 }
 
 // ==========================================================================
@@ -1505,17 +1812,17 @@ async function agregar_tipo_donante() {
 // ==========================================================================
 
 async function eliminar_tipo_donante(codigo) {
-    try {
-        fetch(`${URL_BASE}/eliminar_tipo_donante/${codigo}`, {method: 'DELETE'})
-        .then(response => response.json())
-        .then(data => {
-            console.log("tipo de donante eliminado:", data);
-            tipo_donante();
-            return data;
+try {
+    fetch(`${URL_BASE}/eliminar_tipo_donante/${codigo}`, { method: "DELETE" })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log("tipo de donante eliminado:", data);
+        tipo_donante();
+        return data;
         });
-    } catch (error) {
-        console.error(error);
-    }
+} catch (error) {
+    console.error(error);
+}
 }
 
 // ==========================================================================
@@ -1523,9 +1830,9 @@ async function eliminar_tipo_donante(codigo) {
 // ==========================================================================
 
 function mostrar_donante(donante) {
-    let info ="";
-    donante.donante.forEach(i => {
-        info +=`
+let info = "";
+donante.donante.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_donante}</td>
             <td>${i.nombre}</td>
@@ -1540,70 +1847,70 @@ function mostrar_donante(donante) {
             <button type="button" onclick="eliminar_donante(${i.id_donante})">Eliminar</button>
             </td>
             </tr>
-        `
-    });
-    document.getElementById("tbodydonante").innerHTML = info;
+        `;
+});
+document.getElementById("tbodydonante").innerHTML = info;
 }
 async function donante() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/donante`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_donante(response)
-        llamar_estado()
-        llamar_tipo_donante()
-        llamar_tipo_documento()
-    }catch(error){
-        console.error(error)
-    }
+try {
+    const promesa = await fetch(`${URL_BASE}/donante`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_donante(response);
+    llamar_estado();
+    llamar_tipo_donante();
+    llamar_tipo_documento();
+} catch (error) {
+    console.error(error);
+}
 }
 // ==========================================================================
 // ======================== POST, DONANTE ====================================
 // ==========================================================================
 
 async function agregar_donante() {
-    try {
-        const nombre = document.getElementById("nombre").value;
-        const tipo_documento = document.getElementById("tipo_documento").value;
-        const numero_documento = document.getElementById("numero_documento").value;
-        const telefono = document.getElementById("telefono").value;
-        const correo = document.getElementById("correo").value;
-        const direccion = document.getElementById("direccion").value;
-        const estado = document.getElementById("estado").value;
-        const tipo_donante = document.getElementById("tipo_donante").value;
+try {
+    const nombre = document.getElementById("nombre").value;
+    const tipo_documento = document.getElementById("tipo_documento").value;
+    const numero_documento = document.getElementById("numero_documento").value;
+    const telefono = document.getElementById("telefono").value;
+    const correo = document.getElementById("correo").value;
+    const direccion = document.getElementById("direccion").value;
+    const estado = document.getElementById("estado").value;
+    const tipo_donante = document.getElementById("tipo_donante").value;
 
-        const nuevo_donante = {
-            "nombre": nombre,
-            "tipo_documento": tipo_documento,
-            "numero_documento": numero_documento,
-            "telefono": telefono,
-            "correo": correo,
-            "direccion": direccion,
-            "estado": estado,
-            "tipo_donante": tipo_donante
-        }
-        const promesa = await fetch(`${URL_BASE}/registro_donante`, {
-            method: 'POST',
-            body: JSON.stringify(nuevo_donante),
-            headers: {
-                "Content-type": "application/json"
-            },
-        })
-        const response = await promesa.json()
-        console.log(response)
-        document.getElementById("nombre").value = "";
-        document.getElementById("tipo_documento").value = "";
-        document.getElementById("numero_documento").value = "";
-        document.getElementById("telefono").value = "";
-        document.getElementById("correo").value = "";
-        document.getElementById("direccion").value = "";
-        document.getElementById("estado").value = "";
-        document.getElementById("tipo_donante").value = "";
+    const nuevo_donante = {
+        nombre: nombre,
+        tipo_documento: tipo_documento,
+        numero_documento: numero_documento,
+        telefono: telefono,
+        correo: correo,
+        direccion: direccion,
+        estado: estado,
+        tipo_donante: tipo_donante,
+    };
+    const promesa = await fetch(`${URL_BASE}/registro_donante`, {
+        method: "POST",
+        body: JSON.stringify(nuevo_donante),
+        headers: {
+        "Content-type": "application/json",
+    },
+    });
+    const response = await promesa.json();
+    console.log(response);
+    document.getElementById("nombre").value = "";
+    document.getElementById("tipo_documento").value = "";
+    document.getElementById("numero_documento").value = "";
+    document.getElementById("telefono").value = "";
+    document.getElementById("correo").value = "";
+    document.getElementById("direccion").value = "";
+    document.getElementById("estado").value = "";
+    document.getElementById("tipo_donante").value = "";
 
-        donante();
-    } catch (error) {
-        console.error(error);
-    }
+    donante();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
@@ -1611,17 +1918,17 @@ async function agregar_donante() {
 // ==========================================================================
 
 async function eliminar_donante(codigo) {
-    try {
-        fetch(`${URL_BASE}/eliminar_donante/${codigo}`, {method: 'DELETE'})
-        .then(response => response.json())
-        .then(data => {
-            console.log("donante eliminado:", data);
-            donante();
-            return data;
-        });
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    fetch(`${URL_BASE}/eliminar_donante/${codigo}`, { method: "DELETE" })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("donante eliminado:", data);
+        donante();
+        return data;
+      });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
@@ -1629,9 +1936,9 @@ async function eliminar_donante(codigo) {
 // ==========================================================================
 
 function mostrartipo_gasto(tipo_gasto) {
-    let info ="";
-    tipo_gasto.tipo_gasto.forEach(i => {
-        info +=`
+  let info = "";
+  tipo_gasto.tipo_gasto.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_tipo_gasto}</td>
             <td>${i.nombre}</td>
@@ -1639,19 +1946,19 @@ function mostrartipo_gasto(tipo_gasto) {
             
         </tr>
         `;
-    });
-    document.getElementById("tbodytipo_gasto").innerHTML = info;
+  });
+  document.getElementById("tbodytipo_gasto").innerHTML = info;
 }
 
 async function tipo_gasto() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_gasto`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrartipo_gasto(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_gasto`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrartipo_gasto(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
@@ -1659,9 +1966,9 @@ async function tipo_gasto() {
 // ==========================================================================
 
 function mostrargasto(gasto) {
-    let info ="";
-    gasto.gasto.forEach(i => {
-        info +=`
+  let info = "";
+  gasto.gasto.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_gasto}</td>
             <td>${i.fecha}</td>
@@ -1672,19 +1979,18 @@ function mostrargasto(gasto) {
             
         </tr>
         `;
-    });
-    document.getElementById("tbodygasto").innerHTML = info;
+  });
+  document.getElementById("tbodygasto").innerHTML = info;
 }
-
 async function gasto() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/gasto`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrargasto(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/gasto`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrargasto(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
@@ -1692,16 +1998,15 @@ async function gasto() {
 // ==========================================================================
 
 async function gasto_id(id) {
-    try {
-        const promesa = await fetch(`${URL_BASE}/gasto/${id}`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
+  try {
+    const promesa = await fetch(`${URL_BASE}/gasto/${id}`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
 
-        document.getElementById()
-    
-    } catch (error) {
-        console.error((error))
-    }
+    document.getElementById();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
@@ -1709,9 +2014,9 @@ async function gasto_id(id) {
 // ==========================================================================
 
 function mostrartipo_organizacion(tipo_organizacion) {
-    let info ="";
-    tipo_organizacion.tipo_organizacion.forEach(i => {
-        info +=`
+  let info = "";
+  tipo_organizacion.tipo_organizacion.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_tipo_organizacion}</td>
             <td>${i.nombre}</td>
@@ -1719,92 +2024,97 @@ function mostrartipo_organizacion(tipo_organizacion) {
             <td> <button onclick="editar_tipo_organizacion(${i.id_tipo_organizacion})">Editar</button> <button onclick="eliminar_tipo_organizacion(${i.id_tipo_organizacion})">Eliminar</button></td>
         </tr>
         `;
-    });
-    document.getElementById("tbodytipo_organizacion").innerHTML = info;
+  });
+  document.getElementById("tbodytipo_organizacion").innerHTML = info;
 }
 
 async function tipo_organizacion() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_organizacion`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrartipo_organizacion(response)
-        
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_organizacion`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrartipo_organizacion(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // =================== POST, TIPO ORGANIZACION  ==============================
 // ==========================================================================
 
 async function agregar_tipo_organizacion() {
-    try {
-        const nombre_tipo_organizacion = document.getElementById("nombre").value;
-        const descripcion_tipo_organizacion = document.getElementById("descripcion").value;
+  try {
+    const nombre_tipo_organizacion = document.getElementById("nombre").value;
+    const descripcion_tipo_organizacion =
+      document.getElementById("descripcion").value;
 
-        const nuevo_tipo_organizacion = {
-        "nombre": nombre_tipo_organizacion,
-        "descripcion": descripcion_tipo_organizacion
-        };
+    const nuevo_tipo_organizacion = {
+      nombre: nombre_tipo_organizacion,
+      descripcion: descripcion_tipo_organizacion,
+    };
 
-        const promesa = await fetch(`${URL_BASE}/registro_tipo_organizacion`, {
-        method: 'POST',
-        body: JSON.stringify(nuevo_tipo_organizacion),
-        headers: {
-            "Content-type": "application/json"
-        }
-        });
+    const promesa = await fetch(`${URL_BASE}/registro_tipo_organizacion`, {
+      method: "POST",
+      body: JSON.stringify(nuevo_tipo_organizacion),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
 
-        const response = await promesa.json();
-        console.log(response);
+    const response = await promesa.json();
+    console.log(response);
 
-        document.getElementById("nombre").value = "";
-        document.getElementById("descripcion").value = "";
-        tipo_organizacion();
-
-    } catch (error) {
-        console.error(error);
-    }
-    }
+    document.getElementById("nombre").value = "";
+    document.getElementById("descripcion").value = "";
+    tipo_organizacion();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 // ==========================================================================
 // =================== DELETE, TIPO ORGANIZACION ============================
 // ==========================================================================
 
 async function eliminar_tipo_organizacion(codigo) {
-    try {
-        fetch(`${URL_BASE}/eliminar_tipo_organizacion/${codigo}`, {method: 'DELETE'})
-        .then(response => response.json())
-        .then(data => {
-            console.log("tipo de organizacion eliminado:", data);
-            tipo_organizacion();
-            return data;
-        });
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    fetch(`${URL_BASE}/eliminar_tipo_organizacion/${codigo}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("tipo de organizacion eliminado:", data);
+        tipo_organizacion();
+        return data;
+      });
+  } catch (error) {
+    console.error(error);
+  }
 }
 // =======================================================================
 // ===================== LLAMAR TIPO_ORGANIZACION ========================
 // =======================================================================
 async function llamar_tipo_organizacion() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/tipo_organizacion`, {method: 'GET'});
-        const response = await promesa.json()
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_organizacion`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
 
-        const select = document.getElementById("tipo_organizacion");
-        select.innerHTML = "";
-        response.tipo_organizacion.forEach(tipo =>  {
-            const option = document.createElement("option")
-            option.value = tipo.id_tipo_organizacion;
-            option.text = `${tipo.id_tipo_organizacion} - ${tipo.nombre}`;
+    const select = document.getElementById("tipo_organizacion");
+    select.innerHTML = "";
+    response.tipo_organizacion.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.id_tipo_organizacion;
+      option.text = `${tipo.id_tipo_organizacion} - ${tipo.nombre}`;
 
-            select.appendChild(option)
-        })
-    } catch (error) {
-        console.error("Error al cargar el tipo de organizacion", error)
-    }
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar el tipo de organizacion", error);
+  }
 }
 
 // ==========================================================================
@@ -1812,9 +2122,9 @@ async function llamar_tipo_organizacion() {
 // ==========================================================================
 
 function mostrarorganizacion(organizacion) {
-    let info ="";
-    organizacion.organizacion.forEach(i => {
-        info +=`
+  let info = "";
+  organizacion.organizacion.forEach((i) => {
+    info += `
         <tr>
             <td>${i.codigo}</td>
             <td>${i.descripcion}</td>
@@ -1829,96 +2139,95 @@ function mostrarorganizacion(organizacion) {
             </td>
         </tr>
         `;
-    });
-    document.getElementById("tbodyorganizacion").innerHTML = info;
+  });
+  document.getElementById("tbodyorganizacion").innerHTML = info;
 }
 
 async function organizacion() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/organizacion`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrarorganizacion(response)
-        llamar_tipo_organizacion()
-        llamar_tipo_entrega()
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/organizacion`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrarorganizacion(response);
+    llamar_tipo_organizacion();
+    llamar_tipo_entrega();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
 // ====================   POST, AGREGAR ORGANIZACION   ====================
 // ==========================================================================
 async function agregar_organizacion() {
-    try {
-        const descripcion = document.getElementById("descripcion").value;
-        const nombre = document.getElementById("nombre").value;
-        const responsable = document.getElementById("responsable").value;
-        const telefono = document.getElementById("telefono").value;
-        const direccion = document.getElementById("direccion").value;
-        const tipo_entrega = document.getElementById("tipo_entrega").value;
-        const tipo_organizacion = document.getElementById("tipo_organizacion").value;
+  try {
+    const descripcion = document.getElementById("descripcion").value;
+    const nombre = document.getElementById("nombre").value;
+    const responsable = document.getElementById("responsable").value;
+    const telefono = document.getElementById("telefono").value;
+    const direccion = document.getElementById("direccion").value;
+    const tipo_entrega = document.getElementById("tipo_entrega").value;
+    const tipo_organizacion =
+      document.getElementById("tipo_organizacion").value;
 
-        const nueva_organizacion = {
-            "descripcion": descripcion,
-            "nombre": nombre,
-            "responsable": responsable,
-            "telefono": telefono,
-            "direccion": direccion,
-            "tipo_entrega": tipo_entrega,
-            "tipo_organizacion": tipo_organizacion
-        }
+    const nueva_organizacion = {
+      descripcion: descripcion,
+      nombre: nombre,
+      responsable: responsable,
+      telefono: telefono,
+      direccion: direccion,
+      tipo_entrega: tipo_entrega,
+      tipo_organizacion: tipo_organizacion,
+    };
 
-        const promesa = await fetch(`${URL_BASE}/registro_organizacion`, {
-            method: 'POST',
-            body : JSON.stringify(nueva_organizacion),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+    const promesa = await fetch(`${URL_BASE}/registro_organizacion`, {
+      method: "POST",
+      body: JSON.stringify(nueva_organizacion),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-        const response = await promesa.json()
-        console.log(response)
-        document.getElementById("descripcion").value = "";
-        document.getElementById("nombre").value = "";
-        document.getElementById("responsable").value = "";
-        document.getElementById("telefono").value = "";
-        document.getElementById("direccion").value = "";
-        document.getElementById("tipo_entrega").value = "";
-        document.getElementById("tipo_organizacion").value = "";
-        
-        organizacion();
-        
+    const response = await promesa.json();
+    console.log(response);
+    document.getElementById("descripcion").value = "";
+    document.getElementById("nombre").value = "";
+    document.getElementById("responsable").value = "";
+    document.getElementById("telefono").value = "";
+    document.getElementById("direccion").value = "";
+    document.getElementById("tipo_entrega").value = "";
+    document.getElementById("tipo_organizacion").value = "";
 
-    } catch (error) {
-        console.error(error);
-    }
+    organizacion();
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // =================== DELETE, ORGANIZACION ============================
 // ==========================================================================
 
 async function eliminar_organizacion(codigo) {
-    try {
-        fetch(`${URL_BASE}/eliminar_organizacion/${codigo}`, {method: 'DELETE'})
-        .then(response => response.json())
-        .then(data => {
-            console.log("organizacion eliminada:", data);
-            organizacion();
-            return data;
-        });
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    fetch(`${URL_BASE}/eliminar_organizacion/${codigo}`, { method: "DELETE" })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("organizacion eliminada:", data);
+        organizacion();
+        return data;
+      });
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // ===================  GET, ACTA VENCIMIENTO  ==============================
 // ==========================================================================
 
 function mostraracta_vencimiento(acta_vencimiento) {
-    let info ="";
-    acta_vencimiento.acta_vencimiento.forEach(i => {
-        info +=`
+  let info = "";
+  acta_vencimiento.acta_vencimiento.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_acta}</td>
             <td>${i.fecha}</td>
@@ -1927,29 +2236,30 @@ function mostraracta_vencimiento(acta_vencimiento) {
             
         </tr>
         `;
-    });
-    document.getElementById("tbodyacta_vencimiento").innerHTML = info;
+  });
+  document.getElementById("tbodyacta_vencimiento").innerHTML = info;
 }
 
 async function acta_vencimiento() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/acta_vencimiento`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostraracta_vencimiento(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/acta_vencimiento`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostraracta_vencimiento(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
-
 
 // ==========================================================================
 // ===================  GET, TIPO_ENTREGA  =================================
 // ==========================================================================
 function mostrar_tipo_entrega(tipo_entrega) {
-    let info ="";
-    tipo_entrega.tipo_entrega.forEach(i => {
-        info +=`
+  let info = "";
+  tipo_entrega.tipo_entrega.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_tipo_entrega}</td>
             <td>${i.nombre}</td>
@@ -1958,92 +2268,96 @@ function mostrar_tipo_entrega(tipo_entrega) {
             
         </tr>
         `;
-    });
-    document.getElementById("tbodytipo_entrega").innerHTML = info;
+  });
+  document.getElementById("tbodytipo_entrega").innerHTML = info;
 }
 async function obtener_tipo_entrega() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_tipo_entrega(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_entrega`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_tipo_entrega(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // ====================== LLAMAR TIPO_ENTREGA ==============================
 // ==========================================================================
 async function llamar_tipo_entrega() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/tipo_entrega`, {method: 'GET'});
-        const response = await promesa.json();
-        const select = document.getElementById("tipo_entrega");
-        select.innerHTML = "";
-        response.tipo_entrega.forEach(tipo =>  {
-            const option = document.createElement("option")
-            option.value = tipo.id_tipo_entrega;
-            option.dataset.descripcion = tipo.descripcion;
-            option.text = `${tipo.nombre}`;
-            select.appendChild(option)
-        })
-    } catch (error) {
-        console.error("Error al cargar el tipo de entrega", error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_entrega`, { method: "GET" });
+    const response = await promesa.json();
+    const select = document.getElementById("tipo_entrega");
+    select.innerHTML = "";
+    response.tipo_entrega.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.id_tipo_entrega;
+      option.dataset.descripcion = tipo.descripcion;
+      option.text = `${tipo.nombre}`;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar el tipo de entrega", error);
+  }
 }
 
 // ==========================================================================
 // ======================   GET, TIPO_DOCUMENTO   ===========================
 // ==========================================================================
 function mostrartipo_documento(tipo_documento) {
-    let info ="";
-    tipo_documento.tipo_documento.forEach(i => {
-        info +=`
+  let info = "";
+  tipo_documento.tipo_documento.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_tipo_documento}</td>
             <td>${i.nombre}</td>
         </tr>
         `;
-    });
-    document.getElementById("tbodytipo_documento").innerHTML = info;
+  });
+  document.getElementById("tbodytipo_documento").innerHTML = info;
 }
 async function tipo_documento() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrartipo_documento(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_documento`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrartipo_documento(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 // =======================================================================
 // ====================== LLAMAR TIPO_DOCUMENTO ==========================
 // =======================================================================
 async function llamar_tipo_documento() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/tipo_documento`, {method: 'GET'});
-        const response = await promesa.json()
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_documento`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
 
-        const select = document.getElementById("tipo_documento");
-        select.innerHTML = "";
-        response.tipo_documento.forEach(tipo =>  {
-            const option = document.createElement("option")
-            option.value = tipo.id_tipo_documento;
-            option.text = `${tipo.nombre}`;
-            select.appendChild(option)
-        })
-    } catch (error) {
-        console.error("Error al cargar el tipo de documento", error)
-    }
+    const select = document.getElementById("tipo_documento");
+    select.innerHTML = "";
+    response.tipo_documento.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.id_tipo_documento;
+      option.text = `${tipo.nombre}`;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar el tipo de documento", error);
+  }
 }
 // ==========================================================================
 // ======================   GET, USUARIO   =================================
 // ==========================================================================
 function mostrar_usuario(usuario) {
-    let info="";
-    usuario.usuario.forEach(i => {
-        info +=`
+  let info = "";
+  usuario.usuario.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_usuario}</td>
             <td>${i.nombre_completo}</td>
@@ -2055,95 +2369,92 @@ function mostrar_usuario(usuario) {
             <td>${i.estado}</td>
             <td><button class="btn btn-danger" onclick="eliminar_usuario(${i.id_usuario})">Eliminar</button></td>
         </tr>
-        `
-    });
-    document.getElementById("tbodyusuario").innerHTML = info;
+        `;
+  });
+  document.getElementById("tbodyusuario").innerHTML = info;
 }
 async function usuario() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/usuarios`, {method : 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_usuario(response)
-        llamar_estado()
-        llamar_tipo_documento()
-        llamar_tipo_usuario()
-
-
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/usuarios`, { method: "GET" });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_usuario(response);
+    llamar_estado();
+    llamar_tipo_documento();
+    llamar_tipo_usuario();
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // ====================   POST, AGREGAR USUARIO   ===========================
 // ==========================================================================
 async function agregar_usuario() {
-    try {
-        const nombre_completo = document.getElementById("nombre_completo").value;
-        const tipo_documento = document.getElementById("tipo_documento").value;
-        const numero_documento = document.getElementById("numero_documento").value;
-        const correo = document.getElementById("correo").value;
-        const contrasena = document.getElementById("contrasena").value;
-        const tipo_usuario = document.getElementById("tipo_usuario").value;
-        const estado = document.getElementById("estado").value;
+  try {
+    const nombre_completo = document.getElementById("nombre_completo").value;
+    const tipo_documento = document.getElementById("tipo_documento").value;
+    const numero_documento = document.getElementById("numero_documento").value;
+    const correo = document.getElementById("correo").value;
+    const contrasena = document.getElementById("contrasena").value;
+    const tipo_usuario = document.getElementById("tipo_usuario").value;
+    const estado = document.getElementById("estado").value;
 
-        const nuevo_usuario = {
-            "nombre_completo": nombre_completo,
-            "tipo_documento": tipo_documento,
-            "numero_documento": numero_documento,
-            "correo": correo,
-            "contrasena": contrasena,
-            "tipo_usuario": tipo_usuario,
-            "estado": estado
-        }
+    const nuevo_usuario = {
+      nombre_completo: nombre_completo,
+      tipo_documento: tipo_documento,
+      numero_documento: numero_documento,
+      correo: correo,
+      contrasena: contrasena,
+      tipo_usuario: tipo_usuario,
+      estado: estado,
+    };
 
-        const promesa = await fetch(`${URL_BASE}/registro_usuarios`, {
-            method: 'POST',
-            body : JSON.stringify(nuevo_usuario),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+    const promesa = await fetch(`${URL_BASE}/registro_usuarios`, {
+      method: "POST",
+      body: JSON.stringify(nuevo_usuario),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-        const response = await promesa.json()
-        console.log(response)
-        document.getElementById("nombre_completo").value = "";
-        document.getElementById("tipo_documento").value = "";
-        document.getElementById("numero_documento").value = "";
-        document.getElementById("correo").value = "";
-        document.getElementById("contrasena").value = "";
-        document.getElementById("tipo_usuario").value = "";
-        document.getElementById("estado").value = "";
-        usuario();
-
-    } catch (error) {
-        console.error(error);
-    }
+    const response = await promesa.json();
+    console.log(response);
+    document.getElementById("nombre_completo").value = "";
+    document.getElementById("tipo_documento").value = "";
+    document.getElementById("numero_documento").value = "";
+    document.getElementById("correo").value = "";
+    document.getElementById("contrasena").value = "";
+    document.getElementById("tipo_usuario").value = "";
+    document.getElementById("estado").value = "";
+    usuario();
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // ====================== DELETE, USUARIO ==================================
 // ==========================================================================
 async function eliminar_usuario(codigo) {
-    try {
-        fetch(`${URL_BASE}/eliminar_usuarios/${codigo}`, {method: 'DELETE'})
-        .then(response => response.json())
-        .then(data => {
-            console.log("usuario eliminado:", data);
-            usuario();
-            return data;
-        });
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    fetch(`${URL_BASE}/eliminar_usuarios/${codigo}`, { method: "DELETE" })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("usuario eliminado:", data);
+        usuario();
+        return data;
+      });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // ==========================================================================
 // =================== GET, DONACION MONETARIA ==============================
 // ==========================================================================
 function mostrar_donacion_monetaria(monetaria) {
-    let info="";
-    monetaria.donacion_monetaria.forEach(i => {
-        info +=`
+  let info = "";
+  monetaria.donacion_monetaria.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_donacion_monetaria}</td>
             <td>${i.donante}</td>
@@ -2154,27 +2465,29 @@ function mostrar_donacion_monetaria(monetaria) {
             <td>${i.usuario}</td>
             <td>${i.tipo_donacion}</td>
         </tr>
-        `
-    });
-    document.getElementById("tbodydonacion_monetaria").innerHTML = info;
+        `;
+  });
+  document.getElementById("tbodydonacion_monetaria").innerHTML = info;
 }
 async function donacion_monetaria() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/donacion_monetaria`, {method : 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_donacion_monetaria(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/donacion_monetaria`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_donacion_monetaria(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // =================== GET, FECHA VENCIMIENTO ==============================
 // ==========================================================================
 function mostrar_vencimiento(vencimiento) {
-    let info ="";
-    vencimiento.fecha_vencimiento.forEach(i => {
-        info +=`
+  let info = "";
+  vencimiento.fecha_vencimiento.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_vencimiento}</td>
             <td>${i.id_producto}</td>
@@ -2184,147 +2497,147 @@ function mostrar_vencimiento(vencimiento) {
             <td>${i.id_acta}</td>
         </tr>
         `;
-    });
-    document.getElementById("tbodyfecha_vencimiento").innerHTML = info;
+  });
+  document.getElementById("tbodyfecha_vencimiento").innerHTML = info;
 }
 async function fecha_vencimiento() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/fecha_vencimiento`, {method : 'GET'});
-        const response = await promesa.json();
-        console.log(response)
-        mostrar_vencimiento(response)
-    }catch(error){
-        console.error(error)
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/fecha_vencimiento`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
+    mostrar_vencimiento(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 // ==========================================================================
 // =================== MOSTRAR CONTRASEÑA ===================================
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
-    const input = document.getElementById("contrasena");
-    const toggle = document.getElementById("togglePassword");
-    const icon = document.getElementById("iconoOjo");
+  const input = document.getElementById("contrasena");
+  const toggle = document.getElementById("togglePassword");
+  const icon = document.getElementById("iconoOjo");
 
-    if (input && toggle && icon) {
-        toggle.addEventListener("click", () => {
-            const mostrar = input.type === "password";
-            input.type = mostrar ? "text" : "password";
-            icon.classList.toggle("bi-eye");
-            icon.classList.toggle("bi-eye-slash");
-        });
-    }
+  if (input && toggle && icon) {
+    toggle.addEventListener("click", () => {
+      const mostrar = input.type === "password";
+      input.type = mostrar ? "text" : "password";
+      icon.classList.toggle("bi-eye");
+      icon.classList.toggle("bi-eye-slash");
+    });
+  }
 });
 // ==========================================================================
 // =================== GET, TIPO_USUARIO ===================================
 // ==========================================================================
 function mostrar_tipo_usuario(tipo_usuario) {
-    let info ="";
-    tipo_usuario.forEach(i => {
-        info +=`
+  let info = "";
+  tipo_usuario.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id_tipo_usuario}</td>
             <td>${i.descripcion}</td>
         </tr>
         `;
-    });
-    document.getElementById("tbodytipo_usuario").innerHTML = info;
+  });
+  document.getElementById("tbodytipo_usuario").innerHTML = info;
 }
 async function tipo_usuario() {
-    try{
-        const promesa = await fetch(`${URL_BASE}/tipo_usuario`, {method : 'GET'});
-        const response = await promesa.json();
-        mostrar_tipo_usuario(response);
-    }catch(error){
-        console.error(error);
-    }
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_usuario`, { method: "GET" });
+    const response = await promesa.json();
+    mostrar_tipo_usuario(response);
+  } catch (error) {
+    console.error(error);
+  }
 }
 // =======================================================================
 // ====================== LLAMAR TIPO USUARIO ============================
 // =======================================================================a
 async function llamar_tipo_usuario() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/tipo_usuario`, {method: 'GET'});
-        const response = await promesa.json()
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_usuario`, { method: "GET" });
+    const response = await promesa.json();
 
-        const select = document.getElementById("tipo_usuario");
-        select.innerHTML = "";
-        response.tipo_usuario.forEach(tipo =>  {
-            const option = document.createElement("option")
-            option.value = tipo.id_tipo_usuario;
-            option.text = `${tipo.descripcion}`;
-            select.appendChild(option)
-        })
-    } catch (error) {
-        console.error("Error al cargar el tipo de usuario", error)
-    }
+    const select = document.getElementById("tipo_usuario");
+    select.innerHTML = "";
+    response.tipo_usuario.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.id_tipo_usuario;
+      option.text = `${tipo.descripcion}`;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar el tipo de usuario", error);
+  }
 }
-
 
 // ==========================================================================
 // ===================== LLAMAR TIPO_DONACION  ===========================
 // ==========================================================================
 async function llamar_tipo_donacion() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/tipo_donacion`, { method: 'GET' });
-        const response = await promesa.json();
+  try {
+    const promesa = await fetch(`${URL_BASE}/tipo_donacion`, { method: "GET" });
+    const response = await promesa.json();
 
+    const select = document.getElementById("tipo_donacion");
+    select.innerHTML =
+      "<option value=''>Seleccione un tipo de donación</option>";
 
-        const select = document.getElementById("tipo_donacion");
-        select.innerHTML = "<option value=''>Seleccione un tipo de donación</option>";
-
-        response.tipo_donacion.forEach(tipo => {
-            const option = document.createElement("option");
-            option.value = tipo.codigo;
-            option.text = `${tipo.descripcion}`;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error al cargar tipos de donación:", error);
-    }
+    response.tipo_donacion.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.codigo;
+      option.text = `${tipo.descripcion}`;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar tipos de donación:", error);
+  }
 }
 // ==========================================================================
 // ===================== LLAMAR ORGANIZACION  ===========================
 // ==========================================================================
 async function llamar_organizacion() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/organizacion`, { method: 'GET' });
-        const response = await promesa.json();
+  try {
+    const promesa = await fetch(`${URL_BASE}/organizacion`, { method: "GET" });
+    const response = await promesa.json();
 
+    const select = document.getElementById("organizacion");
+    select.innerHTML = "<option value=''>Seleccione una organización</option>";
 
-        const select = document.getElementById("organizacion");
-        select.innerHTML = "<option value=''>Seleccione una organización</option>";
+    response.organizacion.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.codigo;
+      option.text = `${tipo.nombre}`;
 
-        response.organizacion.forEach(tipo => {
-            const option = document.createElement("option");
-            option.value = tipo.codigo;
-            option.text = `${tipo.nombre}`;
-
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error al cargar organizaciones:", error);
-    }
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar organizaciones:", error);
+  }
 }
 
 // ==========================================================================
 // ========================= LLAMAR BODEGA  =================================
 // ==========================================================================
 async function llamar_bodega() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/bodega`, { method: 'GET' });
-        const response = await promesa.json();
+  try {
+    const promesa = await fetch(`${URL_BASE}/bodega`, { method: "GET" });
+    const response = await promesa.json();
 
-        const select = document.getElementById("bodega");
-        select.innerHTML = "<option value=''>Seleccione una bodega</option>";
-        response.bodega.forEach(tipo => {
-            const option = document.createElement("option");
-            option.value = tipo.id_bodega;
-            option.text = `${tipo.nombre_bodega}`;
-            select.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Error al cargar las bodegas:", error);
-    }
+    const select = document.getElementById("bodega");
+    select.innerHTML = "<option value=''>Seleccione una bodega</option>";
+    response.bodega.forEach((tipo) => {
+      const option = document.createElement("option");
+      option.value = tipo.id_bodega;
+      option.text = `${tipo.nombre_bodega}`;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al cargar las bodegas:", error);
+  }
 }
 
 // =========================================================================
@@ -2332,33 +2645,37 @@ async function llamar_bodega() {
 // =========================================================================
 
 async function cargar_detalle_donacion_producto() {
-    try {
-        const promesa = await fetch(`${URL_BASE}/detalle_donacion_producto`, { method: 'GET' });
-        const response = await promesa.json();
-        console.log(response);
+  try {
+    const promesa = await fetch(`${URL_BASE}/detalle_donacion_producto`, {
+      method: "GET",
+    });
+    const response = await promesa.json();
+    console.log(response);
 
-        if (response.detalle_donacion_producto && response.detalle_donacion_producto.length > 0) {
-            mostrar_detalle_donacion_producto(response);
-        } else {
-            document.getElementById("tbodydetalles").innerHTML = `
+    if (
+      response.detalle_donacion_producto &&
+      response.detalle_donacion_producto.length > 0
+    ) {
+      mostrar_detalle_donacion_producto(response);
+    } else {
+      document.getElementById("tbodydetalles").innerHTML = `
                 <tr>
                     <td colspan="6">No hay donaciones de productos registradas.</td>
                 </tr>`;
-        }
-
-    } catch (error) {
-        console.error("Error al cargar detalles de donación de producto:", error);
-        document.getElementById("tbodydetalles").innerHTML = `
+    }
+  } catch (error) {
+    console.error("Error al cargar detalles de donación de producto:", error);
+    document.getElementById("tbodydetalles").innerHTML = `
             <tr>
                 <td colspan="6">Error al cargar datos.</td>
             </tr>`;
-    }
+  }
 }
 
 function mostrar_detalle_donacion_producto(detalles) {
-    let info = "";
-    detalles.detalle_donacion_producto.forEach(i => {
-        info += `
+  let info = "";
+  detalles.detalle_donacion_producto.forEach((i) => {
+    info += `
         <tr>
             <td>${i.id}</td>
             <td>${i.donante}</td>
@@ -2367,6 +2684,6 @@ function mostrar_detalle_donacion_producto(detalles) {
             <td>${i.peso_unitario}</td>
             <td>${i.unidad_medida}</td>
         </tr>`;
-    });
-    document.getElementById("tbodydetalles").innerHTML = info;
+  });
+  document.getElementById("tbodydetalles").innerHTML = info;
 }
